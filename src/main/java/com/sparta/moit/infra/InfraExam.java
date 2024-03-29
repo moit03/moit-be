@@ -7,4 +7,5 @@ public class InfraExam {
     // #DONE test UpperCase
     // Jira Add Trigger
     // Jira Add Trigger #done
+    // DONE first
 }
