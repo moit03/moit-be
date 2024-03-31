@@ -21,9 +21,14 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: make env.properties
+        if: |
+          contains(github.ref, 'main') ||
+          contains(github.ref, 'develop')
         run: |
           echo "${{ secrets.ENV_PROPERTIES }}" > $GITHUB_WORKSPACE/env.properties
         shell: bash
+        env:
+          ENV_PROPERTIES: ${{ secrets.ENV_PROPERTIES }}
 
 
       - name: Build with Gradle
