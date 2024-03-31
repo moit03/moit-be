@@ -23,7 +23,7 @@ jobs:
       - name: make env.properties
         if: |
           contains(github.ref, 'main') ||
-          contains(github.ref, 'develop')
+          contains(github.ref, 'dev')
         run: |
           cd ./
           touch ./env.properties
