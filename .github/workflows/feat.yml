@@ -1,0 +1,29 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "moitbe-*" ]
+
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: make env.properties
+        run: |
+          touch env.properties
+          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
+        shell: bash
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
