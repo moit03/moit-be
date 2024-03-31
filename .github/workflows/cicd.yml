@@ -25,10 +25,10 @@ jobs:
           contains(github.ref, 'main') ||
           contains(github.ref, 'dev')
         run: |
-          cd ./src/main/resources
-          touch ./env.properties
-          echo "${{ secrets.ENV_PROPERTIES }}" > ./env.properties
+          touch env.properties
+          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
         shell: bash
+
 
 
       - name: Build with Gradle
