@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "MOITBE-*" ]
+    branches: [ "MOITBE-*", "main", "dev" ]
   pull_request:
     branches: [ "main", "dev" ]
 
