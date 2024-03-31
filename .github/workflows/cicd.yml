@@ -25,9 +25,9 @@ jobs:
           contains(github.ref, 'main') ||
           contains(github.ref, 'dev')
         run: |
-          cd ./
-          touch ./env.properties
-          echo "${{ secrets.ENV_PROPERTIES }}" > ./env.properties
+          cd $GITHUB_WORKSPACE
+          touch env.properties
+          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
         shell: bash
 
 
