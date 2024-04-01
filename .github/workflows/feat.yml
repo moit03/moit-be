@@ -5,7 +5,7 @@ on:
     branches: [ "moitbe-*" ]
 
 jobs:
-  CI-CD:
+  CI-TEST:
     runs-on: ubuntu-latest
 
     steps:
