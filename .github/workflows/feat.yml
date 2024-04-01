@@ -1,8 +1,9 @@
-name: CI/CD
+name: feat
 
 on:
   push:
-    branches: [ "moitbe-*" ]
+    branches:
+      - "MOITBE-**"
 
 jobs:
   CI-TEST:
