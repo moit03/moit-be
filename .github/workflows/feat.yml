@@ -6,7 +6,7 @@ on:
       - "MOITBE-**"
 
 jobs:
-  CI-CD:
+  CI-TEST:
     runs-on: ubuntu-latest
 
     steps:
