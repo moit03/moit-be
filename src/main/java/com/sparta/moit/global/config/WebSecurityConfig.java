@@ -89,6 +89,7 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PUBLIC_URL).permitAll()
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/user/**").permitAll()
                         .anyRequest().authenticated()
         );
