@@ -2,6 +2,7 @@ package com.sparta.moit.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.moit.domain.member.dto.LoginRequestDto;
+import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.global.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,7 +24,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/user/login"); // POST 사용
+        setFilterProcessesUrl("api/member/signin");
     }
 
     @Override
@@ -47,7 +48,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        String token = jwtUtil.createToken(email);
+        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        String token = jwtUtil.createToken(email, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
         response.setCharacterEncoding("UTF-8");
     }
