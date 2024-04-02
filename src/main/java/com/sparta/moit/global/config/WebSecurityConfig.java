@@ -68,7 +68,6 @@ public class WebSecurityConfig {
                 cors.configurationSource(corsConfigurationSource())
         );
         http.csrf(AbstractHttpConfigurer::disable);
-        http.httpBasic(AbstractHttpConfigurer::disable);
         http.formLogin(AbstractHttpConfigurer::disable);
 
         http.sessionManagement((sessionManagement) ->
@@ -110,10 +109,10 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(false);
-        configuration.setExposedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
