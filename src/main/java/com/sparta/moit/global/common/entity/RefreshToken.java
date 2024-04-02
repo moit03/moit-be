@@ -1,4 +1,4 @@
-package com.sparta.moit.global.entity;
+package com.sparta.moit.global.common.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
