@@ -6,10 +6,8 @@ import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.entity.*;
 import com.sparta.moit.domain.meeting.repository.CareerRepository;
 import com.sparta.moit.domain.meeting.repository.MeetingRepository;
-import com.sparta.moit.domain.meeting.repository.MeetingSkillRepository;
 import com.sparta.moit.domain.meeting.repository.SkillRepository;
 import com.sparta.moit.domain.member.entity.Member;
-import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +31,7 @@ public class MeetingServiceImpl implements MeetingService{
     }
 
     @Override
-    public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto) {
-        Member member = memberRepository.findById(1L).orElseThrow(() ->
-                new IllegalArgumentException("아이디 문제")
-        );
+    public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto, Member member) {
 
         List<Long> skillIds = requestDto.getSkillIds();
         Meeting meeting = requestDto.toEntity(member);
