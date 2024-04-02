@@ -12,5 +12,5 @@ public interface MemberControllerDocs {
     ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException;
 
     @Operation(summary = "네이버 로그인", description = "네이버 로그인 API")
-    ResponseEntity<?> naverLogin(@RequestParam String code, String state) throws JsonProcessingException;
+    ResponseEntity<?> naverLogin(@RequestParam String code,@RequestParam String state) throws JsonProcessingException;
 }
