@@ -4,6 +4,7 @@ import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.security.JwtAuthenticationFilter;
 import com.sparta.moit.global.security.JwtAuthorizationFilter;
 import com.sparta.moit.global.security.UserDetailsServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -65,7 +66,20 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors ->
-                cors.configurationSource(corsConfigurationSource())
+                cors.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.addAllowedOriginPattern("*");
+                        configuration.addAllowedHeader("*");
+                        configuration.addAllowedMethod("*");
+                        configuration.setAllowCredentials(false);
+                        configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+
+                        return configuration;
+                    }
+                })
         );
         http.csrf(AbstractHttpConfigurer::disable);
         http.formLogin(AbstractHttpConfigurer::disable);
@@ -104,19 +118,19 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(false);
-        configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
-
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        configuration.addAllowedOriginPattern("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addAllowedMethod("*");
+//        configuration.setAllowCredentials(false);
+//        configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+//
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }
