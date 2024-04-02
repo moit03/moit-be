@@ -1,5 +1,6 @@
 package com.sparta.moit.global.error;
 
+import com.sparta.moit.global.common.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,6 +8,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handelCustomException(CustomException e) {
+        return ResponseEntity.status(e.getHttpStatus()).body(ResponseDto.error(e.getKey(),e.getMessage(),e.getHttpStatus()));
+    }
 
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<RestApiException> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
