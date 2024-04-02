@@ -1,6 +1,7 @@
 package com.sparta.moit.global.config;
 
 import com.sparta.moit.global.jwt.JwtUtil;
+import com.sparta.moit.global.security.CustomLoggingFilter;
 import com.sparta.moit.global.security.JwtAuthenticationFilter;
 import com.sparta.moit.global.security.JwtAuthorizationFilter;
 import com.sparta.moit.global.security.UserDetailsServiceImpl;
@@ -32,13 +33,18 @@ import java.util.List;
 @Slf4j(topic = "Security Log")
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+
+    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.authenticationConfiguration = authenticationConfiguration;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,6 +61,11 @@ public class WebSecurityConfig {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
+    }
+
+    @Bean
+    public CustomLoggingFilter customLoggingFilter(){
+        return new CustomLoggingFilter();
     }
 
     @Bean
@@ -96,7 +107,7 @@ public class WebSecurityConfig {
         );
 
 
-
+        http.addFilterBefore(customLoggingFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
