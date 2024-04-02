@@ -67,7 +67,7 @@ public class WebSecurityConfig {
         http.cors(cors ->
                 cors.configurationSource(corsConfigurationSource())
         );
-
+        http.cors(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
         http.formLogin(AbstractHttpConfigurer::disable);
