@@ -110,7 +110,7 @@ public class WebSecurityConfig {
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);
         configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
 
 
