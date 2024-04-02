@@ -88,7 +88,7 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PUBLIC_URL).permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/api/member/signin/naver").permitAll()
                         .requestMatchers("/user/**").permitAll()

@@ -1,9 +1,11 @@
 package com.sparta.moit.domain.meeting.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name="skill")
@@ -12,16 +14,16 @@ import java.util.Set;
 @Builder
 @Getter
 public class Skill {
-    @Column(name = "skill_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long skillId;
+    private Long Id;
 
     @Column(name = "skill_name")
     private String skillName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MeetingSkill> meetings = new HashSet<>();
+    private List<MeetingSkill> meetings;
 
     @Builder
     public Skill(String skillName) {

@@ -12,16 +12,12 @@ import java.util.Set;
 @Builder
 @Getter
 public class Career {
-    @Column(name = "career_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long careerId;
+    private Long Id;
 
-    @Column(name = "meeting_name")
+    @Column(name = "career_name")
     private String careerName;
-
-    @OneToMany(mappedBy = "career")
-    private Set<MeetingCareer> meetingCareerSet = new HashSet<>();
 
     @Builder
     public Career(String careerName) {

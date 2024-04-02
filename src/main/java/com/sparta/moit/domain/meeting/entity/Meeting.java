@@ -1,11 +1,17 @@
 package com.sparta.moit.domain.meeting.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.mapping.ToOne;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,13 +19,11 @@ import java.util.Set;
 @Entity(name = "meeting")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @Getter
-public class Meeting {
-    @Column(name = "meeting_id")
+public class Meeting extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long meetingId;
+    private Long Id;
 
     @Column(name = "meeting_name")
     private String meetingName;
@@ -27,11 +31,17 @@ public class Meeting {
     @Column(name = "meeting_date")
     private LocalDate meetingDate;
 
-    @Column(name = "meeting_datetime")
-    private LocalDateTime meetingDatetime;
+    @Column(name = "meeting_start_time")
+    private LocalDateTime meetingStartTime;
+
+    @Column(name = "meeting_end_time")
+    private LocalDateTime meetingEndTime;
 
     @Column(name = "budget")
     private Integer budget;
+
+    @Column(name = "location_address")
+    private String locationAddress;
 
     @Column(name = "contents", length = 2000)
     private String contents;
@@ -42,34 +52,48 @@ public class Meeting {
     @Column(name = "total_count")
     private Short totalCount;
 
-    @Column(name = "first_skill_id")
-    private Long firstSkillId;
-
     @Column(name = "location_lat")
     private Double locationLat;
 
-    @Column(name = "location_long")
-    private Double locationLong;
+    @Column(name = "location_lng")
+    private Double locationLng;
 
-    @Column(name = "region1_depth_name")
-    private String region1depthName;
+    @Column(name = "region_first_name")
+    private String regionFirstName;
 
-    @Column(name = "region2_depth_name")
-    private String region2depthName;
+    @Column(name = "region_second_name")
+    private String regionSecondName;
 
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MeetingSkill> skills = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    @JsonIgnore
+    private Member member;
 
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MeetingCareer> careers = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<MeetingSkill> skills = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<MeetingCareer> careers = new ArrayList<>();
 
     @Builder
-    public Meeting(String meetingName, Short registeredCount, Short totalCount, Long firstSkillId, Double locationLat, Double locationLong) {
+    public Meeting(String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
+                   String locationAddress, String contents, Short registeredCount, Short totalCount,
+                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member member) {
         this.meetingName = meetingName;
+        this.meetingDate = meetingDate;
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
+        this.budget = budget;
+        this.locationAddress = locationAddress;
+        this.contents = contents;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
-        this.firstSkillId = firstSkillId;
         this.locationLat = locationLat;
-        this.locationLong = locationLong;
+        this.locationLng = locationLng;
+        this.regionFirstName = regionFirstName;
+        this.regionSecondName = regionSecondName;
+        this.member = member;
     }
 }

@@ -12,30 +12,27 @@ public class GetMeetingResponseDto {
     private String meetingName;
     private Short registeredCount;
     private Short totalCount;
-    private Long firstSkillId;
     private Double locationLat;
-    private Double locationLong;
+    private Double locationLng;
 
     @Builder
-    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Long firstSkillId, Double locationLat, Double locationLong) {
+    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
-        this.firstSkillId = firstSkillId;
         this.locationLat = locationLat;
-        this.locationLong = locationLong;
+        this.locationLng = locationLng;
     }
 
     public static GetMeetingResponseDto fromEntity(Meeting meeting){
         return GetMeetingResponseDto.builder()
-                .meetingId(meeting.getMeetingId())
+                .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .registeredCount(meeting.getRegisteredCount())
                 .totalCount(meeting.getTotalCount())
-                .firstSkillId(meeting.getFirstSkillId())
                 .locationLat(meeting.getLocationLat())
-                .locationLong(meeting.getLocationLong())
+                .locationLng(meeting.getLocationLng())
                 .build();
     }
 }
