@@ -1,4 +1,4 @@
-package com.sparta.moit.global.entity;
+package com.sparta.moit.global.common.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
