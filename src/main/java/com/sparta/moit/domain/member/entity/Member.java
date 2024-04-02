@@ -21,6 +21,7 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
     private Long kakaoId;
+    private Long naverId;
 
     public Member(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
@@ -40,5 +41,17 @@ public class Member {
     public Member kakaoIdUpdate(Long kakaoId) {
         this.kakaoId = kakaoId;
         return this;
+    }
+
+    public Member updateNaverId(Long naverId) {
+        this.naverId = naverId;
+        return this;
+    }
+
+    /* 테스트용 */
+    public void setUsername(String username) {
+    }
+
+    public void setRole(UserRoleEnum userRoleEnum) {
     }
 }
