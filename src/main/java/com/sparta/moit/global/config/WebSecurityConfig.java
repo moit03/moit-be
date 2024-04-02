@@ -27,6 +27,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Slf4j(topic = "Security Log")
 @Configuration
 @EnableWebSecurity
@@ -62,12 +64,13 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(AbstractHttpConfigurer::disable);
-
         http.cors(cors ->
                 cors.configurationSource(corsConfigurationSource())
         );
+
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.httpBasic(AbstractHttpConfigurer::disable);
+        http.formLogin(AbstractHttpConfigurer::disable);
 
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -83,7 +86,6 @@ public class WebSecurityConfig {
                 "/api-docs/**",
                 "api-docs" };
 
-
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
@@ -95,7 +97,7 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
         );
 
-        http.formLogin(AbstractHttpConfigurer::disable);
+
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -113,6 +115,7 @@ public class WebSecurityConfig {
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+        configuration.setExposedHeaders(List.of("Authorization"));
 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
