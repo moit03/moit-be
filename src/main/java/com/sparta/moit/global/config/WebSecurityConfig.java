@@ -1,11 +1,9 @@
 package com.sparta.moit.global.config;
 
 import com.sparta.moit.global.jwt.JwtUtil;
-import com.sparta.moit.global.security.CustomLoggingFilter;
 import com.sparta.moit.global.security.JwtAuthenticationFilter;
 import com.sparta.moit.global.security.JwtAuthorizationFilter;
 import com.sparta.moit.global.security.UserDetailsServiceImpl;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -20,15 +18,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @Slf4j(topic = "Security Log")
 @Configuration
@@ -64,11 +58,6 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CustomLoggingFilter customLoggingFilter(){
-        return new CustomLoggingFilter();
-    }
-
-    @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
@@ -100,7 +89,9 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PUBLIC_URL).permitAll()
+                        .requestMatchers("/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/region/**").permitAll()
                         .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/api/member/signin/naver").permitAll()
                         .requestMatchers("/user/**").permitAll()
@@ -108,7 +99,6 @@ public class WebSecurityConfig {
         );
 
 
-        http.addFilterBefore(customLoggingFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

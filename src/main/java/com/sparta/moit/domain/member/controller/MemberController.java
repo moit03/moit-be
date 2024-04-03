@@ -1,6 +1,7 @@
 package com.sparta.moit.domain.member.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.moit.domain.member.controller.docs.MemberControllerDocs;
 import com.sparta.moit.domain.member.service.KakaoService;
 import com.sparta.moit.domain.member.service.NaverService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,22 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "로그인", description = "로그인 API")
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberController implements MemberControllerDocs {
     private final KakaoService kakaoService;
     private final NaverService naverService;
 
-    @Operation(summary = "카카오 로그인", description = "카카오 로그인 API")
     @GetMapping("/signin/kakao")
     public ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
         return ResponseEntity.ok().body(token);
     }
 
-    @Operation(summary = "네이버 로그인", description = "네이버 로그인 API")
     @GetMapping("/signin/naver")
     public ResponseEntity<?> naverLogin(@RequestParam String code, @RequestParam String state) throws JsonProcessingException{
         String token = naverService.naverLogin(code, state);

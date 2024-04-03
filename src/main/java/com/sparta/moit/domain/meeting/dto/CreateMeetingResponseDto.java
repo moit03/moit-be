@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.meeting.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,45 +13,30 @@ import java.util.stream.Collectors;
 @Getter
 public class CreateMeetingResponseDto {
     private Long meetingId;
-
     private String meetingName;
-
     private LocalDate meetingDate;
-
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetingStartTime;
-
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetingEndTime;
-
     private String locationAddress;
-
     private Integer budget;
-
     private String contents;
-
     private Short registeredCount;
-
     private Short totalCount;
-
-    private Long firstSkillId;
-
     private Double locationLat;
-
     private Double locationLng;
-
     private String regionFirstName;
-
     private String regionSecondName;
-
     private List<Skill> skillList;
-
     private List<Career> careerList;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
     @Builder
-    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Long firstSkillId, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -61,7 +47,6 @@ public class CreateMeetingResponseDto {
         this.locationAddress = locationAddress;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
-        this.firstSkillId = firstSkillId;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
         this.regionFirstName = regionFirstName;
