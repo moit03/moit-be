@@ -48,7 +48,9 @@ public class NaverService {
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", "LeIb2VY5WfTDHHNTQmzN")
                 .queryParam("client_secret", "WHdVWARrEo")
-                .queryParam("redirect_uri", "http://localhost:5173/login/naver")
+                .queryParam("redirect_uri", "http://my-hangterest.s3-website-us-east-1.amazonaws.com/login/naver")
+                // http://my-hangterest.s3-website-us-east-1.amazonaws.com/login/naver
+                // http://localhost:5173/login/naver
                 .queryParam("code", code)
                 .queryParam("state",state)
                 .encode()
