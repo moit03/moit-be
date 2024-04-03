@@ -7,7 +7,7 @@ import com.sparta.moit.domain.member.dto.NaverUserInfoDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
-import com.sparta.moit.global.exception.CustomValidationException;
+import com.sparta.moit.global.error.CustomValidationException;
 import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;

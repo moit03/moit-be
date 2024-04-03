@@ -2,7 +2,7 @@ package com.sparta.moit.global.service;
 
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.global.common.entity.RefreshToken;
-import com.sparta.moit.global.exception.CustomValidationException;
+import com.sparta.moit.global.error.CustomValidationException;
 import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;

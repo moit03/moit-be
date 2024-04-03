@@ -27,6 +27,10 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
     private final long TOKEN_TIME = 60 * 60 * 1000000L;
 
+    /* refresh token 유효 시간*/
+    public static final long REFRESH_TOKEN_VALIDITY_MS = 14 * 24 * 60 * 60 * 1000L; // 14 days
+
+
     @Value("${jwt.secret.key}")
     private String secretKey;
     private Key key;
