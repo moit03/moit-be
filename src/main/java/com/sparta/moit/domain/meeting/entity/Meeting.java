@@ -3,6 +3,7 @@ package com.sparta.moit.domain.meeting.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
 import jakarta.persistence.*;
@@ -95,5 +96,18 @@ public class Meeting extends Timestamped {
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
         this.member = member;
+    }
+
+    public void updateMeeting(Long Id,UpdateMeetingRequestDto requestDto) {
+        this.Id = Id;
+        this.meetingName = requestDto.getMeetingName();
+        this.budget = requestDto.getBudget();
+        this.locationAddress = requestDto.getLocationAddress();
+        this.contents = requestDto.getContents();
+        this.totalCount = requestDto.getTotalCount();
+        this.locationLat = requestDto.getLocationLat();
+        this.locationLng = requestDto.getLocationLng();
+        this.regionFirstName = requestDto.getRegionFirstName();
+        this.regionSecondName = requestDto.getRegionSecondName();
     }
 }
