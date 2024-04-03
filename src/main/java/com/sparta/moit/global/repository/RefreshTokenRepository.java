@@ -1,6 +1,6 @@
 package com.sparta.moit.global.repository;
 
-import com.sparta.moit.global.entity.RefreshToken;
+import com.sparta.moit.global.common.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
