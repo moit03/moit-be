@@ -36,7 +36,7 @@ public class NaverService {
         String accessToken = getAccessToken(code,state);
         NaverUserInfoDto naverUserInfo = getNaverUserInfo(accessToken);
         Member naverMember = registerNaverUserIfNeeded(naverUserInfo);
-        String createToken = jwtUtil.createToken(naverMember.getUsername(), naverMember.getRole());
+        String createToken = jwtUtil.createToken(naverMember.getEmail(), naverMember.getRole());
         return createToken;
     }
 
@@ -46,8 +46,8 @@ public class NaverService {
                 .fromUriString("https://nid.naver.com")
                 .path("/oauth2.0/token")
                 .queryParam("grant_type", "authorization_code")
-                .queryParam("client_id", "LeIb2VY5WfTDHHNTQmzN")
-                .queryParam("client_secret", "WHdVWARrEo")
+                .queryParam("client_id", "pCzgB5uI4k0mvelBfCRz")
+                .queryParam("client_secret", "0_eecfIk5d")
                 .queryParam("redirect_uri", "http://my-hangterest.s3-website-us-east-1.amazonaws.com/login/naver")
                 // http://my-hangterest.s3-website-us-east-1.amazonaws.com/login/naver
                 // http://localhost:5173/login/naver
