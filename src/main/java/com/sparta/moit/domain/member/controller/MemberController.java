@@ -1,10 +1,12 @@
 package com.sparta.moit.domain.member.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.service.KakaoService;
 import com.sparta.moit.domain.member.service.MemberService;
 import com.sparta.moit.domain.member.service.NaverService;
 import com.sparta.moit.global.common.dto.RefreshTokenRequest;
+import com.sparta.moit.global.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.Getter;
@@ -24,8 +26,8 @@ public class MemberController {
     @Operation(summary = "카카오 소셜 로그인", description = "카카오로 소셜 로그인을 합니다.")
     @ApiResponse(responseCode = "200", description = "카카오 로그인 완료")
     public ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
-        String token = kakaoService.kakaoLogin(code);
-        return ResponseEntity.ok().body(token);
+        MemberResponseDto responseDto = kakaoService.kakaoLogin(code);
+        return ResponseEntity.ok().body(ResponseDto.success("카카오 로그인 완료",responseDto));
     }
 
     @GetMapping("/signin/naver")
@@ -48,7 +50,7 @@ public class MemberController {
         }
 
         /*로그아웃 API 호출*/
-        naverService.logout(refreshTokenString);
+        //naverService.logout(refreshTokenString);
         kakaoService.logout(refreshTokenString);
         /*로그아웃 메시지 반환*/
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");

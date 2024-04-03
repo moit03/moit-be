@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j(topic = "리프레시 토큰 관리")
 @Service
@@ -28,7 +29,7 @@ public class RefreshTokenService {
     }
 
     /*리프레시 토큰 생성 및 저장*/
-    public void createAndSaveRefreshToken(String email, String refreshTokenString) {
+    public String createAndSaveRefreshToken(String email, String refreshTokenString) {
         Date expiryDate = new Date(System.currentTimeMillis() + JwtUtil.REFRESH_TOKEN_VALIDITY_MS);
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(refreshTokenString)
@@ -36,6 +37,7 @@ public class RefreshTokenService {
                 .expiryDate(expiryDate)
                 .build();
         refreshTokenRepository.save(refreshToken);
+        return refreshToken.getToken();
     }
 
     /*리프레시 토큰 검증*/

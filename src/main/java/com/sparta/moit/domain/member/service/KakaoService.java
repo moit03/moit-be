@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.moit.domain.member.dto.KakaoUserInfoDto;
+import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
@@ -24,6 +25,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.UUID;
 
+import static com.sparta.moit.global.common.entity.QRefreshToken.refreshToken;
+
 @Slf4j(topic = "Kakao Login")
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,7 @@ public class KakaoService {
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
 
-    public String kakaoLogin(String code) throws JsonProcessingException {
+    public MemberResponseDto kakaoLogin(String code) throws JsonProcessingException {
         /* 1. "인가 코드"로 "액세스 토큰" 요청 */
         String accessToken = getToken(code);
 
@@ -45,9 +48,15 @@ public class KakaoService {
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         /* 4. JWT 토큰 반환 */
-        String createToken = jwtUtil.createToken(kakaoMember.getUsername(), kakaoMember.getRole());
+        // 이게 우리서버 Access Token
+        String createToken = jwtUtil.createToken(kakaoMember.getEmail(), kakaoMember.getRole());
+        // 이게 우리서버 Refresh Token 발급
+        String refreshToken = jwtUtil.createRefreshToken(kakaoMember.getEmail(), kakaoMember.getRole());
+        // 발급한 토큰을 DB에 저장하기
+        String refreshTokenValue = refreshTokenService.createAndSaveRefreshToken(kakaoMember.getEmail(), refreshToken);
 
-        return createToken;
+        MemberResponseDto responseDto = MemberResponseDto.builder().username(kakaoMember.getUsername()).accessToken(createToken).refreshToken(refreshTokenValue).build();
+        return responseDto;
     }
 
     private String getToken(String code) throws JsonProcessingException {
@@ -109,6 +118,7 @@ public class KakaoService {
         /* HTTP Header 생성 */
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
+        //headers.add("RefreshToken", "refreshToken " + refreshToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -147,6 +157,7 @@ public class KakaoService {
                 kakaoUser = sameEmailUser;
                 /* 기존 회원정보에 카카오 Id 추가 */
                 kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
+
             } else {
                 /* 신규 회원가입 */
                 /* password: random UUID */
@@ -163,6 +174,7 @@ public class KakaoService {
         }
         return kakaoUser;
     }
+
     /* 로그아웃 */
     public void logout(String refreshTokenString){
         refreshTokenService.deleteRefreshToken(refreshTokenString);
