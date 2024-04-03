@@ -85,6 +85,7 @@ public class WebSecurityConfig {
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
+
         String[] PUBLIC_URL = {"/v1/api-docs",
                 "/swagger-resources/**",
                 "/api/v1/**",
