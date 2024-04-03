@@ -14,5 +14,4 @@ public class MoitApplication {
     public static void main(String[] args) {
         SpringApplication.run(MoitApplication.class, args);
     }
-
 }
