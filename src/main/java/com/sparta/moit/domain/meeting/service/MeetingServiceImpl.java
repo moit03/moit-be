@@ -13,7 +13,8 @@ import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +29,11 @@ public class MeetingServiceImpl implements MeetingService {
     private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
 
-    public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
+    /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
         return result.stream().map(GetMeetingResponseDto::fromEntity)
                 .toList();
-    }
+    }*/
 
     @Override
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
@@ -73,5 +74,34 @@ public class MeetingServiceImpl implements MeetingService {
 
         meeting.updateMeeting(requestDto);
         return meetingId;
+    }
+
+    @Override
+    public List<GetMeetingResponseDto> getFilteredMeetingList(int page,
+                                                              Double locationLat,
+                                                              Double locationLng,
+                                                              List<Short> skillId,
+                                                              List<Short> careerId) {
+        /*Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);*/
+        List<Meeting> meetingList;
+
+        if (skillId != null) {
+            if (careerId != null) {
+                // skillId와 careerId가 모두 존재하는 경우
+                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+            } else {
+                // skillId만 존재하는 경우
+                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+            }
+        } else {
+            if (careerId != null) {
+                // careerId만 존재하는 경우
+                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+            } else {
+                // skillId와 careerId 모두 존재하지 않는 경우
+                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+            }
+        }
+        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
 }

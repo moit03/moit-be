@@ -13,7 +13,7 @@ import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
 public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    @Override
+    /*@Override
     public List<Meeting> findAllByFilter(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         JPAQuery<Meeting> query = queryFactory.selectFrom(meeting);
 
@@ -41,7 +41,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 //        }
 
         return query.fetch();
-    }
+    }*/
 
 
 

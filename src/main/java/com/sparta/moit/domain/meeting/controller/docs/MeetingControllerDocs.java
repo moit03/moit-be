@@ -18,14 +18,6 @@ import java.util.List;
 @Tag(name = "미팅", description = "미팅 API")
 public interface MeetingControllerDocs {
 
-    @Operation(summary = "미팅 리스트 조회", description = "미팅 리스트 조회 API")
-    ResponseEntity<List<GetMeetingResponseDto>> getMeetingList(
-            @RequestParam List<Integer> careerTypes,
-            @RequestParam List<Integer> skillTypes,
-            @RequestParam String region1depthName,
-            @RequestParam String region2depthName
-    );
-
     @Operation(summary = "미팅 등록", description = "미팅 등록 API")
     ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 

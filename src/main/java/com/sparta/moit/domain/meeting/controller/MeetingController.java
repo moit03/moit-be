@@ -24,7 +24,7 @@ import java.util.List;
 public class MeetingController implements MeetingControllerDocs {
     private final MeetingService meetingService;
 
-    public ResponseEntity<List<GetMeetingResponseDto>> getMeetingList(
+    /*public ResponseEntity<List<GetMeetingResponseDto>> getMeetingList(
             @RequestParam List<Integer> careerTypes,
             @RequestParam List<Integer> skillTypes,
             @RequestParam String region1depthName,
@@ -38,7 +38,7 @@ public class MeetingController implements MeetingControllerDocs {
         );
         return ResponseEntity.status(HttpStatus.OK)
                 .body(responseDto);
-    }
+    }*/
 
     @PostMapping
     public ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -50,5 +50,16 @@ public class MeetingController implements MeetingControllerDocs {
     public ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long updatedMeetingId = meetingService.updateMeeting(requestDto, userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("모임 수정", updatedMeetingId));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getMeetingListByLatLng(@RequestParam Double locationLat,
+                                                    @RequestParam Double locationLng,
+                                                    @RequestParam(required = false) List<Short> skillId,
+                                                    @RequestParam(required = false) List<Short> careerId,
+                                                    @RequestParam(defaultValue = "1") int page){
+        List<GetMeetingResponseDto> responseDtoList =
+                meetingService.getFilteredMeetingList(page, locationLat, locationLng, skillId, careerId);
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
 }
