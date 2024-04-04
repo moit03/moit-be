@@ -2,20 +2,16 @@ package com.sparta.moit.domain.meeting.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.mapping.ToOne;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "meeting")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -47,7 +43,7 @@ public class Meeting extends Timestamped {
     @Column(name = "contents", length = 2000)
     private String contents;
 
-    @Column(name="registered_count")
+    @Column(name = "registered_count")
     private Short registeredCount;
 
     @Column(name = "total_count")
@@ -98,8 +94,7 @@ public class Meeting extends Timestamped {
         this.member = member;
     }
 
-    public void updateMeeting(Long Id,UpdateMeetingRequestDto requestDto) {
-        this.Id = Id;
+    public void updateMeeting(UpdateMeetingRequestDto requestDto) {
         this.meetingName = requestDto.getMeetingName();
         this.budget = requestDto.getBudget();
         this.locationAddress = requestDto.getLocationAddress();
