@@ -52,6 +52,7 @@ public class CreateMeetingRequestDto {
                 .locationLng(this.locationLng)
                 .regionFirstName(this.regionFirstName)
                 .regionSecondName(this.regionSecondName)
+                .member(member)
                 .build();
     }
 }

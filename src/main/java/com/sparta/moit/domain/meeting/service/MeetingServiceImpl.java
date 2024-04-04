@@ -28,7 +28,6 @@ public class MeetingServiceImpl implements MeetingService {
     private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
 
-    @Transactional
     public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
         return result.stream().map(GetMeetingResponseDto::fromEntity)
@@ -36,7 +35,6 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
 
         List<Long> skillIds = requestDto.getSkillIds();
@@ -68,13 +66,10 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     @Transactional
-    public Long updateMeeting(UpdateMeetingRequestDto requestDto, UserDetails userDetails, Long meetingId) {
+    public Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId) {
 
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-
-        Member member = memberRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_YOUR_POST));
+        Meeting meeting = meetingRepository.findByIdAndMember(meetingId,member)
+                        .orElseThrow(()-> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
         meeting.updateMeeting(requestDto);
         return meetingId;

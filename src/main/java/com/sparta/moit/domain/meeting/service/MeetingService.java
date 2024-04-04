@@ -13,5 +13,5 @@ public interface MeetingService {
 
     Long createMeeting(CreateMeetingRequestDto requestDto, Member member);
 
-    Long updateMeeting(UpdateMeetingRequestDto requestDto, UserDetails userDetails, Long meetingId);
+    Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
 }
