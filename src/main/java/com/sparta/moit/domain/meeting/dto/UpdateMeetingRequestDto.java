@@ -1,9 +1,8 @@
 package com.sparta.moit.domain.meeting.dto;
 
-import com.sparta.moit.domain.meeting.entity.*;
+import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -11,13 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class CreateMeetingRequestDto {
+public class UpdateMeetingRequestDto {
     @Schema(description = "미팅 제목", example = "[모각코] 석촌호수 카페 모집중!")
     private String meetingName;
-    @Schema(description = "미팅 날짜", example = "2024-04-11")
-    private LocalDate meetingDate;
-    private LocalDateTime meetingStartTime;
-    private LocalDateTime meetingEndTime;
     @Schema(description = "미팅 예산", example = "10000")
     private Integer budget;
     @Schema(description = "미팅 내용", example = "석촌호수 근처 카페에서 모각코 진행합니다! 관심있으신 분은 채팅 참여해주세요 :)")
@@ -40,9 +35,6 @@ public class CreateMeetingRequestDto {
     public Meeting toEntity(Member member) {
         return Meeting.builder()
                 .meetingName(this.meetingName)
-                .meetingDate(this.meetingDate)
-                .meetingStartTime(this.meetingStartTime)
-                .meetingEndTime(this.meetingEndTime)
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
@@ -52,7 +44,6 @@ public class CreateMeetingRequestDto {
                 .locationLng(this.locationLng)
                 .regionFirstName(this.regionFirstName)
                 .regionSecondName(this.regionSecondName)
-                .member(member)
                 .build();
     }
 }

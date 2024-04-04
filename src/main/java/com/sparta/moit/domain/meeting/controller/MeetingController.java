@@ -2,8 +2,8 @@ package com.sparta.moit.domain.meeting.controller;
 
 import com.sparta.moit.domain.meeting.controller.docs.MeetingControllerDocs;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
-import com.sparta.moit.domain.meeting.dto.CreateMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
+import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.service.MeetingService;
 import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
@@ -41,8 +41,14 @@ public class MeetingController implements MeetingControllerDocs {
     }
 
     @PostMapping
-    public ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        CreateMeetingResponseDto responseDto = meetingService.createMeeting(requestDto, userDetails.getUser());
-        return ResponseEntity.ok().body(ResponseDto.success("모임 등록", responseDto));
+    public ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long meetingId = meetingService.createMeeting(requestDto, userDetails.getUser());
+        return ResponseEntity.ok().body(ResponseDto.success("모임 등록", meetingId));
+    }
+
+    @PutMapping("/{meetingId}")
+    public ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long updatedMeetingId = meetingService.updateMeeting(requestDto, userDetails.getUser(), meetingId);
+        return ResponseEntity.ok().body(ResponseDto.success("모임 수정", updatedMeetingId));
     }
 }
