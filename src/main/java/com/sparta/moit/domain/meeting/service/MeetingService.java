@@ -16,4 +16,6 @@ public interface MeetingService {
     Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
 
     List<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Short> skillId, List<Short> careerId);
+
+    Long enterMeeting(Member member, Long meetingId);
 }

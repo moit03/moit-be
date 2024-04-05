@@ -105,4 +105,9 @@ public class Meeting extends Timestamped {
         this.regionFirstName = requestDto.getRegionFirstName();
         this.regionSecondName = requestDto.getRegionSecondName();
     }
+
+    public void addMember(Member member) {
+        this.member = member;
+    }
+
 }

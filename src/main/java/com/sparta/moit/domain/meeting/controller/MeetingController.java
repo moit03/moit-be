@@ -62,4 +62,11 @@ public class MeetingController implements MeetingControllerDocs {
                 meetingService.getFilteredMeetingList(page, locationLat, locationLng, skillId, careerId);
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
+
+    @PostMapping("my-meetings/{meetingId}")
+    public ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long enterMeetingId = meetingService.enterMeeting(userDetails.getUser(), meetingId);
+        return ResponseEntity.ok().body(ResponseDto.success("모임 참가", enterMeetingId));
+    }
+
 }

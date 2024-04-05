@@ -104,4 +104,16 @@ public class MeetingServiceImpl implements MeetingService {
         }
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
+
+    @Override
+    public Long enterMeeting(Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(()-> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        meeting.addMember(member);
+
+        return meetingId;
+    }
+
 }
