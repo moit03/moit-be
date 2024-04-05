@@ -40,18 +40,21 @@ public class MeetingController implements MeetingControllerDocs {
                 .body(responseDto);
     }*/
 
+    /*모임 등록*/
     @PostMapping
     public ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long meetingId = meetingService.createMeeting(requestDto, userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("모임 등록", meetingId));
     }
 
+    /*모임 수정*/
     @PutMapping("/{meetingId}")
     public ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long updatedMeetingId = meetingService.updateMeeting(requestDto, userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("모임 수정", updatedMeetingId));
     }
 
+    /*모임 조회*/
     @GetMapping
     public ResponseEntity<?> getMeetingListByLatLng(@RequestParam Double locationLat,
                                                     @RequestParam Double locationLng,
@@ -63,12 +66,14 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
 
+    /*모임 참가*/
     @PostMapping("my-meetings/{meetingId}")
     public ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long enterMeetingId = meetingService.enterMeeting(userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("모임 참가", enterMeetingId));
     }
 
+    /*주소별 모임 조회*/
     @GetMapping("/address")
     public ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException {
         List<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListByAddress(firstRegion, secondRegion, page);

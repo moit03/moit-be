@@ -122,6 +122,7 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingId;
     }
 
+    /*주소별 모임 조회*/
     @Override
     public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
         AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
