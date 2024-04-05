@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,36 +71,26 @@ public class MeetingServiceImpl implements MeetingService {
     public Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId) {
 
         Meeting meeting = meetingRepository.findByIdAndMember(meetingId,member)
-                        .orElseThrow(()-> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+                .orElseThrow(()-> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
         meeting.updateMeeting(requestDto);
         return meetingId;
     }
 
     @Override
-    public List<GetMeetingResponseDto> getFilteredMeetingList(int page,
-                                                              Double locationLat,
-                                                              Double locationLng,
-                                                              List<Short> skillId,
-                                                              List<Short> careerId) {
-        /*Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);*/
+    public List<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Short> skillId, List<Short> careerId) {
         List<Meeting> meetingList;
-
         if (skillId != null) {
             if (careerId != null) {
-                // skillId와 careerId가 모두 존재하는 경우
-                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+                meetingList = meetingRepository.getMeetingsWithSkillAndCareer(locationLat, locationLng, skillId, careerId, 16, page);
             } else {
-                // skillId만 존재하는 경우
-                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+                meetingList = meetingRepository.getMeetingsWithSkill(locationLat, locationLng, skillId, 16, page);
             }
         } else {
             if (careerId != null) {
-                // careerId만 존재하는 경우
-                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId,16, page);
             } else {
-                // skillId와 careerId 모두 존재하지 않는 경우
-                meetingList = meetingRepository.findNearestMeetings(locationLat, locationLng, 16, page);
+                meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
             }
         }
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
