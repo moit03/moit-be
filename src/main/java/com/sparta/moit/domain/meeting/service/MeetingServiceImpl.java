@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.meeting.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
@@ -10,8 +11,10 @@ import com.sparta.moit.domain.meeting.repository.MeetingRepository;
 import com.sparta.moit.domain.meeting.repository.SkillRepository;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
+import com.sparta.moit.global.common.dto.AddressResponseDto;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
+import com.sparta.moit.global.util.AddressUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
     private final MeetingMemberRepository meetingMemberRepository;
+    private final AddressUtil addressUtil;
 
     /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
@@ -116,5 +120,12 @@ public class MeetingServiceImpl implements MeetingService {
         meetingMemberRepository.save(meetingMember);
 
         return meetingId;
+    }
+
+    @Override
+    public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
+        AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
+        List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
+        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
 }

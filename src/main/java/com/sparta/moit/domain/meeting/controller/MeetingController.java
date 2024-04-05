@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.meeting.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.controller.docs.MeetingControllerDocs;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
@@ -68,4 +69,9 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("모임 참가", enterMeetingId));
     }
 
+    @GetMapping("/address")
+    public ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException {
+        List<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListByAddress(firstRegion, secondRegion, page);
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
 }
