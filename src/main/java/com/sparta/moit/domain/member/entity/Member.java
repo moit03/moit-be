@@ -1,10 +1,7 @@
 package com.sparta.moit.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,7 +17,9 @@ public class Member {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+    @Column(name = "kakao_id")
     private Long kakaoId;
+    @Column(name = "naver_id")
     private Long naverId;
 
     public Member(String username, String password, String email, UserRoleEnum role) {
@@ -30,12 +29,14 @@ public class Member {
         this.role = role;
     }
 
-    public Member(String username, String password, String email, UserRoleEnum role, Long kakaoId) {
+    @Builder
+    public Member (String username, String password, String email, UserRoleEnum role, Long kakaoId, Long naverId){
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.kakaoId =kakaoId;
+        this.kakaoId = kakaoId;
+        this.naverId = naverId;
     }
 
     public Member kakaoIdUpdate(Long kakaoId) {
