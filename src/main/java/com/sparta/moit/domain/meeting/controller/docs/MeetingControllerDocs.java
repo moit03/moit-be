@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.meeting.controller.docs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
@@ -31,4 +32,8 @@ public interface MeetingControllerDocs {
 
     @Operation(summary = "회원 모임 가입", description = "모임 가입 API")
     ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
+
+    @Operation(summary = "주소별 모임 조회", description = "주소별 모임 조회 API")
+    public ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException;
+
 }
