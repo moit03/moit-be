@@ -33,9 +33,9 @@ public class MemberController {
     @GetMapping("/signin/naver")
     @Operation(summary = "네이버 소셜 로그인", description = "네이버로 소셜 로그인을 합니다.")
     @ApiResponse(responseCode = "200", description = "네이버 로그인 완료")
-    public ResponseEntity<?> naverLogin(@RequestParam String code, String state, String refreshToken) throws JsonProcessingException{
-        String token = naverService.naverLogin(code,state, refreshToken);
-        return ResponseEntity.ok().body(token);
+    public ResponseEntity<?> naverLogin(@RequestParam String code, @RequestParam String state ) throws JsonProcessingException{
+        MemberResponseDto responseDto = naverService.naverLogin(code,state);
+        return ResponseEntity.ok().body(ResponseDto.success("네이버 로그인 완료", responseDto));
     }
 
     /*로그아웃 기능 호출*/

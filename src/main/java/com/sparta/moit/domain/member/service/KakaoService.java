@@ -25,8 +25,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.UUID;
 
-import static com.sparta.moit.global.common.entity.QRefreshToken.refreshToken;
-
 @Slf4j(topic = "Kakao Login")
 @Service
 @RequiredArgsConstructor
@@ -48,11 +46,13 @@ public class KakaoService {
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         /* 4. JWT 토큰 반환 */
-        // 이게 우리서버 Access Token
+        /* 이게 우리서버 Access Token */
         String createToken = jwtUtil.createToken(kakaoMember.getEmail(), kakaoMember.getRole());
-        // 이게 우리서버 Refresh Token 발급
+
+        /* 이게 우리서버 Refresh Token 발급 */
         String refreshToken = jwtUtil.createRefreshToken(kakaoMember.getEmail(), kakaoMember.getRole());
-        // 발급한 토큰을 DB에 저장하기
+
+        /* 발급한 토큰을 DB에 저장하기 */
         String refreshTokenValue = refreshTokenService.createAndSaveRefreshToken(kakaoMember.getEmail(), refreshToken);
 
         MemberResponseDto responseDto = MemberResponseDto.builder().username(kakaoMember.getUsername()).accessToken(createToken).refreshToken(refreshTokenValue).build();
@@ -93,8 +93,6 @@ public class KakaoService {
         );
 
         /* HTTP 응답 (JSON) -> 액세스 토큰 파싱 */
-//        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-//        return jsonNode.get("access_token").asText();
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
         String accessToken = jsonNode.get("access_token").asText();
         String refreshToken = jsonNode.get("refresh_token").asText();
@@ -107,6 +105,7 @@ public class KakaoService {
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         log.info("accessToken : " + accessToken);
+
         /* 요청 URL 만들기 */
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kapi.kakao.com")
@@ -118,7 +117,6 @@ public class KakaoService {
         /* HTTP Header 생성 */
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
-        //headers.add("RefreshToken", "refreshToken " + refreshToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -145,16 +143,18 @@ public class KakaoService {
     }
 
     private Member registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
-        /*DB 에 중복된 Kakao Id 가 있는지 확인 */
+        /* DB 에 중복된 Kakao Id 가 있는지 확인 */
         Long kakaoId = kakaoUserInfo.getId();
         Member kakaoUser = memberRepository.findByKakaoId(kakaoId).orElse(null);
 
         if (kakaoUser == null) {
+
             /* 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인 */
             String kakaoEmail = kakaoUserInfo.getEmail();
             Member sameEmailUser = memberRepository.findByEmail(kakaoEmail).orElse(null);
             if (sameEmailUser != null) {
                 kakaoUser = sameEmailUser;
+
                 /* 기존 회원정보에 카카오 Id 추가 */
                 kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
 

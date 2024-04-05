@@ -3,6 +3,7 @@ package com.sparta.moit.domain.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.dto.NaverUserInfoDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
@@ -36,17 +37,21 @@ public class NaverService {
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
 
-    public String naverLogin(String code, String state, String refreshToken) throws JsonProcessingException {
-        String accessToken = getAccessToken(code,state, refreshToken);
+    public MemberResponseDto naverLogin(String code, String state) throws JsonProcessingException {
+        String accessToken = getAccessToken(code,state);
         NaverUserInfoDto naverUserInfo = getNaverUserInfo(accessToken);
         Member naverMember = registerNaverUserIfNeeded(naverUserInfo);
-        String createToken = jwtUtil.createToken(naverMember.getUsername(), naverMember.getRole());
+        String createToken = jwtUtil.createToken(naverMember.getEmail(), naverMember.getRole());
+
         /* Refresh Token 생성 및 저장 */
-        refreshTokenService.createAndSaveRefreshToken(naverUserInfo.getEmail(), createToken);
-        return createToken;
+        String refreshToken = jwtUtil.createRefreshToken(naverMember.getEmail(), naverMember.getRole());
+        String refreshTokenValue = refreshTokenService.createAndSaveRefreshToken(naverMember.getEmail(), refreshToken);
+
+        MemberResponseDto responseDto = MemberResponseDto.builder().username(naverMember.getUsername()).accessToken(createToken).refreshToken(refreshTokenValue).build();
+        return responseDto;
     }
 
-    private String getAccessToken(String code, String state, String refreshToken) throws JsonProcessingException {
+    private String getAccessToken(String code, String state) throws JsonProcessingException {
         /* Request URL 만들기 */
         URI uri = UriComponentsBuilder
                 .fromUriString("https://nid.naver.com")
@@ -57,24 +62,15 @@ public class NaverService {
                 .queryParam("redirect_uri", "http://localhost:5173/login/naver")
                 .queryParam("code", code)
                 .queryParam("state",state)
-                .queryParam("refreshToken", refreshToken)
                 .encode()
                 .build()
                 .toUri();
 
          /* HTTP Header 생성 */
         HttpHeaders headers = new HttpHeaders();
-        //headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         /* HTTP Body 생성 */
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-//        body.add("grant_type", "authorization_code");
-//        body.add("client_id", "LeIb2VY5WfTDHHNTQmzN");
-//        body.add("client_secret", "WHdVWARrEo");
-//        //body.add("redirect_uri", "http://localhost:8080/api/member/signin/naver");
-//        body.add("redirect_uri", "http://localhost:5173/login/naver");
-//        body.add("code", code);
-//        body.add("state", state);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
@@ -86,12 +82,10 @@ public class NaverService {
 
         /* Parse the JSON response to extract the access token */
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-        log.info(jsonNode.get("access_token").asText());
-        String refreshTokenValue = jsonNode.has("refresh_token") ? jsonNode.get("refresh_token").asText() : null;
-        if (refreshTokenValue != null) {
-            refreshTokenService.createAndSaveRefreshToken(jsonNode.get("email").asText(), refreshToken);
-        }
-        return jsonNode.get("access_token").asText();
+        log.info("jsonNode.get " + jsonNode.get("access_token").asText());
+        String accessToken = jsonNode.get("access_token").asText();
+
+        return accessToken;
     }
 
     private NaverUserInfoDto getNaverUserInfo(String accessToken) throws JsonProcessingException {
@@ -104,7 +98,6 @@ public class NaverService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
-        //headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
@@ -127,6 +120,7 @@ public class NaverService {
     }
 
     private Member registerNaverUserIfNeeded(NaverUserInfoDto naverUserInfo) {
+
         /* DB 에 중복된 Naver Id 가 있는지 확인 */
         Long naverId = naverUserInfo.getId();
         Member naverUser = memberRepository.findByNaverId(naverId).orElse(null);
