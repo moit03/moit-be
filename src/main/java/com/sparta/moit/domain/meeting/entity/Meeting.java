@@ -63,8 +63,11 @@ public class Meeting extends Timestamped {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
+    private Member creator;
+
+    @OneToMany(mappedBy = "meeting")
     @JsonIgnore
-    private Member member;
+    private List<MeetingMember> meetingMembers = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -77,7 +80,7 @@ public class Meeting extends Timestamped {
     @Builder
     public Meeting(String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
                    String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member member) {
+                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member creator, List<MeetingMember> meetingMembers) {
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
         this.meetingStartTime = meetingStartTime;
@@ -91,7 +94,8 @@ public class Meeting extends Timestamped {
         this.locationLng = locationLng;
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
-        this.member = member;
+        this.creator = creator;
+        this.meetingMembers = meetingMembers;
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
@@ -105,4 +109,9 @@ public class Meeting extends Timestamped {
         this.regionFirstName = requestDto.getRegionFirstName();
         this.regionSecondName = requestDto.getRegionSecondName();
     }
+
+    public void addMeetingMember(MeetingMember meetingMember) {
+        this.meetingMembers.add(meetingMember);
+    }
+
 }

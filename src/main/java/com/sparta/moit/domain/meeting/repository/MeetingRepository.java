@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Long>, MeetingRepositoryCustom {
 
-    Optional<Meeting> findByIdAndMember(Long id, Member member);
+    Optional<Meeting> findByIdAndCreator(Long meetingId, Member member);
 
     @Query(value = "SELECT * FROM meeting ORDER BY "
             + "(6371 * acos(cos(radians(:locationLat)) * cos(radians(location_lat)) * cos(radians(location_lng) - radians(:locationLng)) + sin(radians(:locationLat)) * sin(radians(location_lat)))) ASC "
