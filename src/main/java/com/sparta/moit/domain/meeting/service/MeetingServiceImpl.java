@@ -5,6 +5,7 @@ import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.entity.*;
 import com.sparta.moit.domain.meeting.repository.CareerRepository;
+import com.sparta.moit.domain.meeting.repository.MeetingMemberRepository;
 import com.sparta.moit.domain.meeting.repository.MeetingRepository;
 import com.sparta.moit.domain.meeting.repository.SkillRepository;
 import com.sparta.moit.domain.member.entity.Member;
@@ -13,9 +14,6 @@ import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +27,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final SkillRepository skillRepository;
     private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
+    private final MeetingMemberRepository meetingMemberRepository;
 
     /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
@@ -72,8 +71,8 @@ public class MeetingServiceImpl implements MeetingService {
     @Transactional
     public Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId) {
 
-        Meeting meeting = meetingRepository.findByIdAndMember(meetingId,member)
-                .orElseThrow(()-> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
         meeting.updateMeeting(requestDto);
         return meetingId;
@@ -91,7 +90,7 @@ public class MeetingServiceImpl implements MeetingService {
             }
         } else {
             if (careerId != null) {
-                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId,16, page);
+                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId, 16, page);
             } else {
                 meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
             }
@@ -104,12 +103,18 @@ public class MeetingServiceImpl implements MeetingService {
     @Transactional
     public Long enterMeeting(Member member, Long meetingId) {
 
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+        Member member1 = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        meeting.addMember(member);
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        MeetingMember meetingMember = MeetingMember.builder()
+                .member(member1)
+                .meeting(meeting)
+                .build();
+        meetingMemberRepository.save(meetingMember);
 
         return meetingId;
     }
-
 }

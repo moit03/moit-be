@@ -1,9 +1,8 @@
 package com.sparta.moit.domain.meeting.dto;
 
-import com.sparta.moit.domain.meeting.entity.*;
+import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -37,7 +36,7 @@ public class CreateMeetingRequestDto {
     @Schema(description = "경력 ID 리스트", example = "[1, 2]")
     private List<Long> careerIds;
 
-    public Meeting toEntity(Member member) {
+    public Meeting toEntity(Member creator) {
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
@@ -52,7 +51,7 @@ public class CreateMeetingRequestDto {
                 .locationLng(this.locationLng)
                 .regionFirstName(this.regionFirstName)
                 .regionSecondName(this.regionSecondName)
-                .member(member)
+                .creator(creator)
                 .build();
     }
 }

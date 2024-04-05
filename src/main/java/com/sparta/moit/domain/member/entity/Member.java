@@ -1,12 +1,17 @@
 package com.sparta.moit.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.moit.domain.meeting.entity.MeetingMember;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity(name = "member")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -23,6 +28,10 @@ public class Member {
     private Long kakaoId;
     private Long naverId;
 
+    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    private List<MeetingMember> meetingMembers = new ArrayList<>();
+
     public Member(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;
@@ -35,7 +44,7 @@ public class Member {
         this.password = password;
         this.email = email;
         this.role = role;
-        this.kakaoId =kakaoId;
+        this.kakaoId = kakaoId;
     }
 
     public Member kakaoIdUpdate(Long kakaoId) {
@@ -53,5 +62,9 @@ public class Member {
     }
 
     public void setRole(UserRoleEnum userRoleEnum) {
+    }
+
+    public void addMeetingMember(MeetingMember meetingMember) {
+        this.meetingMembers.add(meetingMember);
     }
 }
