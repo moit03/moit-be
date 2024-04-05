@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 public interface MeetingService {
+
 //    List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName);
 
     Long createMeeting(CreateMeetingRequestDto requestDto, Member member);

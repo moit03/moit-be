@@ -35,6 +35,7 @@ public class MeetingServiceImpl implements MeetingService {
                 .toList();
     }*/
 
+    /*모임 등록*/
     @Override
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
 
@@ -65,6 +66,7 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingId;
     }
 
+    /*모임 수정*/
     @Override
     @Transactional
     public Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId) {
@@ -76,6 +78,7 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingId;
     }
 
+    /*모임 조회*/
     @Override
     public List<GetMeetingResponseDto> getFilteredMeetingList(int page,
                                                               Double locationLat,
@@ -105,7 +108,9 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
 
+    /*모임 참가*/
     @Override
+    @Transactional
     public Long enterMeeting(Member member, Long meetingId) {
 
         Meeting meeting = meetingRepository.findById(meetingId)
