@@ -30,12 +30,12 @@ public class AddressUtil {
     public AddressUtil(RestTemplateBuilder builder) {
         this.restTemplate = builder.build();
     }
-
+    /* DB 위도-경도 저장용 메서드 (사용 중지) */
     public AddressResponseDto searchAddress(String regionFirstName, String regionSecondName) throws JsonProcessingException {
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
                 .fromUriString("https://sgisapi.kostat.go.kr/OpenAPI3/addr/geocodewgs84.json")
-                .queryParam("accessToken", "f739ec35-e148-45c0-bf70-54528bdbbb38")
+                .queryParam("accessToken", "f68447c5-ecdd-4e40-98af-d3ecf40dfb27")
                 .queryParam("address", regionFirstName + " " + regionSecondName)
                 .encode()
                 .build()

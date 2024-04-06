@@ -15,10 +15,19 @@ public class RegionSecond {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short regionSecondId;
 
+    private Double regionLat;
+
+    private Double regionLng;
+
     @Column(name = "region_second_name")
     private String regionSecondName;
 
     @ManyToOne
     @JoinColumn(name = "region_first_id", nullable = false)
     private RegionFirst regionFirst;
+
+    public void update(Double lat, Double lng) {
+        this.regionLat = lat;
+        this.regionLng = lng;
+    }
 }
