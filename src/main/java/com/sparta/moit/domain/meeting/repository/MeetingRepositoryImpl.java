@@ -1,17 +1,158 @@
 package com.sparta.moit.domain.meeting.repository;
 
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.dto.MeetingFilterCondition;
+import com.sparta.moit.domain.meeting.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static com.sparta.moit.domain.meeting.entity.QCareer.career;
 import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
+import static com.sparta.moit.domain.meeting.entity.QMeetingCareer.meetingCareer;
+import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
+import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
+
 
 @RequiredArgsConstructor
 public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+
+    /*@Override
+    public Page<Meeting> getMeetingsWithSkillAndCareer(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable) {
+        QMeeting meeting = QMeeting.meeting;
+        QMeetingSkill meetingSkill = QMeetingSkill.meetingSkill;
+        QMeetingCareer meetingCareer = QMeetingCareer.meetingCareer;
+
+        List<Meeting> meetingList = queryFactory.selectFrom(meeting)
+                .leftJoin(meetingSkill).on(meeting.Id.eq(meetingSkill.meeting.Id))
+                .leftJoin(meetingCareer).on(meeting.Id.eq(meetingCareer.meeting.Id))
+                .where(
+                        meetingSkill.meeting.Id.in(skillId),
+                        meetingCareer.career.Id.in(careerId)
+                )
+                .orderBy(distanceExpression(locationLat, locationLng).asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory.select(meeting.count())
+                .from(meeting)
+                .leftJoin(meetingSkill).on(meeting.Id.eq(meetingSkill.meeting.Id))
+                .leftJoin(meetingCareer).on(meeting.Id.eq(meetingCareer.meeting.Id))
+                .where(
+                        meetingSkill.meeting.Id.in(skillId),
+                        meetingCareer.career.Id.in(careerId)
+                )
+                .fetchOne();
+
+        long totalCount = total != null ? total : 0L;
+
+        return new PageImpl<>(meetingList, pageable, totalCount);
+    }*/
+
+    @Override
+    public Page<Meeting> getMeetingsWithSkillAndCareer(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable) {
+        QMeeting meeting = QMeeting.meeting;
+        QMeetingSkill meetingSkill = QMeetingSkill.meetingSkill;
+        QMeetingCareer meetingCareer = QMeetingCareer.meetingCareer;
+
+        JPQLQuery<Meeting> query = queryFactory.selectFrom(meeting);
+
+        if (skillId != null) {
+            query = query.leftJoin(meetingSkill).on(meeting.Id.eq(meetingSkill.meeting.Id))
+                    .where(meetingSkill.skill.Id.in(skillId));
+        }
+        if (careerId != null) {
+            if (skillId != null) {
+                query = query.leftJoin(meetingCareer).on(meeting.Id.eq(meetingCareer.meeting.Id))
+                        .where(meetingCareer.career.Id.in(careerId));
+            } else {
+                query = query.leftJoin(meetingCareer).on(meeting.Id.eq(meetingCareer.meeting.Id))
+                        .where(meetingCareer.career.Id.in(careerId));
+            }
+        }
+
+        List<Meeting> meetingList = query.orderBy(distanceExpression(locationLat, locationLng).asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory.select(meeting.count())
+                .from(meeting)
+                .fetchOne();
+
+        long totalCount = total != null ? total : 0L;
+
+
+        return new PageImpl<>(meetingList, pageable, totalCount);
+    }
+
+    @Override
+    public List<Meeting> getMeetingTest(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, int page) {
+        List<Meeting> meetingList = queryFactory
+                .selectFrom(meeting)
+                .leftJoin(meetingSkill)
+                .on(meeting.Id.eq(meetingSkill.meeting.Id))
+                .leftJoin(meetingCareer)
+                .on(meeting.Id.eq(meetingCareer.meeting.Id))
+                .where(
+                        skillEq(skillId),
+                        careerEq(careerId)
+                )
+                .orderBy(
+                        distanceExpression(locationLat, locationLng).asc()
+                )
+                .offset(page)
+                .limit(16)
+                .fetch();
+
+        return meetingList;
+    }
+
+    private BooleanExpression careerEq(List<Long> careerId) {
+        return careerId == null || careerId.isEmpty() ? null : career.Id.in(careerId);
+    }
+
+    private BooleanExpression skillEq(List<Long> skillId) {
+        return skillId == null || skillId.isEmpty() ? null : meetingSkill.skill.Id.in(skillId);
+    }
+
+    @Override
+    public Page<Meeting> getMeetingsQueryDsl(Double locationLat, Double locationLng, Pageable pageable) {
+        QMeeting meeting = QMeeting.meeting;
+
+        List<Meeting> meetingList = queryFactory
+                .selectFrom(meeting)
+                .orderBy(distanceExpression(locationLat, locationLng).asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        Long total = queryFactory
+                .select(meeting.count())
+                .from(meeting)
+                .fetchOne();
+
+
+        long totalCount = total != null ? total : 0L;
+
+        return new PageImpl<>(meetingList, pageable, totalCount);
+    }
+
+
+    private ComparableExpressionBase<Double> distanceExpression(Double locationLat, Double locationLng) {
+        return Expressions.numberTemplate(Double.class,
+                "ST_DISTANCE_SPHERE(point({0}, {1}), point(meeting.locationLng, meeting.locationLat))",
+                locationLng, locationLat);
+    }
 
     /*@Override
     public List<Meeting> findAllByFilter(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
@@ -42,7 +183,6 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
         return query.fetch();
     }*/
-
 
 
 }

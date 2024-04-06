@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.controller.docs.MeetingControllerDocs;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
+import com.sparta.moit.domain.meeting.dto.MeetingFilterCondition;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.service.MeetingService;
 import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -55,11 +57,21 @@ public class MeetingController implements MeetingControllerDocs {
     @GetMapping
     public ResponseEntity<?> getMeetingListByLatLng(@RequestParam Double locationLat,
                                                     @RequestParam Double locationLng,
-                                                    @RequestParam(required = false) List<Short> skillId,
-                                                    @RequestParam(required = false) List<Short> careerId,
+                                                    @RequestParam(required = false) List<Long> skillId,
+                                                    @RequestParam(required = false) List<Long> careerId,
                                                     @RequestParam(defaultValue = "1") int page){
-        List<GetMeetingResponseDto> responseDtoList =
+        Page<GetMeetingResponseDto> responseDtoList =
                 meetingService.getFilteredMeetingList(page, locationLat, locationLng, skillId, careerId);
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> getMeetingTest(@RequestParam Double locationLat,
+                                            @RequestParam Double locationLng,
+                                            @RequestParam(required = false) List<Long> skillId,
+                                            @RequestParam(required = false) List<Long> careerId,
+                                            @RequestParam(defaultValue = "1") int page) {
+        List<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingTest(page, locationLat, locationLng, skillId, careerId);
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
 

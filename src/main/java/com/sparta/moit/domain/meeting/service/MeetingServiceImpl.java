@@ -3,6 +3,7 @@ package com.sparta.moit.domain.meeting.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
+import com.sparta.moit.domain.meeting.dto.MeetingFilterCondition;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.entity.*;
 import com.sparta.moit.domain.meeting.repository.CareerRepository;
@@ -17,6 +18,9 @@ import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.util.AddressUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,8 +88,9 @@ public class MeetingServiceImpl implements MeetingService {
 
     /*모임 조회*/
     @Override
-    public List<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Short> skillId, List<Short> careerId) {
-        List<Meeting> meetingList;
+    public Page<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        /*List<Meeting> meetingList;
         if (skillId != null) {
             if (careerId != null) {
                 meetingList = meetingRepository.getMeetingsWithSkillAndCareer(locationLat, locationLng, skillId, careerId, 16, page);
@@ -98,11 +103,23 @@ public class MeetingServiceImpl implements MeetingService {
             } else {
                 meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
             }
-        }
-        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+        }*/
+//skillId, careerId,
+//        Page<Meeting> meetings = meetingRepository.getMeetingsQueryDsl(locationLat, locationLng,  pageable);
+        Page<Meeting> meetings = meetingRepository.getMeetingsWithSkillAndCareer(locationLat, locationLng, skillId, careerId, pageable);
+        Page<GetMeetingResponseDto> meetingPageList = meetings.map(GetMeetingResponseDto::fromEntity);
+
+        return meetingPageList;
+//        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    }
+    @Override
+    public List<GetMeetingResponseDto> getMeetingTest(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
+        List<Meeting> meetings = meetingRepository.getMeetingTest(locationLat, locationLng, skillId, careerId, page);
+        return meetings.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
 
     /*모임 참가*/
+
     @Override
     @Transactional
     public Long enterMeeting(Member member, Long meetingId) {
@@ -121,11 +138,11 @@ public class MeetingServiceImpl implements MeetingService {
 
         return meetingId;
     }
-
     @Override
     public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
         AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
         List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
+
 }
