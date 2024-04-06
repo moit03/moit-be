@@ -10,13 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class CreateMeetingRequestDto {
+public class UpdateMeetingRequestDto {
     @Schema(description = "미팅 제목", example = "[모각코] 석촌호수 카페 모집중!")
     private String meetingName;
-    @Schema(description = "미팅 날짜", example = "2024-04-11")
-    private LocalDate meetingDate;
-    private LocalDateTime meetingStartTime;
-    private LocalDateTime meetingEndTime;
     @Schema(description = "미팅 예산", example = "10000")
     private Integer budget;
     @Schema(description = "미팅 내용", example = "석촌호수 근처 카페에서 모각코 진행합니다! 관심있으신 분은 채팅 참여해주세요 :)")
@@ -36,12 +32,9 @@ public class CreateMeetingRequestDto {
     @Schema(description = "경력 ID 리스트", example = "[1, 2]")
     private List<Long> careerIds;
 
-    public Meeting toEntity(Member creator) {
+    public Meeting toEntity(Member member) {
         return Meeting.builder()
                 .meetingName(this.meetingName)
-                .meetingDate(this.meetingDate)
-                .meetingStartTime(this.meetingStartTime)
-                .meetingEndTime(this.meetingEndTime)
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
@@ -51,7 +44,6 @@ public class CreateMeetingRequestDto {
                 .locationLng(this.locationLng)
                 .regionFirstName(this.regionFirstName)
                 .regionSecondName(this.regionSecondName)
-                .creator(creator)
                 .build();
     }
 }

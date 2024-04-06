@@ -2,19 +2,16 @@ package com.sparta.moit.domain.meeting.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.mapping.ToOne;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "meeting")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -46,7 +43,7 @@ public class Meeting extends Timestamped {
     @Column(name = "contents", length = 2000)
     private String contents;
 
-    @Column(name="registered_count")
+    @Column(name = "registered_count")
     private Short registeredCount;
 
     @Column(name = "total_count")
@@ -66,8 +63,11 @@ public class Meeting extends Timestamped {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
+    private Member creator;
+
+    @OneToMany(mappedBy = "meeting")
     @JsonIgnore
-    private Member member;
+    private List<MeetingMember> meetingMembers = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -80,7 +80,7 @@ public class Meeting extends Timestamped {
     @Builder
     public Meeting(String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
                    String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member member) {
+                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member creator, List<MeetingMember> meetingMembers) {
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
         this.meetingStartTime = meetingStartTime;
@@ -94,6 +94,24 @@ public class Meeting extends Timestamped {
         this.locationLng = locationLng;
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
-        this.member = member;
+        this.creator = creator;
+        this.meetingMembers = meetingMembers;
     }
+
+    public void updateMeeting(UpdateMeetingRequestDto requestDto) {
+        this.meetingName = requestDto.getMeetingName();
+        this.budget = requestDto.getBudget();
+        this.locationAddress = requestDto.getLocationAddress();
+        this.contents = requestDto.getContents();
+        this.totalCount = requestDto.getTotalCount();
+        this.locationLat = requestDto.getLocationLat();
+        this.locationLng = requestDto.getLocationLng();
+        this.regionFirstName = requestDto.getRegionFirstName();
+        this.regionSecondName = requestDto.getRegionSecondName();
+    }
+
+    public void addMeetingMember(MeetingMember meetingMember) {
+        this.meetingMembers.add(meetingMember);
+    }
+
 }
