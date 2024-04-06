@@ -79,4 +79,11 @@ public class MeetingController implements MeetingControllerDocs {
         List<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListByAddress(firstRegion, secondRegion, page);
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
+
+    /*모임 삭제*/
+    @DeleteMapping("/{meetingId}")
+    public ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        meetingService.deleteMeeting(userDetails.getUser(), meetingId);
+        return ResponseEntity.ok().body(ResponseDto.success("모임 삭제 완료", null));
+    }
 }

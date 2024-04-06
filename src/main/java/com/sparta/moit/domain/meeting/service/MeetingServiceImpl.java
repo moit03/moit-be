@@ -41,6 +41,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     /*모임 등록*/
     @Override
+    @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
 
         List<Long> skillIds = requestDto.getSkillIds();
@@ -129,4 +130,17 @@ public class MeetingServiceImpl implements MeetingService {
         List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
+
+    /*모임 삭제*/
+    @Override
+    @Transactional
+    public void deleteMeeting(Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        meetingRepository.deleteById(meetingId);
+    }
+
+
 }
