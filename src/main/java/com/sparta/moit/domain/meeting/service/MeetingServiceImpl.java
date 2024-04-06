@@ -33,6 +33,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingMemberRepository meetingMemberRepository;
     private final AddressUtil addressUtil;
 
+
     /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
         return result.stream().map(GetMeetingResponseDto::fromEntity)

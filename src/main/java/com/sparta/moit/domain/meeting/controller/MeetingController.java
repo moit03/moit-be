@@ -60,7 +60,7 @@ public class MeetingController implements MeetingControllerDocs {
                                                     @RequestParam Double locationLng,
                                                     @RequestParam(required = false) List<Short> skillId,
                                                     @RequestParam(required = false) List<Short> careerId,
-                                                    @RequestParam(defaultValue = "1") int page){
+                                                    @RequestParam(defaultValue = "1") int page) {
         List<GetMeetingResponseDto> responseDtoList =
                 meetingService.getFilteredMeetingList(page, locationLat, locationLng, skillId, careerId);
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
