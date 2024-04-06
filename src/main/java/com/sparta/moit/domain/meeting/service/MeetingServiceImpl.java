@@ -33,6 +33,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingMemberRepository meetingMemberRepository;
     private final AddressUtil addressUtil;
 
+
     /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
         return result.stream().map(GetMeetingResponseDto::fromEntity)
@@ -41,6 +42,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     /*모임 등록*/
     @Override
+    @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
 
         List<Long> skillIds = requestDto.getSkillIds();
@@ -122,10 +124,24 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingId;
     }
 
+    /*주소별 모임 조회*/
     @Override
     public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
         AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
         List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
+
+    /*모임 삭제*/
+    @Override
+    @Transactional
+    public void deleteMeeting(Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        meetingRepository.deleteById(meetingId);
+    }
+
+
 }
