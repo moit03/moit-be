@@ -22,4 +22,6 @@ public interface MeetingService {
     List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
 
     Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
+
+    void deleteMeeting(Member member, Long meetingId);
 }
