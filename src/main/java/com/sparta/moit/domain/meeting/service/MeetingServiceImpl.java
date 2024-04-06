@@ -2,6 +2,7 @@ package com.sparta.moit.domain.meeting.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.entity.*;
@@ -127,5 +128,17 @@ public class MeetingServiceImpl implements MeetingService {
         AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
         List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    }
+
+    @Override
+    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member) {
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
+        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
+
+        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList);
+
     }
 }
