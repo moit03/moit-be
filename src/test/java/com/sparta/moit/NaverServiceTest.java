@@ -1,55 +1,46 @@
 package com.sparta.moit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.moit.domain.member.dto.NaverUserInfoDto;
-import com.sparta.moit.domain.member.entity.Member;
-import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
+import com.sparta.moit.domain.member.service.NaverServiceImpl;
 import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.service.RefreshTokenService;
-import com.sparta.moit.domain.member.service.NaverService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class NaverServiceTest {
-    @Mock
-    private PasswordEncoder passwordEncoder;
+        @Mock
+        private RestTemplate restTemplate;
 
-    @Mock
-    private RestTemplate restTemplate;
+        @Mock
+        private MemberRepository memberRepository;
 
-    @Mock
-    private JwtUtil jwtUtil;
+        @Mock
+        private RefreshTokenService refreshTokenService;
 
-    @Mock
-    private MemberRepository memberRepository;
+        @Mock
+        private JwtUtil jwtUtil;
 
-    @Mock
-    private RefreshTokenService refreshTokenService;
+        @Mock
+        private PasswordEncoder passwordEncoder;
 
-    @InjectMocks
-    private NaverService naverService;
+        // Inject concrete implementation
+        @InjectMocks
+        private NaverServiceImpl naverService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+        @BeforeEach
+        void setUp() {
+            MockitoAnnotations.openMocks(this);
+        }
 
 //    @Test
 //    void naverLogin_ShouldReturnToken_WhenValidCodeAndStateProvided() throws JsonProcessingException {
@@ -87,38 +78,30 @@ class NaverServiceTest {
 //        verify(memberRepository, times(1)).save(mockMember);
 //    }
 
-    @Test
-    void refreshToken_ShouldReturnNewAccessToken_WhenValidRefreshTokenProvided() {
-        // Given
-        String refreshToken = "mockRefreshToken";
-        String newAccessToken = "mockNewAccessToken";
+        @Test
+        void refreshToken_ShouldReturnNewAccessToken_WhenValidRefreshTokenProvided() {
+            // Given
+            String refreshToken = "mockRefreshToken";
+            String newAccessToken = "mockNewAccessToken";
 
-        when(refreshTokenService.refreshAccessToken(refreshToken)).thenReturn(Optional.of(newAccessToken));
+            when(refreshTokenService.refreshAccessToken(refreshToken)).thenReturn(Optional.of(newAccessToken));
 
-        // When
-        String accessToken = naverService.refreshToken(refreshToken);
+            // When
+            String accessToken = naverService.refreshToken(refreshToken);
 
-        // Then
-        assertEquals(newAccessToken, accessToken);
+            // Then
+            assertEquals(newAccessToken, accessToken);
+        }
+
+        @Test
+        void naverLogout_ShouldDeleteRefreshToken_WhenValidRefreshTokenProvided() {
+            // Given
+            String refreshToken = "mockRefreshToken";
+
+            // When
+            naverService.logout(refreshToken);
+
+            // Then
+            verify(refreshTokenService, times(1)).deleteRefreshToken(refreshToken);
+        }
     }
-
-    @Test
-    void naverLogout_ShouldDeleteRefreshToken_WhenValidRefreshTokenProvided() {
-        // Given
-        String refreshToken = "mockRefreshToken";
-
-        // When
-        naverService.logout(refreshToken);
-
-        // Then
-        verify(refreshTokenService, times(1)).deleteRefreshToken(refreshToken);
-    }
-
-    private String createNaverAccessTokenResponseJson(String accessToken, String refreshToken) {
-        return "{\"access_token\": \"" + accessToken + "\", \"refresh_token\": \"" + refreshToken + "\"}";
-    }
-
-    private String createNaverUserInfoResponseJson(Long id, String name, String email) {
-        return "{\"response\": {\"id\": " + id + ", \"name\": \"" + name + "\", \"email\": \"" + email + "\"}}";
-    }
-}

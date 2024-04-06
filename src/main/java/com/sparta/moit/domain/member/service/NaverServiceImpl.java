@@ -13,6 +13,7 @@ import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,15 @@ public class NaverServiceImpl implements NaverService{
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
 
+    @Value("${naver.client-id}")
+    private String clientId;
+
+    @Value("${naver.client-secret}")
+    private String clientSecret;
+
+    @Value("${naver.redirect-uri}")
+    private String redirectUri;
+
     public MemberResponseDto naverLogin(String code, String state) throws JsonProcessingException {
         String accessToken = getAccessToken(code,state);
         NaverUserInfoDto naverUserInfo = getNaverUserInfo(accessToken);
@@ -57,16 +67,14 @@ public class NaverServiceImpl implements NaverService{
                 .fromUriString("https://nid.naver.com")
                 .path("/oauth2.0/token")
                 .queryParam("grant_type", "authorization_code")
-                .queryParam("client_id", "pCzgB5uI4k0mvelBfCRz")
-                .queryParam("client_secret", "0_eecfIk5d")
-                .queryParam("redirect_uri", "http://my-hangterest.s3-website-us-east-1.amazonaws.com/login/naver")
+                .queryParam("client_id", clientId)
+                .queryParam("client_secret", clientSecret)
+                .queryParam("redirect_uri", redirectUri)
                 .queryParam("code", code)
                 .queryParam("state",state)
                 .encode()
                 .build()
                 .toUri();
-
-        // LeIb2VY5WfTDHHNTQmzN WHdVWARrEo http://localhost:5173/login/naver
 
         /* HTTP Header 생성 */
         HttpHeaders headers = new HttpHeaders();
