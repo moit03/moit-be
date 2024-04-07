@@ -56,8 +56,9 @@ public enum ErrorCode {
     MSG_TIME_OUT("MSG_TIME_OUT", "인증시간이 초과되었습니다.", HttpStatus.REQUEST_TIMEOUT),
     NOT_EXIST_PROFILE("NOT_EXIST_PROFILE", "프로필사진이 없습니다", HttpStatus.BAD_REQUEST),
     INVALID_PARENT_COMMENT("INVALID_PARENT_COMMENT", "유효하지 않은 부모 댓글입니다.", HttpStatus.BAD_REQUEST),
-    CHATROOM_NOT_FOUND("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다", HttpStatus.NOT_FOUND),
-    MEETING_NOT_FOUND("MEETING_NOT_FOUND", "모임을 찾을 수 없습니다", HttpStatus.NOT_FOUND);
+    CHATROOM_NOT_FOUND("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    MEETING_NOT_FOUND("MEETING_NOT_FOUND", "모임을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    NOT_MEETING_MEMBER("NOT_MEETING_MEMBER", "모임에 가입한 유저가 아닙니다.", HttpStatus.FORBIDDEN);
 
 
     private final String key;
