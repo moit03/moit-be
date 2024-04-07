@@ -11,4 +11,6 @@ public interface MeetingRepositoryCustom {
     /*List<Meeting> findAllByFilter(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName);*/
 
     Slice<Meeting> getMeetingSlice(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable);
+
+    Slice<Meeting> findByKeyword(String keyword, Pageable pageable);
 }

@@ -86,4 +86,11 @@ public class MeetingController implements MeetingControllerDocs {
         meetingService.deleteMeeting(userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("모임 삭제 완료", null));
     }
+
+    /* 모임 검색 */
+    @GetMapping("/search")
+    public ResponseEntity<?> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page) {
+        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListBySearch(keyword, page);
+        return ResponseEntity.ok().body(ResponseDto.success("검색 완료", responseDtoList));
+    }
 }
