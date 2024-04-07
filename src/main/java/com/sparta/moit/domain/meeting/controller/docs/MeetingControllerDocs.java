@@ -33,6 +33,7 @@ public interface MeetingControllerDocs {
                                              @RequestParam(required = false) List<Short> skillId,
                                              @RequestParam(required = false) List<Short> careerId,
                                              @RequestParam(defaultValue = "1") int page);
+  
     @Operation(summary = "모임 상세 조회", description = "모임 상세 조회 API")
     @ApiResponse(responseCode = "200", description = "모임 상세 조회 완료",
             content = @Content(mediaType = "application/json",
@@ -44,5 +45,8 @@ public interface MeetingControllerDocs {
 
     @Operation(summary = "주소별 모임 조회", description = "주소별 모임 조회 API")
     public ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException;
+  
+    @Operation(summary = "모임 삭제 기능", description = "모임 삭제 API")
+    ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
+}
 
-    }

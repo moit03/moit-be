@@ -41,44 +41,58 @@ public class MeetingController implements MeetingControllerDocs {
                 .body(responseDto);
     }*/
 
+    /*모임 등록*/
     @PostMapping
     public ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long meetingId = meetingService.createMeeting(requestDto, userDetails.getUser());
-        return ResponseEntity.ok().body(ResponseDto.success("모임 등록", meetingId));
+        return ResponseEntity.ok().body(ResponseDto.success("모임 등록", meetingId)); /*메세지 추후 리펙토링 예정*/
     }
 
+    /*모임 수정*/
     @PutMapping("/{meetingId}")
     public ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long updatedMeetingId = meetingService.updateMeeting(requestDto, userDetails.getUser(), meetingId);
-        return ResponseEntity.ok().body(ResponseDto.success("모임 수정", updatedMeetingId));
+        return ResponseEntity.ok().body(ResponseDto.success("모임 수정", updatedMeetingId)); /*메세지 추후 리펙토링 예정*/
     }
 
+    /*모임 조회*/
     @GetMapping
     public ResponseEntity<?> getMeetingListByLatLng(@RequestParam Double locationLat,
                                                     @RequestParam Double locationLng,
                                                     @RequestParam(required = false) List<Short> skillId,
                                                     @RequestParam(required = false) List<Short> careerId,
-                                                    @RequestParam(defaultValue = "1") int page){
+                                                    @RequestParam(defaultValue = "1") int page) {
         List<GetMeetingResponseDto> responseDtoList =
                 meetingService.getFilteredMeetingList(page, locationLat, locationLng, skillId, careerId);
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
 
+    /*모임 상세 조회*/
     @GetMapping("/meetings/{meetingId}")
     public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId, userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDto));
     }
 
+
+    /*모임 참가*/
     @PostMapping("my-meetings/{meetingId}")
     public ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long enterMeetingId = meetingService.enterMeeting(userDetails.getUser(), meetingId);
-        return ResponseEntity.ok().body(ResponseDto.success("모임 참가", enterMeetingId));
+        return ResponseEntity.ok().body(ResponseDto.success("모임 참가", enterMeetingId)); /*메세지 추후 리펙토링 예정*/
     }
 
+    /*주소별 모임 조회*/
     @GetMapping("/address")
     public ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException {
         List<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListByAddress(firstRegion, secondRegion, page);
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
+
+    /*모임 삭제*/
+    @DeleteMapping("/{meetingId}")
+    public ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        meetingService.deleteMeeting(userDetails.getUser(), meetingId);
+        return ResponseEntity.ok().body(ResponseDto.success("모임 삭제 완료", null));
     }
 }
