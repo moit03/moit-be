@@ -20,7 +20,7 @@ import java.util.List;
 public class Meeting extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(name = "meeting_name")
     private String meetingName;

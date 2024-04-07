@@ -2,9 +2,13 @@ package com.sparta.moit.domain.meeting.controller.docs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,6 +34,12 @@ public interface MeetingControllerDocs {
                                      @RequestParam(required = false) List<Long> careerId,
                                      @RequestParam(defaultValue = "1") int page);
 
+    @Operation(summary = "모임 상세 조회", description = "모임 상세 조회 API")
+    @ApiResponse(responseCode = "200", description = "모임 상세 조회 완료",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetMeetingDetailResponseDto.class)))
+    public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
+
     @Operation(summary = "회원 모임 가입", description = "모임 가입 API")
     ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
@@ -39,3 +49,4 @@ public interface MeetingControllerDocs {
     @Operation(summary = "모임 삭제 기능", description = "모임 삭제 API")
     ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 }
+

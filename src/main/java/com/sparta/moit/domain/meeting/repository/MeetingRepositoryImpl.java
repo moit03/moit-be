@@ -17,6 +17,7 @@ import static com.sparta.moit.domain.meeting.entity.QCareer.career;
 import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
 import static com.sparta.moit.domain.meeting.entity.QMeetingCareer.meetingCareer;
 import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
+import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
 
 
 @RequiredArgsConstructor
@@ -30,9 +31,9 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .selectFrom(meeting)
                 .distinct()
                 .leftJoin(meetingSkill)
-                .on(meeting.Id.eq(meetingSkill.meeting.Id))
+                .on(meeting.id.eq(meetingSkill.meeting.id))
                 .leftJoin(meetingCareer)
-                .on(meeting.Id.eq(meetingCareer.meeting.Id))
+                .on(meeting.id.eq(meetingCareer.meeting.id))
                 .where(
                         skillEq(skillId),
                         careerEq(careerId)
@@ -102,6 +103,30 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 "ST_DISTANCE_SPHERE(point({0}, {1}), point(meeting.locationLng, meeting.locationLat))",
                 locationLng, locationLat);
     }
+
+    @Override
+    public List<String> findCareerNameList(Long meetingId) {
+        return queryFactory
+                .select(career.careerName)
+                .from(meetingCareer)
+                .join(meetingCareer.career, career)
+                .where(meetingCareer.meeting.id.eq(meetingId))
+                .fetch();
+    }
+
+    @Override
+    public List<String> findSkillNameList(Long meetingId) {
+        return queryFactory
+                .select(skill.skillName)
+                .from(meetingSkill)
+                .join(meetingSkill.skill, skill)
+                .where(meetingSkill.meeting.id.eq(meetingId))
+                .fetch();
+    }
+
+
+
+
 
     /*@Override
     public List<Meeting> findAllByFilter(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
