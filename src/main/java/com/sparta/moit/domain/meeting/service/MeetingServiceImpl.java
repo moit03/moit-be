@@ -17,6 +17,9 @@ import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.util.AddressUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,22 +89,10 @@ public class MeetingServiceImpl implements MeetingService {
 
     /*모임 조회*/
     @Override
-    public List<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Short> skillId, List<Short> careerId) {
-        List<Meeting> meetingList;
-        if (skillId != null) {
-            if (careerId != null) {
-                meetingList = meetingRepository.getMeetingsWithSkillAndCareer(locationLat, locationLng, skillId, careerId, 16, page);
-            } else {
-                meetingList = meetingRepository.getMeetingsWithSkill(locationLat, locationLng, skillId, 16, page);
-            }
-        } else {
-            if (careerId != null) {
-                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId, 16, page);
-            } else {
-                meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
-            }
-        }
-        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    public Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Slice<Meeting> sliceList = meetingRepository.getMeetingSlice(locationLat, locationLng, skillId, careerId, pageable);
+        return sliceList.map(GetMeetingResponseDto::fromEntity);
     }
 
     /*모임 참가*/
@@ -142,6 +133,5 @@ public class MeetingServiceImpl implements MeetingService {
 
         meetingRepository.deleteById(meetingId);
     }
-
 
 }

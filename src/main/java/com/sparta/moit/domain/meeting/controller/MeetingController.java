@@ -10,6 +10,7 @@ import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -56,13 +57,12 @@ public class MeetingController implements MeetingControllerDocs {
 
     /*모임 조회*/
     @GetMapping
-    public ResponseEntity<?> getMeetingListByLatLng(@RequestParam Double locationLat,
-                                                    @RequestParam Double locationLng,
-                                                    @RequestParam(required = false) List<Short> skillId,
-                                                    @RequestParam(required = false) List<Short> careerId,
-                                                    @RequestParam(defaultValue = "1") int page) {
-        List<GetMeetingResponseDto> responseDtoList =
-                meetingService.getFilteredMeetingList(page, locationLat, locationLng, skillId, careerId);
+    public ResponseEntity<?> getMeetingList(@RequestParam Double locationLat,
+                                            @RequestParam Double locationLng,
+                                            @RequestParam(required = false) List<Long> skillId,
+                                            @RequestParam(required = false) List<Long> careerId,
+                                            @RequestParam(defaultValue = "1") int page) {
+        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingList(page, locationLat, locationLng, skillId, careerId);
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
 

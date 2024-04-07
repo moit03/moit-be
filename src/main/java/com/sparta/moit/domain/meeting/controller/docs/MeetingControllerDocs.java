@@ -24,11 +24,11 @@ public interface MeetingControllerDocs {
     ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
     @Operation(summary = "모임 조회", description = "모임 조회 API")
-    ResponseEntity<?> getMeetingListByLatLng(@RequestParam Double locationLat,
-                                             @RequestParam Double locationLng,
-                                             @RequestParam(required = false) List<Short> skillId,
-                                             @RequestParam(required = false) List<Short> careerId,
-                                             @RequestParam(defaultValue = "1") int page);
+    ResponseEntity<?> getMeetingList(@RequestParam Double locationLat,
+                                     @RequestParam Double locationLng,
+                                     @RequestParam(required = false) List<Long> skillId,
+                                     @RequestParam(required = false) List<Long> careerId,
+                                     @RequestParam(defaultValue = "1") int page);
 
     @Operation(summary = "회원 모임 가입", description = "모임 가입 API")
     ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
