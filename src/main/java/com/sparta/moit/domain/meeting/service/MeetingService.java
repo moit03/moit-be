@@ -27,4 +27,5 @@ public interface MeetingService {
     Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
     void deleteMeeting(Member member, Long meetingId);
+
 }

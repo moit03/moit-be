@@ -49,3 +49,4 @@ public interface MeetingControllerDocs {
     @Operation(summary = "모임 삭제 기능", description = "모임 삭제 API")
     ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 }
+
