@@ -1,6 +1,8 @@
 package com.sparta.moit.domain.chat.service;
 
+import com.sparta.moit.domain.chat.dto.SendChatRequestDto;
 import com.sparta.moit.domain.chat.dto.ChatResponseDto;
+import com.sparta.moit.domain.chat.dto.SendChatResponseDto;
 import com.sparta.moit.domain.chat.entity.Chat;
 import com.sparta.moit.domain.chat.repository.ChatRepository;
 import com.sparta.moit.domain.meeting.entity.Meeting;
@@ -33,10 +35,7 @@ public class ChatServiceImpl implements ChatService{
          * */
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
-
-        Boolean isMeetingMember = meetingMemberRepository.existsByMemberAndMeeting(member, meeting);
-
-        if (!isMeetingMember) {
+        if (!isMeetingMember(member, meeting)) {
             throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
         }
 
@@ -44,4 +43,34 @@ public class ChatServiceImpl implements ChatService{
 
         return ChatResponseDto.fromEntity(chatList);
     }
+
+    @Override
+    public SendChatResponseDto sendChat(Long meetingId, Member member, SendChatRequestDto sendChatRequestDto) {
+        /*
+         * 해당 모임이 존재하는지 확인한다.
+         * 해당 모임에 가입한 유저가 맞는 지 확인한다.
+         * 채팅을 DB 에 저장한다.
+         * */
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        if (!isMeetingMember(member, meeting)) {
+            throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
+        }
+        Chat chat = Chat.builder()
+                .content(sendChatRequestDto.getContent())
+                .member(member)
+                .meeting(meeting)
+                .build();
+
+        chatRepository.save(chat);
+
+        return SendChatResponseDto.fromEntity(chat);
+    }
+
+    private Boolean isMeetingMember(Member member, Meeting meeting) {
+        return meetingMemberRepository.existsByMemberAndMeeting(member, meeting);
+    }
+
+
 }
