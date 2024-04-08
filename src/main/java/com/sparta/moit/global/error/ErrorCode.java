@@ -62,6 +62,7 @@ public enum ErrorCode {
     NOT_EXIST_MY_PAGE("NOT_EXIST_MY_PAGE", "마이페이지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
 
+
     private final String key;
     private final String message;
     private final HttpStatus httpStatus;

@@ -82,9 +82,10 @@ public class Meeting extends Timestamped {
     private List<MeetingCareer> careers = new ArrayList<>();
 
     @Builder
-    public Meeting(String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
+    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
                    String locationAddress, String contents, Short registeredCount, Short totalCount,
                    Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member creator, List<MeetingMember> meetingMembers) {
+        this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
         this.meetingStartTime = meetingStartTime;
