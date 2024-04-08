@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j(topic = "채팅 Controller")
 @RestController
-@RequestMapping("/api/meetings")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -33,7 +32,7 @@ public class ChatController {
         return ResponseEntity.ok().body(ResponseDto.success("채팅 불러오기 완료", responseDto));
     }
     /* 채팅 보내기, 구독하기 */
-    @MessageMapping("{meetingId}/chat/{memberId}")
+    @MessageMapping("/api/meetings/{meetingId}/chat/{memberId}")
     public void sendChat(@DestinationVariable Long meetingId
             , @AuthenticationPrincipal UserDetailsImpl userDetails
             , @RequestBody SendChatRequestDto sendChatRequestDto) {
