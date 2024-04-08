@@ -18,17 +18,17 @@ public interface MeetingService {
 
     Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
 
-    Long enterMeeting(Member member, Long meetingId);
-
-    List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
-
-    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
+    void deleteMeeting(Member member, Long meetingId);
 
     Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
-    void deleteMeeting(Member member, Long meetingId);
+    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
+
+    List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
 
     Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page);
+
+    Long enterMeeting(Member member, Long meetingId);
 
     void leaveMeeting(Member member, Long meetingId);
 }
