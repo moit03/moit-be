@@ -73,7 +73,7 @@ public class GetMeetingDetailResponseDto {
                 .budget(meeting.getBudget())
                 .contents(meeting.getContents())
                 .locationLat(meeting.getLocationLat())
-                .locationLng(meeting.getLocationLat())
+                .locationLng(meeting.getLocationLng())
                 .build();
     }
 }

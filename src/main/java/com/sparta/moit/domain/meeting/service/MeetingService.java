@@ -22,7 +22,7 @@ public interface MeetingService {
 
     List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
 
-    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member);
+    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
 
     Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
