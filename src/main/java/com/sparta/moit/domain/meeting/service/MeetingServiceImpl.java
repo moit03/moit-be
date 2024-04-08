@@ -124,6 +124,7 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
 
+    /*모임 상세 조회*/
     @Override
     public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member) {
         Meeting meeting = meetingRepository.findById(meetingId)
@@ -156,4 +157,20 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     /*모임 탈퇴*/
+    @Override
+    @Transactional
+    public void leaveMeeting(Member member, Long meetingId) {
+
+        Member member0 = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        MeetingMember meetingMember = MeetingMember.builder()
+                .member(member0)
+                .meeting(meeting)
+                .build();
+        meetingMemberRepository.delete(meetingMember);
+    }
 }

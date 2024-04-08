@@ -103,4 +103,9 @@ public class MeetingController implements MeetingControllerDocs {
     }
 
     /*모임 탈퇴*/
+    @DeleteMapping("/{meetingId}/signout")
+    public ResponseEntity<?> leaveMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        meetingService.leaveMeeting(userDetails.getUser(), meetingId);
+        return ResponseEntity.ok().body(ResponseDto.success("모임 탈퇴 완료", null));
+    }
 }

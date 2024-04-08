@@ -29,4 +29,6 @@ public interface MeetingService {
     void deleteMeeting(Member member, Long meetingId);
 
     Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page);
+
+    void leaveMeeting(Member member, Long meetingId);
 }
