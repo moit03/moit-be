@@ -50,26 +50,26 @@ public class ChatServiceImpl implements ChatService{
         return ChatResponseDto.fromEntity(chatList);
     }
 
-    @Transactional
     @Override
-    public SendChatResponseDto sendChat(Long meetingId, Member member, SendChatRequestDto sendChatRequestDto) {
+    public SendChatResponseDto sendChat(Long meetingId, SendChatRequestDto sendChatRequestDto) {
         /*
          * 해당 모임이 존재하는지 확인한다.
          * 해당 모임에 가입한 유저가 맞는 지 확인한다.
          * 채팅을 DB 에 저장한다.
          * */
-        memberRepository.save(member);
+
+        Member testMember = memberRepository.findById(4L).orElseThrow();
 
         log.info("온 메세지: " + sendChatRequestDto.getContent());
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
-        if (!isMeetingMember(member, meeting)) {
+        if (!isMeetingMember(testMember, meeting)) {
             throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
         }
         Chat chat = Chat.builder()
                 .content(sendChatRequestDto.getContent())
-                .member(member)
+                .member(testMember)
                 .meeting(meeting)
                 .build();
 
