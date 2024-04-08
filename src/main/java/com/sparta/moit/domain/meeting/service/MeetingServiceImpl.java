@@ -126,7 +126,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     /*모임 상세 조회*/
     @Override
-    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member) {
+    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
