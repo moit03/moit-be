@@ -1,6 +1,8 @@
 package com.sparta.moit.domain.meeting.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.entity.*;
@@ -10,10 +12,15 @@ import com.sparta.moit.domain.meeting.repository.MeetingRepository;
 import com.sparta.moit.domain.meeting.repository.SkillRepository;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
+import com.sparta.moit.global.common.dto.AddressResponseDto;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
+import com.sparta.moit.global.util.AddressUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +35,8 @@ public class MeetingServiceImpl implements MeetingService {
     private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
     private final MeetingMemberRepository meetingMemberRepository;
+    private final AddressUtil addressUtil;
+
 
     /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
         List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
@@ -37,6 +46,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     /*모임 등록*/
     @Override
+    @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
 
         List<Long> skillIds = requestDto.getSkillIds();
@@ -80,22 +90,10 @@ public class MeetingServiceImpl implements MeetingService {
 
     /*모임 조회*/
     @Override
-    public List<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Short> skillId, List<Short> careerId) {
-        List<Meeting> meetingList;
-        if (skillId != null) {
-            if (careerId != null) {
-                meetingList = meetingRepository.getMeetingsWithSkillAndCareer(locationLat, locationLng, skillId, careerId, 16, page);
-            } else {
-                meetingList = meetingRepository.getMeetingsWithSkill(locationLat, locationLng, skillId, 16, page);
-            }
-        } else {
-            if (careerId != null) {
-                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId, 16, page);
-            } else {
-                meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
-            }
-        }
-        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    public Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Slice<Meeting> sliceList = meetingRepository.getMeetingSlice(locationLat, locationLng, skillId, careerId, pageable);
+        return sliceList.map(GetMeetingResponseDto::fromEntity);
     }
 
     /*모임 참가*/
@@ -117,4 +115,36 @@ public class MeetingServiceImpl implements MeetingService {
 
         return meetingId;
     }
+
+    /*주소별 모임 조회*/
+    @Override
+    public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
+        AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
+        List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
+        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    }
+
+    @Override
+    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member) {
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
+        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
+
+        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList);
+
+    }
+
+    /*모임 삭제*/
+    @Override
+    @Transactional
+    public void deleteMeeting(Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        meetingRepository.deleteById(meetingId);
+    }
+
 }

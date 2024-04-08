@@ -1,17 +1,96 @@
 package com.sparta.moit.domain.meeting.repository;
 
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
+import static com.sparta.moit.domain.meeting.entity.QCareer.career;
 import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
+import static com.sparta.moit.domain.meeting.entity.QMeetingCareer.meetingCareer;
+import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
+import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
+
 
 @RequiredArgsConstructor
 public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Slice<Meeting> getMeetingSlice(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable) {
+        List<Meeting> meetingList = queryFactory
+                .selectFrom(meeting)
+                .distinct()
+                .leftJoin(meetingSkill)
+                .on(meeting.id.eq(meetingSkill.meeting.id))
+                .leftJoin(meetingCareer)
+                .on(meeting.id.eq(meetingCareer.meeting.id))
+                .where(
+                        skillEq(skillId),
+                        careerEq(careerId)
+                )
+                .orderBy(
+                        distanceExpression(locationLat, locationLng).asc()
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(meetingList, pageable, hasNextPage(meetingList, pageable.getPageSize()));
+    }
+
+    private boolean hasNextPage(List<Meeting> meetingList, int pageSize) {
+        if (meetingList.size() > pageSize) {
+            meetingList.remove(pageSize);
+            return true;
+        }
+        return false;
+    }
+
+    private BooleanExpression careerEq(List<Long> careerId) {
+        return careerId == null || careerId.isEmpty() ? null : career.Id.in(careerId);
+    }
+
+    private BooleanExpression skillEq(List<Long> skillId) {
+        return skillId == null || skillId.isEmpty() ? null : meetingSkill.skill.Id.in(skillId);
+    }
+
+    private ComparableExpressionBase<Double> distanceExpression(Double locationLat, Double locationLng) {
+        return Expressions.numberTemplate(Double.class,
+                "ST_DISTANCE_SPHERE(point({0}, {1}), point(meeting.locationLng, meeting.locationLat))",
+                locationLng, locationLat);
+    }
+
+    @Override
+    public List<String> findCareerNameList(Long meetingId) {
+        return queryFactory
+                .select(career.careerName)
+                .from(meetingCareer)
+                .join(meetingCareer.career, career)
+                .where(meetingCareer.meeting.id.eq(meetingId))
+                .fetch();
+    }
+
+    @Override
+    public List<String> findSkillNameList(Long meetingId) {
+        return queryFactory
+                .select(skill.skillName)
+                .from(meetingSkill)
+                .join(meetingSkill.skill, skill)
+                .where(meetingSkill.meeting.id.eq(meetingId))
+                .fetch();
+    }
+
+
+
+
 
     /*@Override
     public List<Meeting> findAllByFilter(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
@@ -42,7 +121,6 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
         return query.fetch();
     }*/
-
 
 
 }
