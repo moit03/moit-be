@@ -38,7 +38,7 @@ public interface MeetingControllerDocs {
     @ApiResponse(responseCode = "200", description = "모임 상세 조회 완료",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = GetMeetingDetailResponseDto.class)))
-    public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
+    public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId);
 
     @Operation(summary = "회원 모임 가입", description = "모임 가입 API")
     ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
