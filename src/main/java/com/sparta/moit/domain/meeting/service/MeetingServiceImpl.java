@@ -147,6 +147,7 @@ public class MeetingServiceImpl implements MeetingService {
         meetingRepository.deleteById(meetingId);
     }
 
+    /* 모임 검색 */
     @Override
     public Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
@@ -154,4 +155,5 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingList.map(GetMeetingResponseDto::fromEntity);
     }
 
+    /*모임 탈퇴*/
 }

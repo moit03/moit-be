@@ -101,4 +101,6 @@ public class MeetingController implements MeetingControllerDocs {
         Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListBySearch(keyword, page);
         return ResponseEntity.ok().body(ResponseDto.success("검색 완료", responseDtoList));
     }
+
+    /*모임 탈퇴*/
 }
