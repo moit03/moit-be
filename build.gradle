@@ -22,6 +22,8 @@ repositories {
 }
 
 dependencies {
+    // json RestAPI 사용 목적
+    implementation 'org.json:json:20231013'
 
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
@@ -43,6 +45,17 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // QueryDSL 관련
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Websocket 서버, STOMP 메시지브로커, 클라이언트 제공
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // SockJS client : 웹소켓이 지원되지 않는 환경에서 대체 통신 방법 제공
+    implementation 'org.webjars:sockjs-client:1.0.2'
 }
 
 tasks.named('test') {

@@ -4,7 +4,6 @@ import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.security.JwtAuthenticationFilter;
 import com.sparta.moit.global.security.JwtAuthorizationFilter;
 import com.sparta.moit.global.security.UserDetailsServiceImpl;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +18,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -30,13 +27,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Slf4j(topic = "Security Log")
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+
+    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.authenticationConfiguration = authenticationConfiguration;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -62,16 +64,16 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(AbstractHttpConfigurer::disable);
-
         http.cors(cors ->
                 cors.configurationSource(corsConfigurationSource())
         );
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.formLogin(AbstractHttpConfigurer::disable);
 
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
+
 
         String[] PUBLIC_URL = {"/v1/api-docs",
                 "/swagger-resources/**",
@@ -83,19 +85,19 @@ public class WebSecurityConfig {
                 "/api-docs/**",
                 "api-docs" };
 
-
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PUBLIC_URL).permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/region/**").permitAll()
                         .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/api/member/signin/naver").permitAll()
                         .requestMatchers("/user/**").permitAll()
                         .anyRequest().authenticated()
         );
 
-        http.formLogin(AbstractHttpConfigurer::disable);
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -111,7 +113,7 @@ public class WebSecurityConfig {
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);
         configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
 
 
