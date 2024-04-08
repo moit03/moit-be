@@ -4,6 +4,7 @@ import com.sparta.moit.domain.chat.dto.SendChatRequestDto;
 import com.sparta.moit.domain.chat.dto.ChatResponseDto;
 import com.sparta.moit.domain.chat.service.ChatService;
 import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,13 @@ public class ChatController {
     /* 채팅 보내기, 구독하기 */
     @MessageMapping("/api/meetings/{meetingId}/chat/{memberId}")
     public void sendChat(@DestinationVariable Long meetingId
-            , @AuthenticationPrincipal UserDetailsImpl userDetails
+//            , @AuthenticationPrincipal UserDetailsImpl userDetails
             , @RequestBody SendChatRequestDto sendChatRequestDto) {
         log.info("온 메시지 " + sendChatRequestDto.getContent());
         log.info("미팅 id " + meetingId.toString());
-        log.info("로그인 유저 이메일 " + userDetails.getUser().getEmail());
-        Member member = userDetails.getUser();
+//        log.info("로그인 유저 이메일 " + userDetails.getUser().getEmail());
+//        Member member = userDetails.getUser();
+        Member member = new Member("이예진", "$2a$10$KFUTpJ/3P2.N4iwVaIi/xuiP3squLvUMMzzF14I8sUoc4Z0BFbNhK", "dldulwls@naver.com", UserRoleEnum.USER);
         messagingTemplate.convertAndSend("/topic/rooms/" + meetingId + "/chat", chatService.sendChat(meetingId, member, sendChatRequestDto));
     }
 
