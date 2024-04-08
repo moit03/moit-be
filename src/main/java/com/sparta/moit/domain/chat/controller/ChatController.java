@@ -14,6 +14,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j(topic = "채팅 Controller")
@@ -33,6 +34,7 @@ public class ChatController {
         return ResponseEntity.ok().body(ResponseDto.success("채팅 불러오기 완료", responseDto));
     }
     /* 채팅 보내기, 구독하기 */
+    @Transactional
     @MessageMapping("/api/meetings/{meetingId}/chat/{memberId}")
     public void sendChat(@DestinationVariable Long meetingId
 //            , @AuthenticationPrincipal UserDetailsImpl userDetails

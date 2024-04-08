@@ -9,11 +9,13 @@ import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.repository.MeetingMemberRepository;
 import com.sparta.moit.domain.meeting.repository.MeetingRepository;
 import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +30,7 @@ public class ChatServiceImpl implements ChatService{
     private final ChatRepository chatRepository;
     private final MeetingRepository meetingRepository;
     private final MeetingMemberRepository meetingMemberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public ChatResponseDto getChatList(Member member, Long meetingId) {
@@ -47,6 +50,7 @@ public class ChatServiceImpl implements ChatService{
         return ChatResponseDto.fromEntity(chatList);
     }
 
+    @Transactional
     @Override
     public SendChatResponseDto sendChat(Long meetingId, Member member, SendChatRequestDto sendChatRequestDto) {
         /*
@@ -54,6 +58,8 @@ public class ChatServiceImpl implements ChatService{
          * 해당 모임에 가입한 유저가 맞는 지 확인한다.
          * 채팅을 DB 에 저장한다.
          * */
+        memberRepository.save(member);
+
         log.info("온 메세지: " + sendChatRequestDto.getContent());
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
