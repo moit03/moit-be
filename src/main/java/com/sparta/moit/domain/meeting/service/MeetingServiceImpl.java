@@ -147,4 +147,11 @@ public class MeetingServiceImpl implements MeetingService {
         meetingRepository.deleteById(meetingId);
     }
 
+    @Override
+    public Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Slice<Meeting> meetingList = meetingRepository.findByKeyword(keyword, pageable);
+        return meetingList.map(GetMeetingResponseDto::fromEntity);
+    }
+
 }

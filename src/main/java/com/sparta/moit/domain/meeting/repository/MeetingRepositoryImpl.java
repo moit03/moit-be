@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.meeting.repository;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
@@ -23,6 +24,7 @@ import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
 public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
+    /* 모임 조회 */
     @Override
     public Slice<Meeting> getMeetingSlice(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable) {
         List<Meeting> meetingList = queryFactory
@@ -45,6 +47,40 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
         return new SliceImpl<>(meetingList, pageable, hasNextPage(meetingList, pageable.getPageSize()));
     }
+
+    /* 검색 */
+    @Override
+    public Slice<Meeting> findByKeyword(String keyword, Pageable pageable) {
+        List<Meeting> meetingList = queryFactory
+                .selectFrom(meeting)
+                .where(
+                        titleLike(keyword)
+                                .or(addressLike(keyword))
+                                .or(contentLike(keyword))
+                )
+                .orderBy(
+                        meeting.meetingDate.asc(),
+                        meeting.registeredCount.desc()
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+        return new SliceImpl<>(meetingList, pageable, hasNextPage(meetingList, pageable.getPageSize()));
+    }
+
+    private BooleanExpression titleLike(String keyword) {
+        return keyword != null ? meeting.meetingName.contains(keyword) : null;
+    }
+
+    private BooleanExpression addressLike(String keyword) {
+        return keyword != null ? meeting.locationAddress.contains(keyword) : null;
+    }
+
+    private BooleanExpression contentLike(String keyword) {
+        return keyword != null ? meeting.contents.contains(keyword) : null;
+    }
+
+    /* Method */
 
     private boolean hasNextPage(List<Meeting> meetingList, int pageSize) {
         if (meetingList.size() > pageSize) {
