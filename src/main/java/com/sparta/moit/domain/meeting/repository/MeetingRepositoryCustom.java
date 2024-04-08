@@ -14,4 +14,6 @@ public interface MeetingRepositoryCustom {
     List<String> findSkillNameList(Long meetingId);
 
     Slice<Meeting> getMeetingSlice(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable);
+
+    Slice<Meeting> findByKeyword(String keyword, Pageable pageable);
 }
