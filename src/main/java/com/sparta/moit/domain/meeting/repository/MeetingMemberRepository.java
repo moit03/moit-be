@@ -6,5 +6,9 @@ import com.sparta.moit.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Long> {
+
+    int countByMemberId(Long memberId);
+
     Boolean existsByMemberAndMeeting(Member member, Meeting meeting);
+
 }
