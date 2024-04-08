@@ -37,46 +37,45 @@ public class MypageServiceImpl implements MypageService {
     @Override
     @Transactional(readOnly = true)
     public MypageResponseDto getMypageInfo(Member member, Long memberId) {
-        // 사용자 확인
         Member user = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        // 참여한 모임 개수 조회
+        /* 참여한 모임 개수 조회 */
         int enterMeetingCount = meetingMemberRepository.countByMemberId(member.getId());
 
-        // 개최한 모임 개수 조회
+        /* 개최한 모임 개수 */
         int heldMeetingCount = meetingRepository.countByCreator(member);
 
         List<GetMyPageDto> studyTimeList = meetingRepository.getMyPage(member.getId());
 
-
-
+        /* 총 공부시간 */
+        long totalStudyTimeMinutes = 0;
         for (GetMyPageDto meeting : studyTimeList) {
+            LocalDateTime startTime = meeting.getMeetingStartTime();
+            LocalDateTime endTime = meeting.getMeetingEndTime();
+            long studyTimeMinutes = calculateStudyTime(startTime, endTime);
+            totalStudyTimeMinutes += studyTimeMinutes;
             log.info(meeting.getMeetingStartTime().toString());
             log.info(meeting.getMeetingEndTime().toString());
         }
 
-        LocalDateTime startTime = LocalDateTime.now();
-        LocalDateTime endTime = LocalDateTime.now();
-        String studyTime = calculateStudyTime(member.getId(), startTime, endTime);
+        /* 시간 형식으로 변환 */
+        long hours = totalStudyTimeMinutes / 60;
+        long minutes = totalStudyTimeMinutes % 60;
+        String studyTime = String.format("%02d:%02d", hours, minutes);
 
-        // 마이페이지 응답 DTO를 빌더 패턴을 사용하여 생성
         return MypageResponseDto.builder()
-                .enterMeeting(enterMeetingCount)  // 참여한 모임 수 설정
-                .studyTime(studyTime)  // 스터디 시간 설정
-                .heldMeeting(heldMeetingCount)  // 개최한 모임 수 설정
-                .build();  // MypageResponseDto 객체 생성
+                .enterMeeting(enterMeetingCount)
+                .studyTime(studyTime)
+                .heldMeeting(heldMeetingCount)
+                .build();
     }
-
-    // 수정된 calculateStudyTime 메서드
-    public String calculateStudyTime(Long memberId, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
+    public long calculateStudyTime(LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
         if (meetingStartTime != null && meetingEndTime != null) {
             Duration duration = Duration.between(meetingStartTime, meetingEndTime);
-            long hours = duration.toHours();
-            long minutes = duration.toMinutes() % 60;
-            return String.format("%02d:%02d", hours, minutes);
+            return duration.toMinutes();
         } else {
-            return null;
+            return 0;
         }
     }
 }

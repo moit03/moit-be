@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 
 public interface MypageService {
     MypageResponseDto getMypageInfo(Member member, Long memberId);
-    String calculateStudyTime(Long memberId, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime);
+    long calculateStudyTime(LocalDateTime meetingStartTime, LocalDateTime meetingEndTime);
 
 }
