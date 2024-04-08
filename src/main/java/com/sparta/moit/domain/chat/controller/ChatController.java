@@ -7,6 +7,7 @@ import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j(topic = "채팅 Controller")
 @RestController
 @RequestMapping("/api/meetings")
 @RequiredArgsConstructor
@@ -25,6 +27,8 @@ public class ChatController {
     /* 채팅방 입장 전 채팅 목록 불러오기 */
     @GetMapping("/{meetingId}/chats")
     public ResponseEntity<?> getChatList(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info("채팅방 입장 meeting id " + meetingId.toString());
+        log.info("로그인 유저 이메일 " + userDetails.getUser().getEmail());
         ChatResponseDto responseDto = chatService.getChatList(userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("채팅 불러오기 완료", responseDto));
     }
@@ -33,6 +37,9 @@ public class ChatController {
     public void sendChat(@DestinationVariable Long meetingId
             , @AuthenticationPrincipal UserDetailsImpl userDetails
             , @RequestBody SendChatRequestDto sendChatRequestDto) {
+        log.info("온 메시지 " + sendChatRequestDto.getContent());
+        log.info("미팅 id " + meetingId.toString());
+        log.info("로그인 유저 이메일 " + userDetails.getUser().getEmail());
         Member member = userDetails.getUser();
         messagingTemplate.convertAndSend("/topic/rooms/" + meetingId + "/chat", chatService.sendChat(meetingId, member, sendChatRequestDto));
     }

@@ -12,11 +12,14 @@ import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j(topic = "채팅 로그")
 @RestController
 @RequestMapping("/api/chats")
 @RequiredArgsConstructor
@@ -51,6 +54,7 @@ public class ChatServiceImpl implements ChatService{
          * 해당 모임에 가입한 유저가 맞는 지 확인한다.
          * 채팅을 DB 에 저장한다.
          * */
+        log.info("온 메세지: " + sendChatRequestDto.getContent());
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
