@@ -110,14 +110,13 @@ public class MeetingServiceImpl implements MeetingService {
     /*모임 상세 조회*/
     @Override
     public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
+
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
         List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
         List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
-
         return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList);
-
     }
 
     /*주소별 모임 조회*/

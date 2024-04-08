@@ -12,6 +12,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
 
     Optional<Meeting> findByIdAndCreator(Long meetingId, Member member);
 
+    int countByCreator(Member creator);
+
 //    @Query(value = "SELECT * FROM meeting ORDER BY "
 //            + "(6371 * acos(cos(radians(:locationLat)) * cos(radians(location_lat)) * cos(radians(location_lng) - radians(:locationLng)) + sin(radians(:locationLat)) * sin(radians(location_lat)))) ASC "
 //            + "LIMIT :limit OFFSET :page",
@@ -48,4 +50,26 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             + "LIMIT :limit OFFSET :page",
             nativeQuery = true)
     List<Meeting> getMeetingsWithSkillAndCareer(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, int limit, int page);
+
+    //    select * from meeting
+//    left join meeting_member on meeting.id = meeting_member.meeting_id
+//            where
+//    meeting_id = 110
+//    and
+//    meeting_member.member_id=5
+
+    /*
+      SELECT mm.member_id, m.meeting_start_time, m.meeting_end_time
+        FROM meeting_member mm
+                 JOIN meeting m ON m.id = mm.meeting_id
+        WHERE mm.member_id = 5
+    * */
+
+//    @Query(value = "SELECT mm.member_id, m.meeting_start_time, m.meeting_end_time " +
+//            "FROM meeting_member mm " +
+//            "JOIN meeting m ON mm.meeting_id = m.id " +
+//            "WHERE mm.member_id = :memberId",
+//            nativeQuery = true)
+//    List<Meeting> getStudyTimeList(Long memberId);
+
 }
