@@ -123,6 +123,12 @@ public class Meeting extends Timestamped {
         }
     }
 
+    public void decrementRegisteredCount() {
+        if (registeredCount > 0) {
+            registeredCount--;
+        }
+    }
+
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
     }
