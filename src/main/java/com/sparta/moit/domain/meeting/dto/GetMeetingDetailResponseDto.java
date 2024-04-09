@@ -16,6 +16,7 @@ public class GetMeetingDetailResponseDto {
     private String meetingName;
 
     private String creatorName;
+    private String creatorEmail;
 
     private List<String> careerNameList;
     private List<String> skillNameList;
@@ -39,10 +40,11 @@ public class GetMeetingDetailResponseDto {
     private Double locationLng;
 
     @Builder
-    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng) {
+    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.creatorName = creatorName;
+        this.creatorEmail = creatorEmail;
         this.careerNameList = careerNameList;
         this.skillNameList = skillNameList;
         this.meetingDate = meetingDate;
@@ -62,6 +64,7 @@ public class GetMeetingDetailResponseDto {
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .creatorName(meeting.getCreator().getUsername())
+                .creatorEmail(meeting.getCreator().getEmail())
                 .careerNameList(careerNameList)
                 .skillNameList(skillNameList)
                 .meetingDate(meeting.getMeetingDate())
