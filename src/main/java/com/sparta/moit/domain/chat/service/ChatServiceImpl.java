@@ -51,7 +51,7 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public SendChatResponseDto sendChat(Long meetingId, SendChatRequestDto sendChatRequestDto) {
+    public SendChatResponseDto sendChat(Long meetingId, Member member, SendChatRequestDto sendChatRequestDto) {
         /*
          * 해당 모임이 존재하는지 확인한다.
          * 해당 모임에 가입한 유저가 맞는 지 확인한다.
