@@ -21,32 +21,38 @@ import java.util.List;
 @Tag(name = "모임", description = "모임 API")
 public interface MeetingControllerDocs {
 
-    @Operation(summary = "모임 등록", description = "모임 등록 API")
+    @Operation(summary = "모임 등록 기능", description = "모임 등록 API")
     ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
-    @Operation(summary = "모임 수정", description = "모임 수정 API")
+    @Operation(summary = "모임 수정 기능", description = "모임 수정 API")
     ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
-    @Operation(summary = "모임 조회", description = "모임 조회 API")
+    @Operation(summary = "모임 삭제 기능", description = "모임 삭제 API")
+    ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
+
+    @Operation(summary = "모임 조회 기능", description = "모임 조회 API")
     ResponseEntity<?> getMeetingList(@RequestParam Double locationLat,
                                      @RequestParam Double locationLng,
                                      @RequestParam(required = false) List<Long> skillId,
                                      @RequestParam(required = false) List<Long> careerId,
                                      @RequestParam(defaultValue = "1") int page);
 
-    @Operation(summary = "모임 상세 조회", description = "모임 상세 조회 API")
+    @Operation(summary = "모임 상세 조회 기능", description = "모임 상세 조회 API")
     @ApiResponse(responseCode = "200", description = "모임 상세 조회 완료",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = GetMeetingDetailResponseDto.class)))
     public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId);
 
-    @Operation(summary = "회원 모임 가입", description = "모임 가입 API")
-    ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
-
-    @Operation(summary = "주소별 모임 조회", description = "주소별 모임 조회 API")
+    @Operation(summary = "주소별 모임 조회 기능", description = "주소별 모임 조회 API")
     public ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException;
 
-    @Operation(summary = "모임 삭제 기능", description = "모임 삭제 API")
-    ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
+    @Operation(summary = "모임 검색 기능", description = "모임 검색 API")
+    ResponseEntity<?> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page);
+
+    @Operation(summary = "회원 모임 참가 기능", description = "모임 참가 API")
+    ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
+
+    @Operation(summary = "모임 탈퇴 기능", description = "모임 탈퇴 API")
+    ResponseEntity<?> leaveMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 }
 

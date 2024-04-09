@@ -37,6 +37,7 @@ public class MypageServiceImpl implements MypageService {
     @Override
     @Transactional(readOnly = true)
     public MypageResponseDto getMypageInfo(Member member, Long memberId) {
+
         Member user = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
@@ -70,6 +71,7 @@ public class MypageServiceImpl implements MypageService {
                 .heldMeeting(heldMeetingCount)
                 .build();
     }
+
     public long calculateStudyTime(LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
         if (meetingStartTime != null && meetingEndTime != null) {
             Duration duration = Duration.between(meetingStartTime, meetingEndTime);

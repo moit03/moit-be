@@ -88,12 +88,51 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingId;
     }
 
+    /*모임 삭제*/
+    @Override
+    @Transactional
+    public void deleteMeeting(Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        meetingRepository.deleteById(meetingId);
+    }
+
     /*모임 조회*/
     @Override
     public Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
         Slice<Meeting> sliceList = meetingRepository.getMeetingSlice(locationLat, locationLng, skillId, careerId, pageable);
         return sliceList.map(GetMeetingResponseDto::fromEntity);
+    }
+
+    /*모임 상세 조회*/
+    @Override
+    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
+
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
+        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList);
+    }
+
+    /*주소별 모임 조회*/
+    @Override
+    public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
+        AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
+        List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
+        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    }
+
+    /* 모임 검색 */
+    @Override
+    public Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Slice<Meeting> meetingList = meetingRepository.findByKeyword(keyword, pageable);
+        return meetingList.map(GetMeetingResponseDto::fromEntity);
     }
 
     /*모임 참가*/
@@ -116,42 +155,19 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingId;
     }
 
-    /*주소별 모임 조회*/
+    /*모임 탈퇴*/
     @Override
-    public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
-        AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
-        List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
-        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
-    }
+    public void leaveMeeting(Member member, Long meetingId) {
 
-    @Override
-    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
+        Member member1 = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
-        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
-        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
+        MeetingMember meetingMember = meetingMemberRepository.findByMemberAndMeeting(member1, meeting)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_MEETING_MEMBER));
 
-        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList);
-
+        meetingMemberRepository.delete(meetingMember);
     }
-
-    /*모임 삭제*/
-    @Override
-    @Transactional
-    public void deleteMeeting(Member member, Long meetingId) {
-
-        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
-
-        meetingRepository.deleteById(meetingId);
-    }
-
-    @Override
-    public Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page) {
-        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
-        Slice<Meeting> meetingList = meetingRepository.findByKeyword(keyword, pageable);
-        return meetingList.map(GetMeetingResponseDto::fromEntity);
-    }
-
 }

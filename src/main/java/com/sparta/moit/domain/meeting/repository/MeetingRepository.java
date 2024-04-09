@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface MeetingRepository extends JpaRepository<Meeting, Long>, MeetingRepositoryCustom {
 
     Optional<Meeting> findByIdAndCreator(Long meetingId, Member member);
+
     int countByCreator(Member creator);
 
 //    @Query(value = "SELECT * FROM meeting ORDER BY "
@@ -49,7 +50,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             + "LIMIT :limit OFFSET :page",
             nativeQuery = true)
     List<Meeting> getMeetingsWithSkillAndCareer(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, int limit, int page);
-//    select * from meeting
+
+    //    select * from meeting
 //    left join meeting_member on meeting.id = meeting_member.meeting_id
 //            where
 //    meeting_id = 110
@@ -69,4 +71,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
 //            "WHERE mm.member_id = :memberId",
 //            nativeQuery = true)
 //    List<Meeting> getStudyTimeList(Long memberId);
+
 }
