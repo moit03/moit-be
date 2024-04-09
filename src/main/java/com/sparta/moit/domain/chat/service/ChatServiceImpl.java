@@ -51,14 +51,15 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public SendChatResponseDto sendChat(Long meetingId, Member member, SendChatRequestDto sendChatRequestDto) {
+    public SendChatResponseDto sendChat(Long meetingId,String email, SendChatRequestDto sendChatRequestDto) {
         /*
          * 해당 모임이 존재하는지 확인한다.
          * 해당 모임에 가입한 유저가 맞는 지 확인한다.
          * 채팅을 DB 에 저장한다.
          * */
 
-        Member testMember = memberRepository.findById(4L).orElseThrow();
+        Member testMember = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_MEETING_MEMBER));
 
         log.info("온 메세지: " + sendChatRequestDto.getContent());
         Meeting meeting = meetingRepository.findById(meetingId)
