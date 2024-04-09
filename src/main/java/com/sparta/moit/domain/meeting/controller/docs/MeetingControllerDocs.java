@@ -41,10 +41,10 @@ public interface MeetingControllerDocs {
     @ApiResponse(responseCode = "200", description = "모임 상세 조회 완료",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = GetMeetingDetailResponseDto.class)))
-    public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId);
+    ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId);
 
     @Operation(summary = "주소별 모임 조회 기능", description = "주소별 모임 조회 API")
-    public ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException;
+    ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException;
 
     @Operation(summary = "모임 검색 기능", description = "모임 검색 API")
     ResponseEntity<?> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page);
