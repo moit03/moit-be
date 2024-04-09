@@ -24,6 +24,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j(topic = "Meeting Service Log")
@@ -146,12 +147,31 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
+        /*중복 참가 여부 확인*/
+        Boolean isMember = meetingMemberRepository.existsByMemberIdAndMeetingId(member.getId(), meetingId);
+        if (isMember) {
+            throw new CustomException(ErrorCode.ALREADY_MEMBER);
+        }
+
+        /*현재 모임 참가 인원 수를 가져오기*/
+        Short registeredCount = meetingMemberRepository.countByMeetingId(meetingId);
+
+        /*모임의 최대 인원 수를 가져오기*/
+        Short totalCount = meeting.getTotalCount();
+
+        /*인원이 다 찼는지 확인*/
+        if (registeredCount == totalCount) {
+            throw new CustomException(ErrorCode.MEETING_FULL);
+        }
+
+        /*모임 엔티티의 등록된 참가자 수 업데이트*/
+        meeting.incrementRegisteredCount();
+
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member1)
                 .meeting(meeting)
                 .build();
         meetingMemberRepository.save(meetingMember);
-
         return meetingId;
     }
 

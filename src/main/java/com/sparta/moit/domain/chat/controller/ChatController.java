@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.chat.controller;
 
+import com.sparta.moit.domain.chat.controller.docs.ChatControllerDocs;
 import com.sparta.moit.domain.chat.dto.ChatResponseDto;
 import com.sparta.moit.domain.chat.dto.SendChatRequestDto;
 import com.sparta.moit.domain.chat.service.ChatService;
@@ -22,7 +23,7 @@ import java.security.Principal;
 @Slf4j(topic = "채팅 Controller")
 @RestController
 @RequiredArgsConstructor
-public class ChatController {
+public class ChatController implements ChatControllerDocs {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;

@@ -46,14 +46,14 @@ public class MeetingController implements MeetingControllerDocs {
     @PostMapping
     public ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long meetingId = meetingService.createMeeting(requestDto, userDetails.getUser());
-        return ResponseEntity.ok().body(ResponseDto.success("모임 등록", meetingId)); /*메세지 추후 리펙토링 예정*/
+        return ResponseEntity.ok().body(ResponseDto.success("모임 등록 완료", meetingId));
     }
 
     /*모임 수정*/
     @PutMapping("/{meetingId}")
     public ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long updatedMeetingId = meetingService.updateMeeting(requestDto, userDetails.getUser(), meetingId);
-        return ResponseEntity.ok().body(ResponseDto.success("모임 수정", updatedMeetingId)); /*메세지 추후 리펙토링 예정*/
+        return ResponseEntity.ok().body(ResponseDto.success("모임 수정 완료", updatedMeetingId));
     }
 
     /*모임 삭제*/
@@ -99,7 +99,7 @@ public class MeetingController implements MeetingControllerDocs {
     @PostMapping("my-meetings/{meetingId}")
     public ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long enterMeetingId = meetingService.enterMeeting(userDetails.getUser(), meetingId);
-        return ResponseEntity.ok().body(ResponseDto.success("모임 참가", enterMeetingId)); /*메세지 추후 리펙토링 예정*/
+        return ResponseEntity.ok().body(ResponseDto.success("모임 참가 완료", enterMeetingId));
     }
 
     /*모임 탈퇴*/

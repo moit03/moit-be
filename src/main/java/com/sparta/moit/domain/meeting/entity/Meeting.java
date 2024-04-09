@@ -115,8 +115,17 @@ public class Meeting extends Timestamped {
         this.regionSecondName = requestDto.getRegionSecondName();
     }
 
+    public void incrementRegisteredCount() {
+        if (registeredCount != null) {
+            registeredCount++;
+        } else {
+            registeredCount = 1;
+        }
+    }
+
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
     }
 
 }
+
