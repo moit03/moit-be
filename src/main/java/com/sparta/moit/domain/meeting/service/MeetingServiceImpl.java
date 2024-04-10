@@ -188,6 +188,8 @@ public class MeetingServiceImpl implements MeetingService {
         MeetingMember meetingMember = meetingMemberRepository.findByMemberAndMeeting(member1, meeting)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_MEETING_MEMBER));
 
+        meeting.decrementRegisteredCount();
+
         meetingMemberRepository.delete(meetingMember);
     }
 }
