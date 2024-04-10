@@ -22,7 +22,7 @@ public class SenderResponseDto {
         return SenderResponseDto.builder()
                 .memberId(member.getId())
                 .memberName(member.getUsername())
-                .memberName(member.getEmail())
+                .memberEmail(member.getEmail())
                 .build();
     }
 
