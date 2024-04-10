@@ -23,9 +23,6 @@ public class Meeting extends Timestamped {
     @Column(name="id")
     private Long id;
 
-//    @Column(name = "member_id")
-//    private Long memberId;
-
     @Column(name = "meeting_name")
     private String meetingName;
 
