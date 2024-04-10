@@ -16,15 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j(topic = "MyPage")
 @RestController
-@RequestMapping("/api/mypage")
+@RequestMapping("/api/member")
 @RequiredArgsConstructor
 public class MypageController implements MypageControllerDocs{
     private final MypageService mypageService;
 
     /* 참여한 모임, 스터디 시간, 개최한 모임 데이터 전달 */
-    @GetMapping("/{memberId}")
-    public ResponseEntity<?> getMypage(@PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        MypageResponseDto mypageResponseDto = mypageService.getMypageInfo(userDetails.getUser(), memberId);
+    @GetMapping("/myinfo")
+    public ResponseEntity<?> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        MypageResponseDto mypageResponseDto = mypageService.getMypageInfo(userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("마이페이지 조회 완료", mypageResponseDto));
     }
 

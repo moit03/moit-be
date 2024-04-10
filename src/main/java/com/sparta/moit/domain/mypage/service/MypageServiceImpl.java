@@ -36,9 +36,9 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     @Transactional(readOnly = true)
-    public MypageResponseDto getMypageInfo(Member member, Long memberId) {
+    public MypageResponseDto getMypageInfo(Member member) {
 
-        Member user = memberRepository.findById(member.getId())
+        Member member1 = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
         /* 참여한 모임 개수 조회 */
