@@ -62,6 +62,10 @@ public class Meeting extends Timestamped {
     @Column(name = "region_second_name")
     private String regionSecondName;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private MeetingStatusEnum status;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member creator;
