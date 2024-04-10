@@ -23,7 +23,7 @@ public class SingleChatResponseDto {
     public static SingleChatResponseDto fromEntity(Chat chat) {
         return SingleChatResponseDto.builder()
                 .chatId(chat.getId())
-                .sender(SenderResponseDto.fromEntity(chat.getMember())) // Ensure this is correctly implemented
+                .sender(SenderResponseDto.fromEntity(chat.getMember()))
                 .content(chat.getContent())
                 .createdAt(chat.getCreatedAt())
                 .build();
