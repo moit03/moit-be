@@ -24,7 +24,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j(topic = "Meeting Service Log")
@@ -44,6 +43,38 @@ public class MeetingServiceImpl implements MeetingService {
         return result.stream().map(GetMeetingResponseDto::fromEntity)
                 .toList();
     }*/
+
+//    /*모임 등록*/
+//    @Override
+//    @Transactional
+//    public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
+//
+//        List<Long> skillIds = requestDto.getSkillIds();
+//        Meeting meeting = requestDto.toEntity(member);
+//        List<Skill> skills = skillRepository.findByIdIn(skillIds);
+//
+//        for (Skill skill : skills) {
+//            MeetingSkill meetingSkill = MeetingSkill.builder()
+//                    .meeting(meeting)
+//                    .skill(skill)
+//                    .build();
+//            meeting.getSkills().add(meetingSkill);
+//        }
+//
+//        List<Long> careerIds = requestDto.getCareerIds();
+//        List<Career> careers = careerRepository.findByIdIn(careerIds);
+//        for (Career career : careers) {
+//            MeetingCareer meetingCareer = MeetingCareer.builder()
+//                    .meeting(meeting)
+//                    .career(career)
+//                    .build();
+//            meeting.getCareers().add(meetingCareer);
+//        }
+//
+//        Meeting savedMeeting = meetingRepository.save(meeting);
+//        Long meetingId = savedMeeting.getId();
+//        return meetingId;
+//    }
 
     /*모임 등록*/
     @Override
@@ -73,6 +104,11 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         Meeting savedMeeting = meetingRepository.save(meeting);
+        MeetingMember meetingMember = MeetingMember.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+        meetingMemberRepository.save(meetingMember);
         Long meetingId = savedMeeting.getId();
         return meetingId;
     }
@@ -96,6 +132,10 @@ public class MeetingServiceImpl implements MeetingService {
 
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        meeting.deleteStatus();
+
+//        meetingMemberRepository.save(meeting);
 
         meetingRepository.deleteById(meetingId);
     }
@@ -160,7 +200,7 @@ public class MeetingServiceImpl implements MeetingService {
         Short totalCount = meeting.getTotalCount();
 
         /*인원이 다 찼는지 확인*/
-        if (registeredCount == totalCount) {
+        if (registeredCount >= totalCount) {
             throw new CustomException(ErrorCode.MEETING_FULL);
         }
 

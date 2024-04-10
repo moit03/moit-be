@@ -68,4 +68,5 @@ public class Member {
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
     }
+
 }
