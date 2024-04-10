@@ -19,12 +19,12 @@ public class ChatResponseDto {
         this.chats = chats;
     }
 
-    public static ChatResponseDto fromEntity(List<Chat> chatEntityList) {
+    public static ChatResponseDto fromEntity(List<Chat> chatEntityList, Long meetingId) {
         List<SingleChatResponseDto> chats = chatEntityList.stream()
                 .map(SingleChatResponseDto::fromEntity)
                 .toList();
         return ChatResponseDto.builder()
-                .meetingId(chatEntityList.get(0).getMeeting().getId())
+                .meetingId(meetingId)
                 .chats(chats).build();
     }
 }

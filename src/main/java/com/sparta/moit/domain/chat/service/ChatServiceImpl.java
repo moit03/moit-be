@@ -1,7 +1,7 @@
 package com.sparta.moit.domain.chat.service;
 
-import com.sparta.moit.domain.chat.dto.SendChatRequestDto;
 import com.sparta.moit.domain.chat.dto.ChatResponseDto;
+import com.sparta.moit.domain.chat.dto.SendChatRequestDto;
 import com.sparta.moit.domain.chat.dto.SendChatResponseDto;
 import com.sparta.moit.domain.chat.entity.Chat;
 import com.sparta.moit.domain.chat.repository.ChatRepository;
@@ -13,9 +13,7 @@ import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,11 +45,11 @@ public class ChatServiceImpl implements ChatService{
 
         List<Chat> chatList = chatRepository.findAllByMeetingOrderById(meeting);
 
-        return ChatResponseDto.fromEntity(chatList);
+        return ChatResponseDto.fromEntity(chatList, meetingId);
     }
 
     @Override
-    public SendChatResponseDto sendChat(Long meetingId,String email, SendChatRequestDto sendChatRequestDto) {
+    public SendChatResponseDto sendChat(Long meetingId, String email, SendChatRequestDto sendChatRequestDto) {
         /*
          * 해당 모임이 존재하는지 확인한다.
          * 해당 모임에 가입한 유저가 맞는 지 확인한다.
