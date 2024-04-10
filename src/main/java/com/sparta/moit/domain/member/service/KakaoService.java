@@ -155,10 +155,4 @@ public class KakaoService {
         }
         return kakaoUser;
     }
-
-    public String login() {
-        String createToken = jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
-        return createToken;
-    }
-
 }

@@ -89,12 +89,14 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PUBLIC_URL).permitAll()
-                        .requestMatchers("/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/region/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/meetings/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/region/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/skill").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/member/myinfo").permitAll()
                         .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/api/member/signin/naver").permitAll()
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/api/member/login").permitAll()
                         .anyRequest().authenticated()
         );
 

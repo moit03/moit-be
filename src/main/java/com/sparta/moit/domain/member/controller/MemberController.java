@@ -31,10 +31,4 @@ public class MemberController implements MemberControllerDocs {
         String token = naverService.naverLogin(code, state);
         return ResponseEntity.ok().body(token);
     }
-
-    @GetMapping("/login")
-    public ResponseEntity<?> login(){
-        String token = kakaoService.login();
-        return ResponseEntity.ok().body(token);
-    }
 }
