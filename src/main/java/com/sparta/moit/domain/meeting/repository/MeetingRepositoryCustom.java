@@ -21,4 +21,6 @@ public interface MeetingRepositoryCustom {
     List<GetMyPageDto> getMyPage(Long memberId);
 
     List<Meeting> findMeetingsByMember(Long memberId);
+
+    List<Meeting> findAllIncompleteMeetingsForHour();
 }
