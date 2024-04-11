@@ -78,7 +78,7 @@ public class KakaoServiceImpl implements KakaoService{
         body.add("grant_type", "authorization_code");
         body.add("client_id", "74153e11b9bd504556db7210160ed19d");
         body.add("client_secret", "AMlNyEikZaIgEBW9KBz7uIVe86PO381g");
-        body.add("redirect_uri", "http://localhost:5173/login/kakao");
+        body.add("redirect_uri", "http://my-hangterest.s3-website-us-east-1.amazonaws.com/login/kakao");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity

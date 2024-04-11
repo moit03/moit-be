@@ -1,6 +1,7 @@
 package com.sparta.moit.global.security;
 
 import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,8 +33,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        UserRoleEnum role = member.getRole();
+        String authority = role.getAuthority();
 
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("User");
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
+
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(simpleGrantedAuthority);
 

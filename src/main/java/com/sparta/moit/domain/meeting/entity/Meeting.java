@@ -20,7 +20,8 @@ import java.util.List;
 public class Meeting extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    @Column(name="id")
+    private Long id;
 
     @Column(name = "meeting_name")
     private String meetingName;
@@ -78,9 +79,10 @@ public class Meeting extends Timestamped {
     private List<MeetingCareer> careers = new ArrayList<>();
 
     @Builder
-    public Meeting(String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
+    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
                    String locationAddress, String contents, Short registeredCount, Short totalCount,
                    Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member creator, List<MeetingMember> meetingMembers) {
+        this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
         this.meetingStartTime = meetingStartTime;
@@ -110,8 +112,23 @@ public class Meeting extends Timestamped {
         this.regionSecondName = requestDto.getRegionSecondName();
     }
 
+    public void incrementRegisteredCount() {
+        if (registeredCount != null) {
+            registeredCount++;
+        } else {
+            registeredCount = 1;
+        }
+    }
+
+    public void decrementRegisteredCount() {
+        if (registeredCount > 0) {
+            registeredCount--;
+        }
+    }
+
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
     }
 
 }
+

@@ -1,20 +1,34 @@
 package com.sparta.moit.domain.chat.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.global.common.entity.Timestamped;
+import jakarta.persistence.*;
+import lombok.*;
 
 
 @Entity
+@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Chat {
+public class Chat extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String content;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Meeting meeting;
+
+    @Builder
+    public Chat(String content, Member member, Meeting meeting) {
+        this.content = content;
+        this.member = member;
+        this.meeting = meeting;
+    }
 }

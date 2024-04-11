@@ -2,9 +2,11 @@ package com.sparta.moit.domain.meeting.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -16,11 +18,17 @@ public interface MeetingService {
 
     Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
 
-    List<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Short> skillId, List<Short> careerId);
+    void deleteMeeting(Member member, Long meetingId);
 
-    Long enterMeeting(Member member, Long meetingId);
+    Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
+
+    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
 
     List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
 
-    void deleteMeeting(Member member, Long meetingId);
+    Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page);
+
+    Long enterMeeting(Member member, Long meetingId);
+
+    void leaveMeeting(Member member, Long meetingId);
 }

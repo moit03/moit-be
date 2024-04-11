@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ public class GetMeetingResponseDto {
     private String meetingName;
     private Short registeredCount;
     private Short totalCount;
+    private LocalDate meetingDate;
     private Double locationLat;
     private Double locationLng;
     private String locationAddress;
@@ -30,11 +32,12 @@ public class GetMeetingResponseDto {
 
 
     @Builder
-    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, List<Skill> skillList, List<Career> careerList, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
+    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, LocalDate meetingDate, Double locationLat, Double locationLng, List<Skill> skillList, List<Career> careerList, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
+        this.meetingDate = meetingDate;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
         this.meetingStartTime = meetingStartTime;
@@ -61,6 +64,7 @@ public class GetMeetingResponseDto {
                 .locationLng(meeting.getLocationLng())
                 .meetingStartTime(meeting.getMeetingStartTime())
                 .meetingEndTime(meeting.getMeetingEndTime())
+                .meetingDate(meeting.getMeetingDate())
                 .locationAddress(meeting.getLocationAddress())
                 .skillList(skillList)
                 .careerList(careerList)

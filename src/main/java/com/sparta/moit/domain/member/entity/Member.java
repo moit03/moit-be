@@ -31,6 +31,7 @@ public class Member {
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
+
     public Member(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;

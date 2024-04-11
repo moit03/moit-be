@@ -2,6 +2,7 @@ package com.sparta.moit.domain.meeting.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.entity.*;
@@ -17,9 +18,13 @@ import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.util.AddressUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j(topic = "Meeting Service Log")
@@ -84,24 +89,51 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingId;
     }
 
+    /*모임 삭제*/
+    @Override
+    @Transactional
+    public void deleteMeeting(Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        meetingRepository.deleteById(meetingId);
+    }
+
     /*모임 조회*/
     @Override
-    public List<GetMeetingResponseDto> getFilteredMeetingList(int page, Double locationLat, Double locationLng, List<Short> skillId, List<Short> careerId) {
-        List<Meeting> meetingList;
-        if (skillId != null) {
-            if (careerId != null) {
-                meetingList = meetingRepository.getMeetingsWithSkillAndCareer(locationLat, locationLng, skillId, careerId, 16, page);
-            } else {
-                meetingList = meetingRepository.getMeetingsWithSkill(locationLat, locationLng, skillId, 16, page);
-            }
-        } else {
-            if (careerId != null) {
-                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId, 16, page);
-            } else {
-                meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
-            }
-        }
+    public Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Slice<Meeting> sliceList = meetingRepository.getMeetingSlice(locationLat, locationLng, skillId, careerId, pageable);
+        return sliceList.map(GetMeetingResponseDto::fromEntity);
+    }
+
+    /*모임 상세 조회*/
+    @Override
+    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
+
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
+        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList);
+    }
+
+    /*주소별 모임 조회*/
+    @Override
+    public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
+        AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
+        List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    }
+
+    /* 모임 검색 */
+    @Override
+    public Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Slice<Meeting> meetingList = meetingRepository.findByKeyword(keyword, pageable);
+        return meetingList.map(GetMeetingResponseDto::fromEntity);
     }
 
     /*모임 참가*/
@@ -115,33 +147,49 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
+        /*중복 참가 여부 확인*/
+        Boolean isMember = meetingMemberRepository.existsByMemberIdAndMeetingId(member.getId(), meetingId);
+        if (isMember) {
+            throw new CustomException(ErrorCode.ALREADY_MEMBER);
+        }
+
+        /*현재 모임 참가 인원 수를 가져오기*/
+        Short registeredCount = meetingMemberRepository.countByMeetingId(meetingId);
+
+        /*모임의 최대 인원 수를 가져오기*/
+        Short totalCount = meeting.getTotalCount();
+
+        /*인원이 다 찼는지 확인*/
+        if (registeredCount == totalCount) {
+            throw new CustomException(ErrorCode.MEETING_FULL);
+        }
+
+        /*모임 엔티티의 등록된 참가자 수 업데이트*/
+        meeting.incrementRegisteredCount();
+
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member1)
                 .meeting(meeting)
                 .build();
         meetingMemberRepository.save(meetingMember);
-
         return meetingId;
     }
 
-    /*주소별 모임 조회*/
+    /*모임 탈퇴*/
     @Override
-    public List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException {
-        AddressResponseDto address = addressUtil.searchAddress(firstRegion, secondRegion);
-        List<Meeting> meetingList = meetingRepository.getNearestMeetings(Double.parseDouble(address.getLat()), Double.parseDouble(address.getLng()), 16, page);
-        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+    public void leaveMeeting(Member member, Long meetingId) {
+
+        Member member1 = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        MeetingMember meetingMember = meetingMemberRepository.findByMemberAndMeeting(member1, meeting)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_MEETING_MEMBER));
+
+        meeting.decrementRegisteredCount();
+
+        meetingMemberRepository.delete(meetingMember);
     }
-
-    /*모임 삭제*/
-    @Override
-    @Transactional
-    public void deleteMeeting(Member member, Long meetingId) {
-
-        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
-
-        meetingRepository.deleteById(meetingId);
-    }
-
-
 }
