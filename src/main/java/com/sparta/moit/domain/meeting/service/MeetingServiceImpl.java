@@ -49,7 +49,6 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-
         List<Long> skillIds = requestDto.getSkillIds();
         Meeting meeting = requestDto.toEntity(member);
         List<Skill> skills = skillRepository.findByIdIn(skillIds);
@@ -73,6 +72,11 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         Meeting savedMeeting = meetingRepository.save(meeting);
+        MeetingMember meetingMember = MeetingMember.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+        meetingMemberRepository.save(meetingMember);
         Long meetingId = savedMeeting.getId();
         return meetingId;
     }
@@ -97,7 +101,8 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
-        meetingRepository.deleteById(meetingId);
+        meeting.deleteStatus();
+
     }
 
     /*모임 조회*/
@@ -153,19 +158,26 @@ public class MeetingServiceImpl implements MeetingService {
             throw new CustomException(ErrorCode.ALREADY_MEMBER);
         }
 
-        /*현재 모임 참가 인원 수를 가져오기*/
-        Short registeredCount = meetingMemberRepository.countByMeetingId(meetingId);
+        /* 현재 모임 참가 인원 수를 가져오기 */
+        Short registeredCount = meeting.getRegisteredCount();
 
-        /*모임의 최대 인원 수를 가져오기*/
+        /* 모임의 최대 인원 수를 가져오기 */
         Short totalCount = meeting.getTotalCount();
 
-        /*인원이 다 찼는지 확인*/
-        if (registeredCount == totalCount) {
+
+        /*모임 엔티티의 등록된 참가자 수 업데이트*/
+        // 검증 로직 구현
+        meeting.incrementRegisteredCount();
+
+        /* 인원이 다 찼는지 확인 */
+        if (registeredCount >= totalCount) {
+            log.info("모임이 가득 찼습니다: {}", meetingId);
+            meeting.updateStatus();
+            meetingRepository.save(meeting);
+            log.info("ID가 {}인 모임의 상태를 FULL로 업데이트했습니다", meetingId);
             throw new CustomException(ErrorCode.MEETING_FULL);
         }
 
-        /*모임 엔티티의 등록된 참가자 수 업데이트*/
-        meeting.incrementRegisteredCount();
 
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member1)

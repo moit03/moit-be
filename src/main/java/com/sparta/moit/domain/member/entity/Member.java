@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.moit.domain.meeting.entity.MeetingMember;
 import jakarta.persistence.*;
@@ -28,7 +29,7 @@ public class Member {
     private Long kakaoId;
     private Long naverId;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
@@ -68,4 +69,5 @@ public class Member {
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
     }
+
 }

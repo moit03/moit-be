@@ -33,6 +33,4 @@ public class MeetingMember {
         meeting.addMeetingMember(this);
         member.addMeetingMember(this);
     }
-
-
 }
