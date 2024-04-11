@@ -117,12 +117,13 @@ public class Meeting extends Timestamped {
         this.regionSecondName = requestDto.getRegionSecondName();
     }
 
-    public void incrementRegisteredCount() {
+    public Short incrementRegisteredCount() {
         if (registeredCount != null) {
             registeredCount++;
         } else {
             registeredCount = 1;
         }
+        return registeredCount;
     }
 
     public void decrementRegisteredCount() {
