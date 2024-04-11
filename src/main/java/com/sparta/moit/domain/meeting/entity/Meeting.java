@@ -144,5 +144,9 @@ public class Meeting extends Timestamped {
         this.status = MeetingStatusEnum.DELETE;
     }
 
+    public void completeStatus() {
+        this.status = MeetingStatusEnum.COMPLETE;
+    }
+
 }
 

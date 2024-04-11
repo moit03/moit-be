@@ -7,11 +7,13 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.moit.domain.meeting.dto.GetMyPageDto;
 import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.sparta.moit.domain.meeting.entity.QCareer.career;
@@ -150,6 +152,18 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .where(meetingSkill.meeting.id.eq(meetingId))
                 .fetch();
     }
+
+    @Override
+    public List<Meeting> findAllIncompleteMeetingsForHour() {
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+
+        return queryFactory.selectFrom(meeting)
+                .where(meeting.status.notIn(MeetingStatusEnum.COMPLETE, MeetingStatusEnum.DELETE))
+                /* now() - 1hr <= meetingEndTime < now() */
+                .where(meeting.meetingStartTime.between(oneHourAgo, LocalDateTime.now()))
+                .fetch();
+    }
+
 
 
 
