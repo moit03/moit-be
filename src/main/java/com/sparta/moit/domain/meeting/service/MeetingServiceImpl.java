@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j(topic = "Meeting Service Log")
 @Service
@@ -164,20 +165,18 @@ public class MeetingServiceImpl implements MeetingService {
         /* 모임의 최대 인원 수를 가져오기 */
         Short totalCount = meeting.getTotalCount();
 
-
-        /*모임 엔티티의 등록된 참가자 수 업데이트*/
-        // 검증 로직 구현
-        meeting.incrementRegisteredCount();
-
-        /* 인원이 다 찼는지 확인 */
+        /* 인원이 다 찼는지 확인 : 예외처리 */
         if (registeredCount >= totalCount) {
-            log.info("모임이 가득 찼습니다: {}", meetingId);
-            meeting.updateStatus();
-            meetingRepository.save(meeting);
-            log.info("ID가 {}인 모임의 상태를 FULL로 업데이트했습니다", meetingId);
             throw new CustomException(ErrorCode.MEETING_FULL);
         }
 
+        /*모임 엔티티의 등록된 참가자 수 업데이트*/
+        registeredCount = meeting.incrementRegisteredCount(); /*모임 참가자 수 증가*/
+
+        /* 인원이 다 찼는지 확인 */
+        if (Objects.equals(registeredCount, totalCount)) {
+            meeting.updateStatus();
+        }
 
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member1)
