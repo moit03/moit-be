@@ -6,6 +6,7 @@ import com.sparta.moit.domain.meeting.repository.MeetingMemberRepository;
 import com.sparta.moit.domain.meeting.repository.MeetingRepository;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
+import com.sparta.moit.domain.mypage.dto.MypageMeetingResponseDto;
 import com.sparta.moit.domain.mypage.dto.MypageResponseDto;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
@@ -79,5 +80,11 @@ public class MypageServiceImpl implements MypageService {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public List<MypageMeetingResponseDto> getMypageMeetingList(Long memberId) {
+        List<Meeting> meetingList= meetingRepository.findMeetingsByMember(memberId);
+        return meetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
 }

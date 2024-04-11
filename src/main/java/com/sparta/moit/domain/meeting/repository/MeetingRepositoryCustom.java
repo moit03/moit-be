@@ -19,4 +19,6 @@ public interface MeetingRepositoryCustom {
     Slice<Meeting> findByKeyword(String keyword, Pageable pageable);
 
     List<GetMyPageDto> getMyPage(Long memberId);
+
+    List<Meeting> findMeetingsByMember(Long memberId);
 }
