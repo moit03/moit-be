@@ -41,7 +41,7 @@ public interface MeetingControllerDocs {
     @ApiResponse(responseCode = "200", description = "모임 상세 조회 완료",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = GetMeetingDetailResponseDto.class)))
-    ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId);
+    ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
     @Operation(summary = "주소별 모임 조회 기능", description = "주소별 모임 조회 API")
     ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException;

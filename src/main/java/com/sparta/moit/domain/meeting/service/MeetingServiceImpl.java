@@ -114,7 +114,7 @@ public class MeetingServiceImpl implements MeetingService {
         return sliceList.map(GetMeetingResponseDto::fromEntity);
     }
 
-    /*모임 상세 조회*/
+    /*모임 상세 조회 (비로그인)*/
     @Override
     public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
 
@@ -123,7 +123,20 @@ public class MeetingServiceImpl implements MeetingService {
 
         List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
         List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
-        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
+    }
+
+    /*모임 상세 조회 (로그인 유저) */
+    @Override
+    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member) {
+
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
+        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
+        Boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.getId(), meetingId);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin);
     }
 
     /*주소별 모임 조회*/
