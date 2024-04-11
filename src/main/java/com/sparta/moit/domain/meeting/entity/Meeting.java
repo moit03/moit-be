@@ -131,6 +131,10 @@ public class Meeting extends Timestamped {
         }
     }
 
+    public void updateStatus() {
+        this.status = MeetingStatusEnum.FULL;
+    }
+
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
     }

@@ -24,6 +24,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j(topic = "Meeting Service Log")
@@ -44,43 +45,10 @@ public class MeetingServiceImpl implements MeetingService {
                 .toList();
     }*/
 
-//    /*모임 등록*/
-//    @Override
-//    @Transactional
-//    public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-//
-//        List<Long> skillIds = requestDto.getSkillIds();
-//        Meeting meeting = requestDto.toEntity(member);
-//        List<Skill> skills = skillRepository.findByIdIn(skillIds);
-//
-//        for (Skill skill : skills) {
-//            MeetingSkill meetingSkill = MeetingSkill.builder()
-//                    .meeting(meeting)
-//                    .skill(skill)
-//                    .build();
-//            meeting.getSkills().add(meetingSkill);
-//        }
-//
-//        List<Long> careerIds = requestDto.getCareerIds();
-//        List<Career> careers = careerRepository.findByIdIn(careerIds);
-//        for (Career career : careers) {
-//            MeetingCareer meetingCareer = MeetingCareer.builder()
-//                    .meeting(meeting)
-//                    .career(career)
-//                    .build();
-//            meeting.getCareers().add(meetingCareer);
-//        }
-//
-//        Meeting savedMeeting = meetingRepository.save(meeting);
-//        Long meetingId = savedMeeting.getId();
-//        return meetingId;
-//    }
-
     /*모임 등록*/
     @Override
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-
         List<Long> skillIds = requestDto.getSkillIds();
         Meeting meeting = requestDto.toEntity(member);
         List<Skill> skills = skillRepository.findByIdIn(skillIds);
@@ -193,19 +161,26 @@ public class MeetingServiceImpl implements MeetingService {
             throw new CustomException(ErrorCode.ALREADY_MEMBER);
         }
 
-        /*현재 모임 참가 인원 수를 가져오기*/
-        Short registeredCount = meetingMemberRepository.countByMeetingId(meetingId);
+        /* 현재 모임 참가 인원 수를 가져오기 */
+        Short registeredCount = meeting.getRegisteredCount();
 
-        /*모임의 최대 인원 수를 가져오기*/
+        /* 모임의 최대 인원 수를 가져오기 */
         Short totalCount = meeting.getTotalCount();
 
-        /*인원이 다 찼는지 확인*/
-        if (registeredCount >= totalCount) {
-            throw new CustomException(ErrorCode.MEETING_FULL);
-        }
 
         /*모임 엔티티의 등록된 참가자 수 업데이트*/
         meeting.incrementRegisteredCount();
+
+        /* 인원이 다 찼는지 확인 */
+        if (registeredCount >= totalCount) {
+            log.info("모임이 가득 찼습니다: {}", meetingId);
+            meeting.updateStatus();
+            meetingRepository.save(meeting);
+//            meetingRepository.flush();
+            log.info("ID가 {}인 모임의 상태를 FULL로 업데이트했습니다", meetingId);
+            throw new CustomException(ErrorCode.MEETING_FULL);
+        }
+
 
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member1)
