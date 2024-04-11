@@ -70,7 +70,7 @@ public class Meeting extends Timestamped {
     @JoinColumn(name = "member_id")
     private Member creator;
 
-    @OneToMany(mappedBy = "meeting")
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
@@ -85,7 +85,7 @@ public class Meeting extends Timestamped {
     @Builder
     public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
                    String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member creator, List<MeetingMember> meetingMembers) {
+                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member creator, List<MeetingMember> meetingMembers, MeetingStatusEnum status) {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -101,7 +101,8 @@ public class Meeting extends Timestamped {
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
         this.creator = creator;
-        this.meetingMembers = meetingMembers;
+        this.meetingMembers = new ArrayList<>();
+        this.status = MeetingStatusEnum.OPEN;
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
@@ -130,9 +131,12 @@ public class Meeting extends Timestamped {
         }
     }
 
+    public void updateStatus() {
+        this.status = MeetingStatusEnum.FULL;
+    }
+
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
     }
-
 }
 

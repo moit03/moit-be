@@ -18,6 +18,7 @@ import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.util.AddressUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -49,7 +50,6 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-
         List<Long> skillIds = requestDto.getSkillIds();
         Meeting meeting = requestDto.toEntity(member);
         List<Skill> skills = skillRepository.findByIdIn(skillIds);
@@ -73,6 +73,11 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         Meeting savedMeeting = meetingRepository.save(meeting);
+        MeetingMember meetingMember = MeetingMember.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+        meetingMemberRepository.save(meetingMember);
         Long meetingId = savedMeeting.getId();
         return meetingId;
     }
@@ -153,19 +158,26 @@ public class MeetingServiceImpl implements MeetingService {
             throw new CustomException(ErrorCode.ALREADY_MEMBER);
         }
 
-        /*현재 모임 참가 인원 수를 가져오기*/
-        Short registeredCount = meetingMemberRepository.countByMeetingId(meetingId);
+        /* 현재 모임 참가 인원 수를 가져오기 */
+        Short registeredCount = meeting.getRegisteredCount();
 
-        /*모임의 최대 인원 수를 가져오기*/
+        /* 모임의 최대 인원 수를 가져오기 */
         Short totalCount = meeting.getTotalCount();
 
-        /*인원이 다 찼는지 확인*/
-        if (registeredCount == totalCount) {
-            throw new CustomException(ErrorCode.MEETING_FULL);
-        }
 
         /*모임 엔티티의 등록된 참가자 수 업데이트*/
         meeting.incrementRegisteredCount();
+
+        /* 인원이 다 찼는지 확인 */
+        if (registeredCount >= totalCount) {
+            log.info("모임이 가득 찼습니다: {}", meetingId);
+            meeting.updateStatus();
+            meetingRepository.save(meeting);
+//            meetingRepository.flush();
+            log.info("ID가 {}인 모임의 상태를 FULL로 업데이트했습니다", meetingId);
+            throw new CustomException(ErrorCode.MEETING_FULL);
+        }
+
 
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member1)
