@@ -15,10 +15,9 @@ public class RegionFirstResponseDto {
     }
 
     public static RegionFirstResponseDto fromEntity(RegionFirst regionFirst){
-        String regionName = regionFirst.getRegionFirstName().substring(0, 2);
         return RegionFirstResponseDto.builder()
                 .regionFirstId(regionFirst.getRegionFirstId())
-                .regionFirstName(regionName)
+                .regionFirstName(regionFirst.getRegionFirstName())
                 .build();
     }
 }
