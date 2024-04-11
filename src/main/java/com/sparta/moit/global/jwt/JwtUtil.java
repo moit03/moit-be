@@ -25,7 +25,7 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
+    private final long TOKEN_TIME = 60 * 60 * 1000L; //60 min
 
     /* refresh token 유효 시간*/
     public static final long REFRESH_TOKEN_VALIDITY_MS = 14 * 24 * 60 * 60 * 1000L; // 14 days
