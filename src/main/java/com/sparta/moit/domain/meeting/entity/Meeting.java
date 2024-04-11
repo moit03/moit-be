@@ -62,11 +62,15 @@ public class Meeting extends Timestamped {
     @Column(name = "region_second_name")
     private String regionSecondName;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private MeetingStatusEnum status;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member creator;
 
-    @OneToMany(mappedBy = "meeting")
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
@@ -81,7 +85,7 @@ public class Meeting extends Timestamped {
     @Builder
     public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
                    String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, Member creator, List<MeetingMember> meetingMembers) {
+                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName,MeetingStatusEnum status, Member creator, List<MeetingMember> meetingMembers) {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -96,8 +100,9 @@ public class Meeting extends Timestamped {
         this.locationLng = locationLng;
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
+        this.status = MeetingStatusEnum.OPEN;
         this.creator = creator;
-        this.meetingMembers = meetingMembers;
+        this.meetingMembers = new ArrayList<>();
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
@@ -112,12 +117,13 @@ public class Meeting extends Timestamped {
         this.regionSecondName = requestDto.getRegionSecondName();
     }
 
-    public void incrementRegisteredCount() {
+    public Short incrementRegisteredCount() {
         if (registeredCount != null) {
             registeredCount++;
         } else {
             registeredCount = 1;
         }
+        return registeredCount;
     }
 
     public void decrementRegisteredCount() {
@@ -126,8 +132,16 @@ public class Meeting extends Timestamped {
         }
     }
 
+    public void updateStatus() {
+        this.status = MeetingStatusEnum.FULL;
+    }
+
     public void addMeetingMember(MeetingMember meetingMember) {
         this.meetingMembers.add(meetingMember);
+    }
+
+    public void deleteStatus() {
+        this.status = MeetingStatusEnum.DELETE;
     }
 
 }

@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j(topic = "Meeting Service Log")
 @Service
@@ -49,7 +50,6 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-
         List<Long> skillIds = requestDto.getSkillIds();
         Meeting meeting = requestDto.toEntity(member);
         List<Skill> skills = skillRepository.findByIdIn(skillIds);
@@ -73,6 +73,11 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         Meeting savedMeeting = meetingRepository.save(meeting);
+        MeetingMember meetingMember = MeetingMember.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+        meetingMemberRepository.save(meetingMember);
         Long meetingId = savedMeeting.getId();
         return meetingId;
     }
@@ -97,7 +102,8 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
-        meetingRepository.deleteById(meetingId);
+        meeting.deleteStatus();
+
     }
 
     /*모임 조회*/
@@ -153,19 +159,24 @@ public class MeetingServiceImpl implements MeetingService {
             throw new CustomException(ErrorCode.ALREADY_MEMBER);
         }
 
-        /*현재 모임 참가 인원 수를 가져오기*/
-        Short registeredCount = meetingMemberRepository.countByMeetingId(meetingId);
+        /* 현재 모임 참가 인원 수를 가져오기 */
+        Short registeredCount = meeting.getRegisteredCount();
 
-        /*모임의 최대 인원 수를 가져오기*/
+        /* 모임의 최대 인원 수를 가져오기 */
         Short totalCount = meeting.getTotalCount();
 
-        /*인원이 다 찼는지 확인*/
-        if (registeredCount == totalCount) {
+        /* 인원이 다 찼는지 확인 : 예외처리 */
+        if (registeredCount >= totalCount) {
             throw new CustomException(ErrorCode.MEETING_FULL);
         }
 
         /*모임 엔티티의 등록된 참가자 수 업데이트*/
-        meeting.incrementRegisteredCount();
+        registeredCount = meeting.incrementRegisteredCount(); /*모임 참가자 수 증가*/
+
+        /* 인원이 다 찼는지 확인 */
+        if (Objects.equals(registeredCount, totalCount)) {
+            meeting.updateStatus();
+        }
 
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member1)
