@@ -103,9 +103,6 @@ public class MeetingServiceImpl implements MeetingService {
 
         meeting.deleteStatus();
 
-//        meetingMemberRepository.save(meeting);
-
-        meetingRepository.deleteById(meetingId);
     }
 
     /*모임 조회*/
@@ -169,6 +166,7 @@ public class MeetingServiceImpl implements MeetingService {
 
 
         /*모임 엔티티의 등록된 참가자 수 업데이트*/
+        // 검증 로직 구현
         meeting.incrementRegisteredCount();
 
         /* 인원이 다 찼는지 확인 */
@@ -176,7 +174,6 @@ public class MeetingServiceImpl implements MeetingService {
             log.info("모임이 가득 찼습니다: {}", meetingId);
             meeting.updateStatus();
             meetingRepository.save(meeting);
-//            meetingRepository.flush();
             log.info("ID가 {}인 모임의 상태를 FULL로 업데이트했습니다", meetingId);
             throw new CustomException(ErrorCode.MEETING_FULL);
         }
