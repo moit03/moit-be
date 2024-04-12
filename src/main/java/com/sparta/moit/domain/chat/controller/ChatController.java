@@ -41,7 +41,6 @@ public class ChatController implements ChatControllerDocs {
             , Principal principal
             , @RequestBody SendChatRequestDto sendChatRequestDto) {
         String email = principal.getName();
-
         messagingTemplate.convertAndSend("/topic/rooms/" + meetingId + "/chat", chatService.sendChat(meetingId, email, sendChatRequestDto));
     }
 }
