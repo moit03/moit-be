@@ -95,9 +95,6 @@ public class KakaoServiceImpl implements KakaoService{
         /* HTTP 응답 (JSON) -> 액세스 토큰 파싱 */
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
         String accessToken = jsonNode.get("access_token").asText();
-        String refreshToken = jsonNode.get("refresh_token").asText();
-
-        refreshTokenService.createAndSaveRefreshToken("kakao", refreshToken); // 리프레시 토큰 저장
 
         /*  access token 반환 */
         return accessToken;
