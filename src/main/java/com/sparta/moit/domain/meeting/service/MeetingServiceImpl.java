@@ -6,10 +6,7 @@ import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.entity.*;
-import com.sparta.moit.domain.meeting.repository.CareerRepository;
-import com.sparta.moit.domain.meeting.repository.MeetingMemberRepository;
-import com.sparta.moit.domain.meeting.repository.MeetingRepository;
-import com.sparta.moit.domain.meeting.repository.SkillRepository;
+import com.sparta.moit.domain.meeting.repository.*;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.global.common.dto.AddressResponseDto;
@@ -37,6 +34,8 @@ public class MeetingServiceImpl implements MeetingService {
     private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
     private final MeetingMemberRepository meetingMemberRepository;
+    private final MeetingSkillRepository meetingSkillRepository;
+    private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
 
 
@@ -50,16 +49,18 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-        List<Long> skillIds = requestDto.getSkillIds();
-        Meeting meeting = requestDto.toEntity(member);
-        List<Skill> skills = skillRepository.findByIdIn(skillIds);
 
+        Meeting meeting = requestDto.toEntity(member);
+        Meeting savedMeeting = meetingRepository.save(meeting);
+
+        List<Long> skillIds = requestDto.getSkillIds();
+        List<Skill> skills = skillRepository.findByIdIn(skillIds);
         for (Skill skill : skills) {
             MeetingSkill meetingSkill = MeetingSkill.builder()
                     .meeting(meeting)
                     .skill(skill)
                     .build();
-            meeting.getSkills().add(meetingSkill);
+            meetingSkillRepository.save(meetingSkill);
         }
 
         List<Long> careerIds = requestDto.getCareerIds();
@@ -69,17 +70,16 @@ public class MeetingServiceImpl implements MeetingService {
                     .meeting(meeting)
                     .career(career)
                     .build();
-            meeting.getCareers().add(meetingCareer);
+            meetingCareerRepository.save(meetingCareer);
         }
 
-        Meeting savedMeeting = meetingRepository.save(meeting);
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member)
                 .meeting(meeting)
                 .build();
         meetingMemberRepository.save(meetingMember);
-        Long meetingId = savedMeeting.getId();
-        return meetingId;
+
+        return savedMeeting.getId();
     }
 
     /*모임 수정*/
