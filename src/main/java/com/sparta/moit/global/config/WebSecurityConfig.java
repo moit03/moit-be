@@ -98,6 +98,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/member/signin/naver").permitAll()
                         .requestMatchers("/api/member/login").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/app/api/meetings/**").permitAll()
+                        .requestMatchers("/topic/rooms/**").permitAll()
                         .anyRequest().authenticated()
         );
 
