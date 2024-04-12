@@ -22,6 +22,8 @@ public interface MeetingService {
 
     Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
+    List<GetMeetingResponseDto> getMeetingListJpql(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
+
     GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
 
     GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member);

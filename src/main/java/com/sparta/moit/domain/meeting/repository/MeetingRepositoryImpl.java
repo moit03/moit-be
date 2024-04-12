@@ -59,16 +59,14 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
         List<Meeting> meetingList = queryFactory
                 .selectFrom(meeting)
                 .distinct()
-                .leftJoin(meetingSkill)
-                .on(meeting.id.eq(meetingSkill.meeting.id))
-                .leftJoin(meetingCareer)
-                .on(meeting.id.eq(meetingCareer.meeting.id))
+                .leftJoin(meeting.skills, meetingSkill)
+                .leftJoin(meeting.careers, meetingCareer)
                 .where(
                         skillEq(skillId),
                         careerEq(careerId)
                 )
                 .orderBy(
-                        distanceExpression(locationLat, locationLng).asc()
+                        distanceExpression2(locationLat, locationLng).asc()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -126,11 +124,17 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private BooleanExpression skillEq(List<Long> skillId) {
         return skillId == null || skillId.isEmpty() ? null : meetingSkill.skill.Id.in(skillId);
     }
-
+    /* MySQL 내장 함수 */
     private ComparableExpressionBase<Double> distanceExpression(Double locationLat, Double locationLng) {
         return Expressions.numberTemplate(Double.class,
                 "ST_DISTANCE_SPHERE(point({0}, {1}), point(meeting.locationLng, meeting.locationLat))",
                 locationLng, locationLat);
+    }
+    /* 직접 작성한 OrderBy (하버사인 공식) */
+    private ComparableExpressionBase<Double> distanceExpression2(Double locationLat, Double locationLng) {
+        return Expressions.numberTemplate(Double.class,
+                "(6371 * acos(cos(radians(meeting.locationLat)) * cos(radians({0})) * cos(radians({1}) - radians(meeting.locationLng)) + sin(radians(meeting.locationLat)) * sin(radians({0}))))",
+                locationLat, locationLng);
     }
 
     @Override

@@ -50,4 +50,10 @@ public class MemberController {
         /*로그아웃 메시지 반환*/
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");
     }
+
+    @GetMapping("/login")
+    public ResponseEntity<?> login(){
+        String token = kakaoService.login();
+        return ResponseEntity.ok().body(token);
+    }
 }

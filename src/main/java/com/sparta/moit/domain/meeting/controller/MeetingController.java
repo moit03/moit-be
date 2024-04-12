@@ -74,6 +74,28 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
 
+    /*모임 조회*/
+    @GetMapping("/jpql")
+    public ResponseEntity<?> getMeetingListJPQL(@RequestParam Double locationLat,
+                                                @RequestParam Double locationLng,
+                                                @RequestParam(required = false) List<Long> skillId,
+                                                @RequestParam(required = false) List<Long> careerId,
+                                                @RequestParam(defaultValue = "1") int page) {
+        List<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListJpql(page, locationLat, locationLng, skillId, careerId);
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
+
+    /*모임 조회 NativeQuery + */
+    @GetMapping("/jpql/slice")
+    public ResponseEntity<?> getMeetingListJPQLSlice(@RequestParam Double locationLat,
+                                                @RequestParam Double locationLng,
+                                                @RequestParam(required = false) List<Long> skillId,
+                                                @RequestParam(required = false) List<Long> careerId,
+                                                @RequestParam(defaultValue = "1") int page) {
+        List<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListJpql(page, locationLat, locationLng, skillId, careerId);
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
+
     /*모임 상세 조회*/
     @GetMapping("/meetings/{meetingId}")
     public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {

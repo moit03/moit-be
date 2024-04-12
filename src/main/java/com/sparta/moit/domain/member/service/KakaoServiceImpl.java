@@ -35,6 +35,9 @@ public class KakaoServiceImpl implements KakaoService{
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
 
+    public String login() {
+        return jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
+    }
     public MemberResponseDto kakaoLogin(String code) throws JsonProcessingException {
         /* 1. "인가 코드"로 "액세스 토큰" 요청 */
         String accessToken = getToken(code);
