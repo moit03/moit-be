@@ -109,7 +109,7 @@ public class MeetingServiceImpl implements MeetingService {
     /*모임 조회*/
     @Override
     public Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
-        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 10);
         Slice<Meeting> sliceList = meetingRepository.getMeetingSlice(locationLat, locationLng, skillId, careerId, pageable);
         return sliceList.map(GetMeetingResponseDto::fromEntity);
     }
@@ -150,7 +150,7 @@ public class MeetingServiceImpl implements MeetingService {
     /* 모임 검색 */
     @Override
     public Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page) {
-        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 16);
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 10);
         Slice<Meeting> meetingList = meetingRepository.findByKeyword(keyword, pageable);
         return meetingList.map(GetMeetingResponseDto::fromEntity);
     }
