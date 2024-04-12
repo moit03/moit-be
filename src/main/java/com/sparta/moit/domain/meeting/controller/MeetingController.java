@@ -76,9 +76,13 @@ public class MeetingController implements MeetingControllerDocs {
 
     /*모임 상세 조회*/
     @GetMapping("/meetings/{meetingId}")
-    public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId) {
-        GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId);
-        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDto));
+    public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userDetails == null ){
+            GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId);
+            return ResponseEntity.ok().body(ResponseDto.success("비로그인 조회 완료", responseDto));
+        }
+        GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId, userDetails.getUser());
+        return ResponseEntity.ok().body(ResponseDto.success("로그인 유저의 조회 완료", responseDto));
     }
 
     /*주소별 모임 조회*/

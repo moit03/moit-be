@@ -24,6 +24,8 @@ public interface MeetingService {
 
     GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
 
+    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member);
+
     List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
 
     Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page);
