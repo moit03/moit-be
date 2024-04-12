@@ -121,9 +121,8 @@ public class NaverServiceImpl implements NaverService{
         );
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-        String strId = jsonNode.get("response").get("id").asText();
-        log.info("strId: " + strId);
-        Long id = Long.parseLong(strId);
+        String id = jsonNode.get("response").get("id").asText();
+        log.info(id);
         String name = jsonNode.get("response").get("name").asText();
         String email = jsonNode.get("response").get("email").asText();
 
@@ -134,7 +133,7 @@ public class NaverServiceImpl implements NaverService{
     private Member registerNaverUserIfNeeded(NaverUserInfoDto naverUserInfo) {
 
         /* DB 에 중복된 Naver Id 가 있는지 확인 */
-        Long naverId = naverUserInfo.getId();
+        String naverId = naverUserInfo.getId();
         log.info("Naver ID: " + naverId);
         Member naverUser = memberRepository.findByNaverId(naverId).orElse(null);
         log.info("Existing Naver User: " + naverUser);
