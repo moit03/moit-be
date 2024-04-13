@@ -26,7 +26,7 @@ public class Member {
     @Column(name = "kakao_id")
     private Long kakaoId;
     @Column(name = "naver_id")
-    private Long naverId;
+    private String naverId;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
     @JsonIgnore
@@ -41,7 +41,7 @@ public class Member {
     }
 
     @Builder
-    public Member (String username, String password, String email, UserRoleEnum role, Long kakaoId, Long naverId){
+    public Member (String username, String password, String email, UserRoleEnum role, Long kakaoId, String naverId){
         this.username = username;
         this.password = password;
         this.email = email;
@@ -55,7 +55,7 @@ public class Member {
         return this;
     }
 
-    public Member updateNaverId(Long naverId) {
+    public Member updateNaverId(String naverId) {
         this.naverId = naverId;
         return this;
     }

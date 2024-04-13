@@ -75,7 +75,7 @@ public class MeetingController implements MeetingControllerDocs {
     }
 
     /*모임 상세 조회*/
-    @GetMapping("/meetings/{meetingId}")
+    @GetMapping("/{meetingId}")
     public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         if (userDetails == null ){
             GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId);

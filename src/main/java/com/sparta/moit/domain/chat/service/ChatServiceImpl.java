@@ -14,6 +14,10 @@ import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +35,7 @@ public class ChatServiceImpl implements ChatService{
     private final MemberRepository memberRepository;
 
     @Override
-    public ChatResponseDto getChatList(Member member, Long meetingId) {
+    public ChatResponseDto getChatList(Long meetingId, int page, Member member) {
         /*
          * 해당 모임이 존재하는지 확인한다.
          * 해당 모임에 가입한 유져가 맞는 지 확인한다.
@@ -39,11 +43,15 @@ public class ChatServiceImpl implements ChatService{
          * */
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
         if (!isMeetingMember(member, meeting)) {
             throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
         }
 
-        List<Chat> chatList = chatRepository.findAllByMeetingOrderById(meeting);
+        int CHAT_PAGE_SIZE = 20;
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), CHAT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "id"));
+
+        Slice<Chat> chatList = chatRepository.findAllByMeetingOrderByIdDesc(meeting, pageable);
 
         return ChatResponseDto.fromEntity(chatList, meetingId);
     }

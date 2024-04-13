@@ -121,7 +121,8 @@ public class NaverServiceImpl implements NaverService{
         );
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-        Long id = jsonNode.get("response").get("id").asLong();
+        String id = jsonNode.get("response").get("id").asText();
+        log.info(id);
         String name = jsonNode.get("response").get("name").asText();
         String email = jsonNode.get("response").get("email").asText();
 
@@ -132,8 +133,10 @@ public class NaverServiceImpl implements NaverService{
     private Member registerNaverUserIfNeeded(NaverUserInfoDto naverUserInfo) {
 
         /* DB 에 중복된 Naver Id 가 있는지 확인 */
-        Long naverId = naverUserInfo.getId();
+        String naverId = naverUserInfo.getId();
+        log.info("Naver ID: " + naverId);
         Member naverUser = memberRepository.findByNaverId(naverId).orElse(null);
+        log.info("Existing Naver User: " + naverUser);
 
         if (naverUser == null) {
             String naverEmail = naverUserInfo.getEmail();
@@ -142,6 +145,7 @@ public class NaverServiceImpl implements NaverService{
                 naverUser = sameEmailUser;
                 /* 기존 회원정보에 Naver Id 추가 */
                 naverUser = naverUser.updateNaverId(naverId);
+                log.info("Naver Email: " + naverEmail);
             } else {
                 /* 신규 회원가입 */
                 /* password: random UUID */
@@ -155,6 +159,7 @@ public class NaverServiceImpl implements NaverService{
                         .naverId(naverId)
                         .build();
             }
+            log.info("Final Naver User: " + naverUser);
             memberRepository.save(naverUser);
         }
         return naverUser;
