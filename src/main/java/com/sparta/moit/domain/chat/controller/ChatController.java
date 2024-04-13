@@ -13,10 +13,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -30,8 +27,10 @@ public class ChatController implements ChatControllerDocs {
 
     /* 채팅방 입장 전 채팅 목록 불러오기 */
     @GetMapping("/api/meetings/{meetingId}/chats")
-    public ResponseEntity<?> getChatList(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ChatResponseDto responseDto = chatService.getChatList(userDetails.getUser(), meetingId);
+    public ResponseEntity<?> getChatList(@PathVariable Long meetingId
+            , @RequestParam(defaultValue = "1") int page
+            , @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ChatResponseDto responseDto = chatService.getChatList(meetingId, page, userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("채팅 불러오기 완료", responseDto));
     }
 

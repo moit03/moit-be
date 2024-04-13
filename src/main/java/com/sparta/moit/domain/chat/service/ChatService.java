@@ -6,7 +6,7 @@ import com.sparta.moit.domain.chat.dto.SendChatResponseDto;
 import com.sparta.moit.domain.member.entity.Member;
 
 public interface ChatService {
-    ChatResponseDto getChatList(Member member, Long meetingId);
+    ChatResponseDto getChatList(Long meetingId, int page, Member member);
 
     SendChatResponseDto sendChat(Long meetingId, String email, SendChatRequestDto chatRequest);
 }
