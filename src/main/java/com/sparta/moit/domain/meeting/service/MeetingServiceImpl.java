@@ -21,7 +21,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,13 +36,6 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingSkillRepository meetingSkillRepository;
     private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
-
-
-    /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
-        List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
-        return result.stream().map(GetMeetingResponseDto::fromEntity)
-                .toList();
-    }*/
 
     /*모임 등록*/
     @Override
@@ -114,8 +106,9 @@ public class MeetingServiceImpl implements MeetingService {
         return sliceList.map(GetMeetingResponseDto::fromEntity);
     }
 
+    /* 모임 조회 (NativeQuery) */
     @Override
-    public List<GetMeetingResponseDto> getMeetingListJpql(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
+    public List<GetMeetingResponseDto> getMeetingListNativeQuery(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
         List<Meeting> meetingList;
         if (skillId != null) {
             if (careerId != null) {

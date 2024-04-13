@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface MeetingService {
 
-//    List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName);
-
     Long createMeeting(CreateMeetingRequestDto requestDto, Member member);
 
     Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
@@ -22,7 +20,7 @@ public interface MeetingService {
 
     Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
-    List<GetMeetingResponseDto> getMeetingListJpql(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
+    List<GetMeetingResponseDto> getMeetingListNativeQuery(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
     GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
 
