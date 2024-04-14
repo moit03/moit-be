@@ -22,9 +22,11 @@ public class RefreshTokenService {
     /*리프레시 토큰 관리 로직
      * 토큰 생성, 저장, 검증, 삭제, 액세스 토큰 갱신 기능 수행*/
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
     private final JwtUtil jwtUtil;
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil) {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, RedisService redisService, JwtUtil jwtUtil) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.redisService = redisService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -36,13 +38,13 @@ public class RefreshTokenService {
                 .email(email)
                 .expiryDate(expiryDate)
                 .build();
-        refreshTokenRepository.save(refreshToken);
+        redisService.saveRefreshToken(refreshToken);
         return refreshToken.getToken();
     }
 
     /*리프레시 토큰 검증*/
     public boolean validateRefreshToken(String token) {
-        return refreshTokenRepository.findByToken(token)
+        return redisService.findRefreshToken(token)
                 .map(RefreshToken::getExpiryDate)
                 .map(expiryDate -> !expiryDate.before(new Date()))
                 .orElse(false);

@@ -1,7 +1,9 @@
 package com.sparta.moit.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
+import com.sparta.moit.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -18,10 +20,13 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
+
+    private final MemberRepository memberRepository;
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
@@ -33,13 +38,52 @@ public class JwtUtil {
 
     @Value("${jwt.secret.key}")
     private String secretKey;
+    @Value("${jwt.refresh.token.expire.time}")
+    private long refreshTokenExpireTime;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    public JwtUtil(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
+    }
+
+    /* Test */
+    public String createTokenForUser(Member user) {
+        Date now = new Date();
+
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(user.getEmail())
+                        .claim(AUTHORIZATION_KEY, user.getRole()) // 사용자 권한
+                        .setExpiration(new Date(now.getTime() + TOKEN_TIME))
+                        .setIssuedAt(now)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+    }
+    public String createRefreshTokenForUser(Member user) {
+        // 리프레시 토큰 생성 (유니크 토큰 생성 방법)
+        String refreshToken = UUID.randomUUID().toString();
+
+        // 리프레시 토큰과 만료 시간을 Member 엔터티에 저장
+        user = Member.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .refreshToken(refreshToken)
+                .refreshTokenExpiry(new Date(System.currentTimeMillis() + refreshTokenExpireTime))
+                .build();
+
+        // 데이터베이스에 새로운 Member 엔터티 업데이트 (리프레시 토큰과 만료 시간 추가)
+         memberRepository.save(user); // 주석 해제하고 memberRepository를 주입하여 사용
+
+        return refreshToken;
     }
 
     public String createToken(String email, UserRoleEnum role) {
@@ -82,25 +126,6 @@ public class JwtUtil {
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
             sendErrorResponse(res, HttpStatus.UNAUTHORIZED.value(), "JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            return false;
-        }
-    }
-
-    public boolean validateToken(String token) throws IOException {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-            return false;
-        } catch (ExpiredJwtException e) {
-            log.error("Expired JWT token, 만료된 JWT token 입니다.");
-            return false;
-        } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-            return false;
-        } catch (IllegalArgumentException e) {
-            log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
             return false;
         }
     }

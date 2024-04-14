@@ -1,5 +1,7 @@
 package com.sparta.moit.global.service;
 
+import com.sparta.moit.global.common.entity.RefreshToken;
+import com.sparta.moit.global.repository.RedisRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -18,7 +21,15 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisRefreshTokenRepository redisRefreshTokenRepository;
 
+    public void saveRefreshToken(RefreshToken refreshToken) {
+        redisRefreshTokenRepository.save(refreshToken);
+    }
+
+    public Optional<RefreshToken> findRefreshToken(String token) {
+        return redisRefreshTokenRepository.findById(token);
+    }
     public void setValues(String key, String data) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         values.set(key, data);
