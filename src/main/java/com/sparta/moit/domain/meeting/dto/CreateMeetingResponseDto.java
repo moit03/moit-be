@@ -7,41 +7,43 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 public class CreateMeetingResponseDto {
-    private Long meetingId;
-    private String meetingName;
-    private LocalDate meetingDate;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime meetingEndTime;
-    private String locationAddress;
-    private Integer budget;
-    private String contents;
-    private Short registeredCount;
-    private Short totalCount;
-    private Double locationLat;
-    private Double locationLng;
-    private String regionFirstName;
-    private String regionSecondName;
-    private List<Skill> skillList;
-    private List<Career> careerList;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime createdAt;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime modifiedAt;
+    private final Long meetingId;
+    private final String meetingName;
+    private final LocalDate meetingDate;
+    @JsonFormat(pattern = "HH:mm")
+    private final ZonedDateTime meetingStartTime;
+    @JsonFormat(pattern = "HH:mm")
+    private final ZonedDateTime meetingEndTime;
+    private final String locationAddress;
+    private final Integer budget;
+    private final String contents;
+    private final Short registeredCount;
+    private final Short totalCount;
+    private final Double locationLat;
+    private final Double locationLng;
+    private final String regionFirstName;
+    private final String regionSecondName;
+    private final List<Skill> skillList;
+    private final List<Career> careerList;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private final ZonedDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private final ZonedDateTime modifiedAt;
 
     @Builder
     public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime;
-        this.meetingEndTime = meetingEndTime;
+        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         this.budget = budget;
         this.contents = contents;
         this.locationAddress = locationAddress;
@@ -53,8 +55,8 @@ public class CreateMeetingResponseDto {
         this.regionSecondName = regionSecondName;
         this.skillList = skillList;
         this.careerList = careerList;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+        this.createdAt = createdAt.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.modifiedAt = modifiedAt.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
     }
 
     public static CreateMeetingResponseDto fromEntity(Meeting meeting) {
