@@ -7,38 +7,35 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
 public class GetMeetingDetailResponseDto {
 
-    private Long meetingId;
-    private String meetingName;
+    private final Long meetingId;
+    private final String meetingName;
+    private final String creatorName;
+    private final String creatorEmail;
+    private final List<String> careerNameList;
+    private final List<String> skillNameList;
+    private final LocalDate meetingDate;
 
-    private String creatorName;
-    private String creatorEmail;
+    @JsonFormat(pattern = "HH:mm")
+    private final ZonedDateTime meetingStartTime;
+    @JsonFormat(pattern = "HH:mm")
+    private final ZonedDateTime meetingEndTime;
 
-    private List<String> careerNameList;
-    private List<String> skillNameList;
+    private final String locationAddress;
 
-    private LocalDate meetingDate;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime meetingEndTime;
-
-    private String locationAddress;
-
-    private Short registeredCount;
-    private Short totalCount;
-
-    private Integer budget;
-
-    private String contents;
-
-    private Double locationLat;
-    private Double locationLng;
-    private boolean isJoin;
+    private final Short registeredCount;
+    private final Short totalCount;
+    private final Integer budget;
+    private final String contents;
+    private final Double locationLat;
+    private final Double locationLng;
+    private final boolean isJoin;
 
     @Builder
     public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin) {
@@ -49,8 +46,8 @@ public class GetMeetingDetailResponseDto {
         this.careerNameList = careerNameList;
         this.skillNameList = skillNameList;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime;
-        this.meetingEndTime = meetingEndTime;
+        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         this.locationAddress = locationAddress;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
