@@ -1,10 +1,8 @@
 package com.sparta.moit.global.service;
 
 import com.sparta.moit.global.common.entity.RedisRefreshToken;
-import com.sparta.moit.global.common.entity.RefreshToken;
 import com.sparta.moit.global.repository.RedisRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;

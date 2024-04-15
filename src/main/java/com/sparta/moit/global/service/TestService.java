@@ -4,11 +4,9 @@ import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.global.common.entity.RedisRefreshToken;
-import com.sparta.moit.global.common.entity.RefreshToken;
 import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.repository.RedisRefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -36,4 +36,14 @@ public class RedisRefreshToken {
         this.email = email;
         this.expiryDate = expiryDate;
     }
+
+
+    public void setToken(String refreshTokenString) {
+    }
+
+    public void setEmail(String email) {
+    }
+
+    public void setDate(Date date) {
+    }
 }

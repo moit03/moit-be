@@ -1,6 +1,6 @@
 package com.sparta.moit.global.config;
 
-import com.sparta.moit.global.common.entity.RefreshToken;
+import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
