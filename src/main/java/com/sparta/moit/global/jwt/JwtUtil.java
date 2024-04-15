@@ -54,38 +54,38 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    /* Test */
-    public String createTokenForUser(Member user) {
-        Date now = new Date();
-
-        return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(user.getEmail())
-                        .claim(AUTHORIZATION_KEY, user.getRole()) // 사용자 권한
-                        .setExpiration(new Date(now.getTime() + TOKEN_TIME))
-                        .setIssuedAt(now)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
-    }
-    public String createRefreshTokenForUser(Member user) {
-        // 리프레시 토큰 생성 (유니크 토큰 생성 방법)
-        String refreshToken = UUID.randomUUID().toString();
-
-        // 리프레시 토큰과 만료 시간을 Member 엔터티에 저장
-        user = Member.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .role(user.getRole())
-                .refreshToken(refreshToken)
-                .refreshTokenExpiry(new Date(System.currentTimeMillis() + refreshTokenExpireTime))
-                .build();
-
-        // 데이터베이스에 새로운 Member 엔터티 업데이트 (리프레시 토큰과 만료 시간 추가)
-         memberRepository.save(user); // 주석 해제하고 memberRepository를 주입하여 사용
-
-        return refreshToken;
-    }
+//    /* Test */
+//    public String createTokenForUser(Member user) {
+//        Date now = new Date();
+//
+//        return BEARER_PREFIX +
+//                Jwts.builder()
+//                        .setSubject(user.getEmail())
+//                        .claim(AUTHORIZATION_KEY, user.getRole()) // 사용자 권한
+//                        .setExpiration(new Date(now.getTime() + TOKEN_TIME))
+//                        .setIssuedAt(now)
+//                        .signWith(key, signatureAlgorithm)
+//                        .compact();
+//    }
+//    public String createRefreshTokenForUser(Member user) {
+//        // 리프레시 토큰 생성 (유니크 토큰 생성 방법)
+//        String refreshToken = UUID.randomUUID().toString();
+//
+//        // 리프레시 토큰과 만료 시간을 Member 엔터티에 저장
+//        user = Member.builder()
+//                .id(user.getId())
+//                .email(user.getEmail())
+//                .password(user.getPassword())
+//                .role(user.getRole())
+//                .refreshToken(refreshToken)
+//                .refreshTokenExpiry(new Date(System.currentTimeMillis() + refreshTokenExpireTime))
+//                .build();
+//
+//        // 데이터베이스에 새로운 Member 엔터티 업데이트 (리프레시 토큰과 만료 시간 추가)
+//         memberRepository.save(user); // 주석 해제하고 memberRepository를 주입하여 사용
+//
+//        return refreshToken;
+//    }
 
     public String createToken(String email, UserRoleEnum role) {
         Date date = new Date();

@@ -4,7 +4,7 @@ import com.sparta.moit.domain.member.dto.LoginRequestDto;
 import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.service.MemberService;
 import com.sparta.moit.global.common.dto.RefreshTokenResponse;
-import com.sparta.moit.global.service.TestService;
+//import com.sparta.moit.global.service.TestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CommonController {
 
-    private final TestService testService;
-
-    @Autowired
-    public CommonController(TestService testService) {
-        this.testService = testService;
-    }
+//    private final TestService testService;
+//
+//    @Autowired
+//    public CommonController(TestService testService) {
+//        this.testService = testService;
+//    }
 
     @Operation(summary = "연결 체크", description = "연결 체크 API")
     @GetMapping("/")
@@ -52,10 +52,10 @@ public class CommonController {
             return ResponseEntity.badRequest().body("로그인 실패");
         }
     }*/
-    @GetMapping("/login")
-    public ResponseEntity<?> login(){
-        MemberResponseDto responseDto = testService.login();
-        return ResponseEntity.ok().body(responseDto);
-    }
+//    @GetMapping("/login")
+//    public ResponseEntity<?> login(){
+//        MemberResponseDto responseDto = testService.login();
+//        return ResponseEntity.ok().body(responseDto);
+//    }
 
 }
