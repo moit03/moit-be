@@ -18,7 +18,7 @@ import java.util.*;
 public class RefreshTokenService {
 
     /*리프레시 토큰 관리 로직
-     * 토큰 생성, 저장, 검증, 삭제, 액세스 토큰 갱신 기능 수행*/
+     * 토큰 생성, 저장, 검증, 삭제, 액세스 토큰 갱신 기능 수행 */
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
     private final RedisRefreshTokenRepository redisRefreshTokenRepository;
