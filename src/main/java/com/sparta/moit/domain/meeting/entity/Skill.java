@@ -21,10 +21,6 @@ public class Skill {
     @Column(name = "skill_name")
     private String skillName;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MeetingSkill> meetings;
-
     @Builder
     public Skill(String skillName) {
         this.skillName = skillName;

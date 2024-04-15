@@ -28,7 +28,7 @@ public class Member {
     @Column(name = "naver_id")
     private String naverId;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "member")
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 

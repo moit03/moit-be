@@ -70,7 +70,7 @@ public class Meeting extends Timestamped {
     @JoinColumn(name = "member_id")
     private Member creator;
 
-    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "meeting")
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
