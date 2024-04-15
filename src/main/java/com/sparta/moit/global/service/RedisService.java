@@ -1,5 +1,6 @@
 package com.sparta.moit.global.service;
 
+import com.sparta.moit.global.common.entity.RedisRefreshToken;
 import com.sparta.moit.global.common.entity.RefreshToken;
 import com.sparta.moit.global.repository.RedisRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,11 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisRefreshTokenRepository redisRefreshTokenRepository;
 
-    public void saveRefreshToken(RefreshToken refreshToken) {
+    public void saveRefreshToken(RedisRefreshToken refreshToken) {
         redisRefreshTokenRepository.save(refreshToken);
     }
 
-    public Optional<RefreshToken> findRefreshToken(String token) {
+    public Optional<RedisRefreshToken> findRefreshToken(String token) {
         return redisRefreshTokenRepository.findById(token);
     }
     public void setValues(String key, String data) {

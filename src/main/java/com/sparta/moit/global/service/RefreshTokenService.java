@@ -1,6 +1,7 @@
 package com.sparta.moit.global.service;
 
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
+import com.sparta.moit.global.common.entity.RedisRefreshToken;
 import com.sparta.moit.global.common.entity.RefreshToken;
 import com.sparta.moit.global.error.CustomValidationException;
 import com.sparta.moit.global.jwt.JwtUtil;
@@ -38,14 +39,26 @@ public class RefreshTokenService {
                 .email(email)
                 .expiryDate(expiryDate)
                 .build();
-        redisService.saveRefreshToken(refreshToken);
+        RedisRefreshToken redisRefreshToken = RedisRefreshToken.builder()
+                .email(email)
+                .token(refreshTokenString)
+                        .build();
+
+        redisService.saveRefreshToken(redisRefreshToken);
         return refreshToken.getToken();
     }
 
     /*리프레시 토큰 검증*/
-    public boolean validateRefreshToken(String token) {
+    /*public boolean validateRefreshToken(String token) {
         return redisService.findRefreshToken(token)
                 .map(RefreshToken::getExpiryDate)
+                .map(expiryDate -> !expiryDate.before(new Date()))
+                .orElse(false);
+    }*/
+
+    public boolean validateRefreshToken(String token) {
+        return redisService.findRefreshToken(token)
+                .map(RedisRefreshToken::getExpiryDate)
                 .map(expiryDate -> !expiryDate.before(new Date()))
                 .orElse(false);
     }

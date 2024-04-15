@@ -32,7 +32,7 @@ public class CommonController {
         return ResponseEntity.ok().body("Connection OK");
     }
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
         try {
             // 사용자의 토큰 생성
@@ -51,5 +51,11 @@ public class CommonController {
             log.error("로그인 실패: {}", e.getMessage());
             return ResponseEntity.badRequest().body("로그인 실패");
         }
+    }*/
+    @GetMapping("/login")
+    public ResponseEntity<?> login(){
+        MemberResponseDto responseDto = testService.login();
+        return ResponseEntity.ok().body(responseDto);
     }
+
 }

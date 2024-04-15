@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
+import com.sparta.moit.global.service.RedisService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;

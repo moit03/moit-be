@@ -94,6 +94,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/api/region/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/skill").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/member/myinfo").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/api/member/signin/naver").permitAll()
                         .requestMatchers("/api/member/login").permitAll()
