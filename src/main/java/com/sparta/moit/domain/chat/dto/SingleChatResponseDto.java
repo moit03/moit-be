@@ -23,6 +23,7 @@ public class SingleChatResponseDto {
         this.createdAt = createdAt;
     }
 
+
     public static SingleChatResponseDto fromEntity(Chat chat) {
         return SingleChatResponseDto.builder()
                 .chatId(chat.getId())
