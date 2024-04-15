@@ -6,4 +6,6 @@ import com.sparta.moit.domain.member.dto.MemberResponseDto;
 public interface KakaoService {
     MemberResponseDto kakaoLogin(String code) throws JsonProcessingException;
     void logout(String refreshTokenString);
+
+    String login();
 }

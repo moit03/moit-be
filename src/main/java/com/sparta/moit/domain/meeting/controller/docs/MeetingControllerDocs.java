@@ -37,14 +37,18 @@ public interface MeetingControllerDocs {
                                      @RequestParam(required = false) List<Long> careerId,
                                      @RequestParam(defaultValue = "1") int page);
 
+    @Operation(summary = "모임 조회 기능 (NativeQuery)", description = "모임 조회 API")
+    public ResponseEntity<?> getMeetingListNativeQuery(@RequestParam Double locationLat,
+                                                       @RequestParam Double locationLng,
+                                                       @RequestParam(required = false) List<Long> skillId,
+                                                       @RequestParam(required = false) List<Long> careerId,
+                                                       @RequestParam(defaultValue = "1") int page);
+
     @Operation(summary = "모임 상세 조회 기능", description = "모임 상세 조회 API")
     @ApiResponse(responseCode = "200", description = "모임 상세 조회 완료",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = GetMeetingDetailResponseDto.class)))
     ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
-
-    @Operation(summary = "주소별 모임 조회 기능", description = "주소별 모임 조회 API")
-    ResponseEntity<?> getMeetingListByAddress(@RequestParam String firstRegion, @RequestParam String secondRegion, @RequestParam(defaultValue = "1") int page) throws JsonProcessingException;
 
     @Operation(summary = "모임 검색 기능", description = "모임 검색 API")
     ResponseEntity<?> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page);

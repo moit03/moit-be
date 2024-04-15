@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity(name = "member")
@@ -29,10 +28,7 @@ public class Member {
     @Column(name = "naver_id")
     private String naverId;
 
-    private String refreshToken;  // 추가: 리프레시 토큰
-    private Date refreshTokenExpiry;  // 추가: 리프레시 토큰 만료 시간
-
-    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "member")
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
@@ -45,29 +41,14 @@ public class Member {
     }
 
     @Builder
-    public Member (Long id, String username, String password, String email, UserRoleEnum role, Long kakaoId, String naverId,
-                   String refreshToken, Date refreshTokenExpiry) {
-        this.id = id;
+    public Member (String username, String password, String email, UserRoleEnum role, Long kakaoId, String naverId){
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
         this.kakaoId = kakaoId;
         this.naverId = naverId;
-        this.refreshToken = refreshToken;  // 추가
-        this.refreshTokenExpiry = refreshTokenExpiry;  // 추가
     }
-
-//    @Builder
-//    public Member (Long id, String username, String password, String email, UserRoleEnum role, Long kakaoId, String naverId){
-//        this.id = id;
-//        this.username = username;
-//        this.password = password;
-//        this.email = email;
-//        this.role = role;
-//        this.kakaoId = kakaoId;
-//        this.naverId = naverId;
-//    }
 
     public Member kakaoIdUpdate(Long kakaoId) {
         this.kakaoId = kakaoId;

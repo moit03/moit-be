@@ -6,10 +6,7 @@ import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.entity.*;
-import com.sparta.moit.domain.meeting.repository.CareerRepository;
-import com.sparta.moit.domain.meeting.repository.MeetingMemberRepository;
-import com.sparta.moit.domain.meeting.repository.MeetingRepository;
-import com.sparta.moit.domain.meeting.repository.SkillRepository;
+import com.sparta.moit.domain.meeting.repository.*;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.global.common.dto.AddressResponseDto;
@@ -24,7 +21,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,29 +33,26 @@ public class MeetingServiceImpl implements MeetingService {
     private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
     private final MeetingMemberRepository meetingMemberRepository;
+    private final MeetingSkillRepository meetingSkillRepository;
+    private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
-
-
-    /*public List<GetMeetingResponseDto> getMeetingList(List<Integer> careerTypes, List<Integer> skillTypes, String region1depthName, String region2depthName) {
-        List<Meeting> result = meetingRepository.findAllByFilter(careerTypes, skillTypes, region1depthName, region2depthName);
-        return result.stream().map(GetMeetingResponseDto::fromEntity)
-                .toList();
-    }*/
 
     /*모임 등록*/
     @Override
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-        List<Long> skillIds = requestDto.getSkillIds();
-        Meeting meeting = requestDto.toEntity(member);
-        List<Skill> skills = skillRepository.findByIdIn(skillIds);
 
+        Meeting meeting = requestDto.toEntity(member);
+        Meeting savedMeeting = meetingRepository.save(meeting);
+
+        List<Long> skillIds = requestDto.getSkillIds();
+        List<Skill> skills = skillRepository.findByIdIn(skillIds);
         for (Skill skill : skills) {
             MeetingSkill meetingSkill = MeetingSkill.builder()
                     .meeting(meeting)
                     .skill(skill)
                     .build();
-            meeting.getSkills().add(meetingSkill);
+            meetingSkillRepository.save(meetingSkill);
         }
 
         List<Long> careerIds = requestDto.getCareerIds();
@@ -69,17 +62,16 @@ public class MeetingServiceImpl implements MeetingService {
                     .meeting(meeting)
                     .career(career)
                     .build();
-            meeting.getCareers().add(meetingCareer);
+            meetingCareerRepository.save(meetingCareer);
         }
 
-        Meeting savedMeeting = meetingRepository.save(meeting);
         MeetingMember meetingMember = MeetingMember.builder()
                 .member(member)
                 .meeting(meeting)
                 .build();
         meetingMemberRepository.save(meetingMember);
-        Long meetingId = savedMeeting.getId();
-        return meetingId;
+
+        return savedMeeting.getId();
     }
 
     /*모임 수정*/
@@ -112,6 +104,30 @@ public class MeetingServiceImpl implements MeetingService {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 10);
         Slice<Meeting> sliceList = meetingRepository.getMeetingSlice(locationLat, locationLng, skillId, careerId, pageable);
         return sliceList.map(GetMeetingResponseDto::fromEntity);
+    }
+
+    /* 모임 조회 (NativeQuery) */
+    @Override
+    public List<GetMeetingResponseDto> getMeetingListNativeQuery(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId) {
+        List<Meeting> meetingList;
+        if (skillId != null) {
+            if (careerId != null) {
+                // skillId와 careerId가 모두 존재하는 경우
+                meetingList = meetingRepository.getMeetingsWithSkillAndCareer(locationLat, locationLng, skillId, careerId, 16, page);
+            } else {
+                // skillId만 존재하는 경우
+                meetingList = meetingRepository.getMeetingsWithSkill(locationLat, locationLng, skillId, 16, page);
+            }
+        } else {
+            if (careerId != null) {
+                // careerId만 존재하는 경우
+                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId,16, page);
+            } else {
+                // skillId와 careerId 모두 존재하지 않는 경우
+                meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
+            }
+        }
+        return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
 
     /*모임 상세 조회 (비로그인)*/

@@ -26,11 +26,5 @@ public class MeetingMember {
     public MeetingMember(Member member, Meeting meeting) {
         this.member = member;
         this.meeting = meeting;
-        setReferences();
-    }
-
-    private void setReferences() {
-        meeting.addMeetingMember(this);
-        member.addMeetingMember(this);
     }
 }
