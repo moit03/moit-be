@@ -30,11 +30,9 @@ public class RefreshTokenService {
 
     /*리프레시 토큰 생성 및 저장*/
     public String createAndSaveRefreshToken(String email, String refreshTokenString) {
-        Date expiryDate = new Date(System.currentTimeMillis() + JwtUtil.REFRESH_TOKEN_VALIDITY_MS);
         RedisRefreshToken refreshToken = RedisRefreshToken.builder()
                 .token(refreshTokenString)
                 .email(email)
-                .expiryDate(expiryDate)
                 .build();
 
         redisService.saveRefreshToken(refreshToken);
@@ -43,16 +41,12 @@ public class RefreshTokenService {
 
     /*리프레시 토큰 검증*/
     public boolean validateRefreshToken(String token) {
-        return redisService.findRefreshToken(token)
-                .map(RedisRefreshToken::getExpiryDate)
-                .map(expiryDate -> !expiryDate.before(new Date()))
-                .orElse(false);
+        return redisRefreshTokenRepository.existsByToken(token);
     }
 
     /*리프레시 토큰으로 새 액세스 토큰 발급*/
     public Optional<String> refreshAccessToken(String refreshToken) {
         return redisRefreshTokenRepository.findByToken(refreshToken)
-                .filter(token -> !token.getExpiryDate().before(new Date())) /*토큰 만료 여부 검사*/
                 .map(RedisRefreshToken::getEmail) /* 토큰에서 이메일 추출 */
                 .map(email -> jwtUtil.createToken(email, UserRoleEnum.USER)); /*새 액세스 토큰 생성*/
     }
