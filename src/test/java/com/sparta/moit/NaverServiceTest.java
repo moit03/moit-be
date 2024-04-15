@@ -33,7 +33,6 @@ class NaverServiceTest {
         @Mock
         private PasswordEncoder passwordEncoder;
 
-        // Inject concrete implementation
         @InjectMocks
         private NaverServiceImpl naverService;
 
