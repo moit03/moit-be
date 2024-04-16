@@ -82,8 +82,11 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
-        // 기술과 경력 저장하기 <- 이 부분 저장이 안됨
+        meetingSkillRepository.deleteByMeeting(meeting);
+        meetingCareerRepository.deleteByMeeting(meeting);
 
+        saveSkills(requestDto.getSkillIds(), meeting);
+        saveCareers(requestDto.getCareerIds(), meeting);
         meeting.updateMeeting(requestDto);
         return meetingId;
     }
@@ -123,7 +126,7 @@ public class MeetingServiceImpl implements MeetingService {
         } else {
             if (careerId != null) {
                 // careerId만 존재하는 경우
-                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId,16, page);
+                meetingList = meetingRepository.getMeetingsWithCareer(locationLat, locationLng, careerId, 16, page);
             } else {
                 // skillId와 careerId 모두 존재하지 않는 경우
                 meetingList = meetingRepository.getNearestMeetings(locationLat, locationLng, 16, page);
@@ -233,5 +236,35 @@ public class MeetingServiceImpl implements MeetingService {
         meeting.decrementRegisteredCount();
 
         meetingMemberRepository.delete(meetingMember);
+    }
+
+    /*기술 저장*/
+    private void saveSkills(List<Long> skillIds, Meeting meeting) {
+        for (Long skillId : skillIds) {
+            Skill skill = skillRepository.findById(skillId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.VALIDATION_ERROR));
+
+            MeetingSkill meetingSkill = MeetingSkill.builder()
+                    .meeting(meeting)
+                    .skill(skill)
+                    .build();
+
+            meetingSkillRepository.save(meetingSkill);
+        }
+    }
+
+    /*경력 저장*/
+    private void saveCareers(List<Long> careerIds, Meeting meeting) {
+        for (Long careerId : careerIds) {
+            Career career = careerRepository.findById(careerId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.VALIDATION_ERROR));
+
+            MeetingCareer meetingCareer = MeetingCareer.builder()
+                    .meeting(meeting)
+                    .career(career)
+                    .build();
+
+            meetingCareerRepository.save(meetingCareer);
+        }
     }
 }
