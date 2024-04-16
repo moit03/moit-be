@@ -31,7 +31,7 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_TIME =  60 * 60 * 1000L; // 60 minutes
+    private final long TOKEN_TIME =  10 * 1000L; // 60 minutes
 
     /* refresh token 유효 시간*/
     public static final long REFRESH_TOKEN_VALIDITY_MS = 14 * 24 * 60 * 60 * 1000L; // 14 days
@@ -141,7 +141,7 @@ public class JwtUtil {
 
     /*리프레시 토큰 생성 메서드*/
     public String createRefreshToken(String email, UserRoleEnum role) {
-        long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; /*14일*/
+        long REFRESH_TOKEN_TIME = 10 * 1000L; /*14일*/
         Date now = new Date();
 
         return Jwts.builder()
