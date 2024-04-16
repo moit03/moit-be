@@ -9,6 +9,7 @@ import com.sparta.moit.domain.member.entity.Member;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MeetingService {
 
@@ -22,9 +23,7 @@ public interface MeetingService {
 
     List<GetMeetingResponseDto> getMeetingListNativeQuery(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
-    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId);
-
-    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member);
+    GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Optional<Member> member);
 
     List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
 

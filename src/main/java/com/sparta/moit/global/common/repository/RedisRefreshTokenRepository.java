@@ -1,4 +1,4 @@
-package com.sparta.moit.global.repository;
+package com.sparta.moit.global.common.repository;
 
 import com.sparta.moit.global.common.entity.RedisRefreshToken;
 import org.apache.el.stream.Stream;

@@ -3,7 +3,7 @@ package com.sparta.moit;
 import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.domain.member.service.NaverServiceImpl;
 import com.sparta.moit.global.jwt.JwtUtil;
-import com.sparta.moit.global.service.RefreshTokenService;
+import com.sparta.moit.global.common.service.RefreshTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

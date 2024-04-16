@@ -2,7 +2,7 @@ package com.sparta.moit.global.common.controller;
 
 import com.sparta.moit.global.common.dto.RefreshTokenRequest;
 import com.sparta.moit.global.common.dto.ResponseDto;
-import com.sparta.moit.global.service.RefreshTokenService;
+import com.sparta.moit.global.common.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

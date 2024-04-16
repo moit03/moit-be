@@ -53,7 +53,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
         return response;
     }
 
-    /* 모임 조회 */
+    /* 모임 조회 */ /*모임 조회 시간 지연 이슈 */
     @Override
     public Slice<Meeting> getMeetingSlice(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable) {
         List<Meeting> meetingList = queryFactory
@@ -63,7 +63,8 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .leftJoin(meeting.careers, meetingCareer)
                 .where(
                         skillEq(skillId),
-                        careerEq(careerId)
+                        careerEq(careerId),
+                        meeting.status.eq(MeetingStatusEnum.OPEN)
                 )
                 .orderBy(
                         distanceExpression2(locationLat, locationLng).asc()
