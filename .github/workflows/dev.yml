@@ -88,7 +88,7 @@ jobs:
 
   docker-pull-and-run:
     runs-on: [self-hosted, dev]
-    if: ${{ needs.backend-docker-build-and-push.result == 'success' }}
+    if: ${{ needs.CI-CD.result == 'success' }}
     needs: [ backend-docker-build-and-push ]
     steps:
       - name: ✨ 배포 스크립트 실행
