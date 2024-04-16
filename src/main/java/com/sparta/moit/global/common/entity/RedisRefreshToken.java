@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash(value = "refresh", timeToLive =  60 ) // 14 * 24 * 60 * 60 *
+@RedisHash(value = "refresh", timeToLive =  1209600 )
 public class RedisRefreshToken {
 
     @Id
