@@ -7,6 +7,7 @@ import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.service.MeetingService;
+import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j(topic = "미팅 로그")
@@ -26,22 +28,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MeetingController implements MeetingControllerDocs {
     private final MeetingService meetingService;
-
-    /*public ResponseEntity<List<GetMeetingResponseDto>> getMeetingList(
-            @RequestParam List<Integer> careerTypes,
-            @RequestParam List<Integer> skillTypes,
-            @RequestParam String region1depthName,
-            @RequestParam String region2depthName
-    ) {
-        List<GetMeetingResponseDto> responseDto = meetingService.getMeetingList(
-                careerTypes,
-                skillTypes,
-                region1depthName,
-                region2depthName
-        );
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseDto);
-    }*/
 
     /*모임 등록*/
     @PostMapping
@@ -89,13 +75,14 @@ public class MeetingController implements MeetingControllerDocs {
     /*모임 상세 조회*/
     @GetMapping("/{meetingId}")
     public ResponseEntity<?> getMeetingDetail(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if (userDetails == null ){
-            GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId);
-            return ResponseEntity.ok().body(ResponseDto.success("비로그인 조회 완료", responseDto));
-        }
-        GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId, userDetails.getUser());
-        return ResponseEntity.ok().body(ResponseDto.success("로그인 유저의 조회 완료", responseDto));
+
+        Optional<Member> member = Optional.ofNullable(userDetails).map(UserDetailsImpl::getUser);
+        GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId, member);
+
+        String message = member.isPresent() ? "로그인 유저의 조회 완료" : "비로그인 조회 완료";
+        return ResponseEntity.ok().body(ResponseDto.success(message, responseDto));
     }
+
 
     /* 모임 검색 */
     @GetMapping("/search")

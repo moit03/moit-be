@@ -9,7 +9,7 @@ import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.global.jwt.JwtUtil;
-import com.sparta.moit.global.service.RefreshTokenService;
+import com.sparta.moit.global.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

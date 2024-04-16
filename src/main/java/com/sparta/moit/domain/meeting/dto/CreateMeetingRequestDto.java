@@ -25,7 +25,9 @@ public class CreateMeetingRequestDto {
     private Short totalCount;
     @Schema(description = "미팅 장소", example = "서울특별시 송파구 석촌동 172-24 석촌동 24-11 나인파크A 201호")
     private String locationAddress;
+    @Schema(description = "미팅 위도", example = "37.50157")
     private Double locationLat;
+    @Schema(description = "미팅 경도", example = "127.040157")
     private Double locationLng;
     @Schema(description = "시-도", example = "서울특별시")
     private String regionFirstName;

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j(topic = "Meeting Service Log")
 @Service
@@ -41,35 +42,12 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
-
         Meeting meeting = requestDto.toEntity(member);
         Meeting savedMeeting = meetingRepository.save(meeting);
 
-        List<Long> skillIds = requestDto.getSkillIds();
-        List<Skill> skills = skillRepository.findByIdIn(skillIds);
-        for (Skill skill : skills) {
-            MeetingSkill meetingSkill = MeetingSkill.builder()
-                    .meeting(meeting)
-                    .skill(skill)
-                    .build();
-            meetingSkillRepository.save(meetingSkill);
-        }
-
-        List<Long> careerIds = requestDto.getCareerIds();
-        List<Career> careers = careerRepository.findByIdIn(careerIds);
-        for (Career career : careers) {
-            MeetingCareer meetingCareer = MeetingCareer.builder()
-                    .meeting(meeting)
-                    .career(career)
-                    .build();
-            meetingCareerRepository.save(meetingCareer);
-        }
-
-        MeetingMember meetingMember = MeetingMember.builder()
-                .member(member)
-                .meeting(meeting)
-                .build();
-        meetingMemberRepository.save(meetingMember);
+        saveSkills(requestDto.getSkillIds(), savedMeeting);
+        saveCareers(requestDto.getCareerIds(), savedMeeting);
+        saveMeetingMember(member, savedMeeting);
 
         return savedMeeting.getId();
     }
@@ -136,27 +114,30 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     /*모임 상세 조회 (비로그인)*/
-    @Override
-    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
-
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
-
-        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
-        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
-        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
-    }
+//    @Override
+//    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
+//
+//        Meeting meeting = meetingRepository.findById(meetingId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+//
+//        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
+//        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
+//        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
+//    }
 
     /*모임 상세 조회 (로그인 유저) */
     @Override
-    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Member member) {
+    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Optional<Member> member) {
 
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
         List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
         List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
-        Boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.getId(), meetingId);
+        if (member.isEmpty()) {
+            return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
+        }
+        Boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
         return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin);
     }
 
@@ -266,5 +247,14 @@ public class MeetingServiceImpl implements MeetingService {
 
             meetingCareerRepository.save(meetingCareer);
         }
+    }
+
+    /* 모임 회원 저장 */
+    private void saveMeetingMember(Member member, Meeting meeting) {
+        MeetingMember meetingMember = MeetingMember.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+        meetingMemberRepository.save(meetingMember);
     }
 }
