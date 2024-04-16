@@ -41,7 +41,12 @@ public class RefreshTokenService {
 
     /*리프레시 토큰 검증*/
     public boolean validateRefreshToken(String token) {
-        return redisRefreshTokenRepository.existsByToken(token);
+        Optional<RedisRefreshToken> refreshToken = redisRefreshTokenRepository.findByToken(token);
+        System.out.println(refreshToken.isPresent());
+        if (refreshToken.isPresent()){
+            return true;
+        }
+        return false;
     }
 
     /*리프레시 토큰으로 새 액세스 토큰 발급*/
