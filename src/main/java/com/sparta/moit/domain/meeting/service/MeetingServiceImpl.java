@@ -82,6 +82,8 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
+        // 기술과 경력 저장하기 <- 이 부분 저장이 안됨
+
         meeting.updateMeeting(requestDto);
         return meetingId;
     }

@@ -53,7 +53,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
         return response;
     }
 
-    /* 모임 조회 */
+    /* 모임 조회 */ /*모임 조회 시간 지연 이슈 -> 10~12초 소요*/
     @Override
     public Slice<Meeting> getMeetingSlice(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable) {
         List<Meeting> meetingList = queryFactory
