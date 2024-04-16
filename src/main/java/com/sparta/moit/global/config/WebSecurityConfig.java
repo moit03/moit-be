@@ -106,8 +106,9 @@ public class WebSecurityConfig {
         );
 
 
-        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();
