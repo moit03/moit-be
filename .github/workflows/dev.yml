@@ -94,6 +94,7 @@ jobs:
       - name: ✨ 배포 스크립트 실행
         run: |
           sh /deploy.sh
+          sudo docker image prune -f
 
 #      ## pull to develop
 #      - name: Pull to dev
