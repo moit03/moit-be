@@ -27,9 +27,9 @@ public class CommonController {
 
     @Operation(summary = "연결 체크", description = "연결 체크 API")
     @GetMapping("/")
-    public ResponseEntity<?> healthCheck() {
+    public String healthCheck() {
         log.info("Connection OK");
-        return ResponseEntity.ok().body("Connection OK");
+        return "Connection OK";
     }
 
     /*@PostMapping("/login")
