@@ -95,7 +95,7 @@ jobs:
         run: |
           sh /deploy.sh
           sudo docker image prune -f
-
+          
 
 #      ## pull to develop
 #      - name: Pull to dev
