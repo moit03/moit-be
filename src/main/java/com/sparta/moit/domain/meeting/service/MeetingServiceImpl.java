@@ -137,7 +137,7 @@ public class MeetingServiceImpl implements MeetingService {
         if (member.isEmpty()) {
             return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
         }
-        Boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
+        boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
         return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin);
     }
 
@@ -162,14 +162,11 @@ public class MeetingServiceImpl implements MeetingService {
     @Transactional
     public Long enterMeeting(Member member, Long meetingId) {
 
-        Member member1 = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
-
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
         /*중복 참가 여부 확인*/
-        Boolean isMember = meetingMemberRepository.existsByMemberIdAndMeetingId(member.getId(), meetingId);
+        boolean isMember = meetingMemberRepository.existsByMemberIdAndMeetingId(member.getId(), meetingId);
         if (isMember) {
             throw new CustomException(ErrorCode.ALREADY_MEMBER);
         }
@@ -194,7 +191,7 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         MeetingMember meetingMember = MeetingMember.builder()
-                .member(member1)
+                .member(member)
                 .meeting(meeting)
                 .build();
         meetingMemberRepository.save(meetingMember);
@@ -207,6 +204,10 @@ public class MeetingServiceImpl implements MeetingService {
 
         Member member1 = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+
+        // if member1 == meeting.creator
+        // throw 생성자는 탈퇴가 불가합니다.
+        // 예외처리 추가
 
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));

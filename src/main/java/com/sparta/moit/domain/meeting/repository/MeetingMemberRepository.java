@@ -12,10 +12,8 @@ public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Lo
 
     int countByMemberId(Long memberId);
 
-    Boolean existsByMemberAndMeeting(Member member, Meeting meeting);
+    boolean existsByMemberAndMeeting(Member member, Meeting meeting);
 
-    Short countByMeetingId(Long meetingId);
-
-    Boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
+    boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
 
 }

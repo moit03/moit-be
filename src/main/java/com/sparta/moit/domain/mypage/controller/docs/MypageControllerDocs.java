@@ -1,11 +1,11 @@
-package com.sparta.moit.domain.mypage.controller;
+package com.sparta.moit.domain.mypage.controller.docs;
 
 import com.sparta.moit.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-public interface MypageControllerDocs{
+public interface MypageControllerDocs {
     @Operation(summary = "마이페이지 정보 조회", description = "마이페이지 정보 조회 API")
     ResponseEntity<?> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails);
 

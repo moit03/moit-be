@@ -21,13 +21,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Slf4j(topic = "채팅 로그")
 @RestController
 @RequestMapping("/api/chats")
 @RequiredArgsConstructor
-public class ChatServiceImpl implements ChatService{
+public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final MeetingRepository meetingRepository;
@@ -39,7 +37,7 @@ public class ChatServiceImpl implements ChatService{
         /*
          * 해당 모임이 존재하는지 확인한다.
          * 해당 모임에 가입한 유져가 맞는 지 확인한다.
-         * 채팅 리스트를 가져온다.
+         * 현재 참여한 채팅방의 채팅내역를 가져온다.
          * */
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
@@ -67,7 +65,6 @@ public class ChatServiceImpl implements ChatService{
         Member testMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_MEETING_MEMBER));
 
-        log.info("온 메세지: " + sendChatRequestDto.getContent());
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
@@ -85,7 +82,7 @@ public class ChatServiceImpl implements ChatService{
         return SendChatResponseDto.fromEntity(chat);
     }
 
-    private Boolean isMeetingMember(Member member, Meeting meeting) {
+    private boolean isMeetingMember(Member member, Meeting meeting) {
         return meetingMemberRepository.existsByMemberAndMeeting(member, meeting);
     }
 

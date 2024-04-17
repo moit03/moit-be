@@ -27,7 +27,7 @@ public class ChatController implements ChatControllerDocs {
 
     /* 채팅방 입장 전 채팅 목록 불러오기 */
     @GetMapping("/api/meetings/{meetingId}/chats")
-    public ResponseEntity<?> getChatList(@PathVariable Long meetingId
+    public ResponseEntity<ResponseDto<ChatResponseDto>> getChatList(@PathVariable Long meetingId
             , @RequestParam(defaultValue = "1") int page
             , @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ChatResponseDto responseDto = chatService.getChatList(meetingId, page, userDetails.getUser());
