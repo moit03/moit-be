@@ -61,6 +61,7 @@ public enum ErrorCode {
     CHATROOM_NOT_FOUND("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MEETING_NOT_FOUND("MEETING_NOT_FOUND", "모임을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOT_MEETING_MEMBER("NOT_MEETING_MEMBER", "모임에 가입한 유저가 아닙니다.", HttpStatus.FORBIDDEN),
+    CREATOR_CAN_NOT_LEAVE("CREATOR_CAN_NOT_LEAVE", "작성자는 탈퇴할 수 없습니다.", HttpStatus.BAD_REQUEST),
     NOT_EXIST_MY_PAGE("NOT_EXIST_MY_PAGE", "마이페이지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
 
