@@ -182,5 +182,4 @@ public class KakaoServiceImpl implements KakaoService{
     public void logout(String refreshTokenString){
         refreshTokenService.deleteRefreshToken(refreshTokenString);
     }
-
 }
