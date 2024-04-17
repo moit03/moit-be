@@ -1,6 +1,7 @@
 package com.sparta.moit.domain.meeting.repository;
 
 import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import com.sparta.moit.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
     Optional<Meeting> findByIdAndCreator(Long meetingId, Member member);
 
     int countByCreator(Member creator);
+    int countByCreatorAndStatusNot(Member creator, MeetingStatusEnum status);
 
     @Query(value = "SELECT * FROM meeting " +
             "ORDER BY ST_DISTANCE_SPHERE(point(:locationLng, :locationLat), point(location_lng, location_lat)) " +

@@ -8,6 +8,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.moit.domain.meeting.dto.GetMyPageDto;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
+import com.sparta.moit.domain.meeting.entity.QMeeting;
+import com.sparta.moit.domain.meeting.entity.QMeetingMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,6 +24,7 @@ import static com.sparta.moit.domain.meeting.entity.QMeetingCareer.meetingCareer
 import static com.sparta.moit.domain.meeting.entity.QMeetingMember.meetingMember;
 import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
 import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
+import static org.hibernate.query.results.Builders.fetch;
 
 
 @RequiredArgsConstructor
@@ -29,7 +32,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<GetMyPageDto> getMyPage(Long memberId) {
+    public List<GetMyPageDto> getMyPage(Long memberId, MeetingStatusEnum status) {
         return queryFactory
                 .select(Projections.constructor(
                         GetMyPageDto.class,
@@ -37,8 +40,9 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                         meeting.meetingEndTime,
                         meetingMember.member.id))
                 .from(meetingMember)
-                .leftJoin(meetingMember.meeting, meeting) // .on 절 대신 엔티티 관계를 사용
-                .where(meetingMember.member.id.eq(memberId))
+                .leftJoin(meetingMember.meeting, meeting)
+                .where(meetingMember.member.id.eq(memberId)
+                        .and(meeting.status.ne(MeetingStatusEnum.DELETE))) // status != DELETE 조건 추가
                 .fetch();
     }
 
