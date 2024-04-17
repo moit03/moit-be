@@ -16,9 +16,6 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "네이버 로그인", description = "네이버 로그인 API")
     ResponseEntity<?> naverLogin(@RequestParam String code,@RequestParam String state) throws JsonProcessingException;
-
-    @Operation(summary = "로그아웃", description = "로그아웃 시 JWT 토큰을 만료처리 합니다.")
-    ResponseEntity<String> logout(@RequestBody RefreshTokenRequest request);
 }
 
 

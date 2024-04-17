@@ -2,6 +2,7 @@ package com.sparta.moit.global.common.controller;
 
 import com.sparta.moit.domain.member.service.KakaoService;
 import com.sparta.moit.domain.member.service.KakaoServiceImpl;
+import com.sparta.moit.global.common.controller.docs.AuthControllerDocs;
 import com.sparta.moit.global.common.dto.RefreshTokenRequest;
 import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.common.service.RefreshTokenService;
@@ -18,10 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-@Tag(name = "Auth Controller", description = "리프레시 토큰을 통한 엑세스 토큰 갱신")
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController implements AuthControllerDocs {
     private final RefreshTokenService refreshTokenService;
     private final KakaoService kakaoService;
 
@@ -32,7 +32,6 @@ public class AuthController {
 
     /*엑세스 토큰 갱신 API 호출*/
     @PostMapping("/refresh")
-    @Operation(summary = "엑세스 토큰 갱신", description = "리프레시 토큰 검증 및 새 엑세스 토큰 발급")
     @ApiResponse(responseCode = "200", description = "엑세스 토큰 발급 성공")
     public ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
         /*리프레시 토큰이 없으면 badRequest 반환*/
@@ -60,7 +59,7 @@ public class AuthController {
 
     /*로그아웃 기능 호출*/
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<String> deleteRefreshToken(@RequestBody RefreshTokenRequest request) {
         /*리프레시 토큰이 없으면 badRequest 반환*/
         String refreshTokenString = request.getRefreshToken();
         if (refreshTokenString == null || refreshTokenString.isEmpty()) {
@@ -69,6 +68,7 @@ public class AuthController {
 
         /*로그아웃 API 호출*/
         refreshTokenService.deleteRefreshToken(refreshTokenString);
+
         /*로그아웃 메시지 반환*/
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");
     }
