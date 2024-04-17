@@ -12,6 +12,7 @@ import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,15 @@ public class KakaoServiceImpl implements KakaoService{
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
+
+    @Value("${kakao.client-id}")
+    private String clientId;
+
+    @Value("${kakao.client-secret}")
+    private String clientSecret;
+
+    @Value("${kakao.redirect-uri}")
+    private String redirectUri;
 
     public String login() {
         return jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
@@ -79,9 +89,9 @@ public class KakaoServiceImpl implements KakaoService{
         /* HTTP Body 생성 */
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "74153e11b9bd504556db7210160ed19d");
-        body.add("client_secret", "AMlNyEikZaIgEBW9KBz7uIVe86PO381g");
-        body.add("redirect_uri", "http://my-hangterest.s3-website-us-east-1.amazonaws.com/login/kakao");
+        body.add("client_id", clientId);
+        body.add("client_secret", clientSecret);
+        body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
