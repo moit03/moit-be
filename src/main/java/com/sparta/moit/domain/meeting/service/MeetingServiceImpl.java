@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
+
 @Slf4j(topic = "Meeting Service Log")
 @Service
 @RequiredArgsConstructor
@@ -205,15 +207,16 @@ public class MeetingServiceImpl implements MeetingService {
         Member member1 = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        // if member1 == meeting.creator
-        // throw 생성자는 탈퇴가 불가합니다.
-        // 예외처리 추가
-
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
         MeetingMember meetingMember = meetingMemberRepository.findByMemberAndMeeting(member1, meeting)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_MEETING_MEMBER));
+
+        /*작성자 탈퇴 불가 코드*/
+        if (member1.equals(meeting.getCreator())) {
+            throw new CustomException(ErrorCode.CREATOR_CAN_NOT_LEAVE);
+        }
 
         meeting.decrementRegisteredCount();
 
