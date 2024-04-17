@@ -20,15 +20,15 @@ public class MemberController {
 
     /* 카카오 로그인 */
     @GetMapping("/signin/kakao")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
+    public ResponseEntity<ResponseDto<MemberResponseDto>> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         MemberResponseDto responseDto = kakaoService.kakaoLogin(code);
-        return ResponseEntity.ok().body(ResponseDto.success("카카오 로그인 완료",responseDto));
+        return ResponseEntity.ok().body(ResponseDto.success("카카오 로그인 완료", responseDto));
     }
 
     /* 네이버 로그인 */
     @GetMapping("/signin/naver")
-    public ResponseEntity<?> naverLogin(@RequestParam String code, @RequestParam String state ) throws JsonProcessingException{
-        MemberResponseDto responseDto = naverService.naverLogin(code,state);
+    public ResponseEntity<ResponseDto<MemberResponseDto>> naverLogin(@RequestParam String code, @RequestParam String state) throws JsonProcessingException {
+        MemberResponseDto responseDto = naverService.naverLogin(code, state);
         return ResponseEntity.ok().body(ResponseDto.success("네이버 로그인 완료", responseDto));
     }
 
@@ -48,7 +48,7 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<?> login(){
+    public ResponseEntity<String> login() {
         String token = kakaoService.login();
         return ResponseEntity.ok().body(token);
     }

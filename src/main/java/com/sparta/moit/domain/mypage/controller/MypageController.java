@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.mypage.controller;
 
+import com.sparta.moit.domain.mypage.controller.docs.MypageControllerDocs;
 import com.sparta.moit.domain.mypage.dto.MypageMeetingResponseDto;
 import com.sparta.moit.domain.mypage.dto.MypageResponseDto;
 import com.sparta.moit.domain.mypage.service.MypageService;
@@ -19,19 +20,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
-public class MypageController implements MypageControllerDocs{
+public class MypageController implements MypageControllerDocs {
     private final MypageService mypageService;
 
     /* 참여한 모임, 스터디 시간, 개최한 모임 데이터 전달 */
     @GetMapping("/myinfo")
-    public ResponseEntity<?> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ResponseDto<MypageResponseDto>> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         MypageResponseDto mypageResponseDto = mypageService.getMypageInfo(userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("마이페이지 조회 완료", mypageResponseDto));
     }
 
     /* 참여한 모임 정보 리스트 */
     @GetMapping("/meeting")
-    public ResponseEntity<?> getMypageMeetingList(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ResponseDto<List<MypageMeetingResponseDto>>> getMypageMeetingList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<MypageMeetingResponseDto> responseDtoList = mypageService.getMypageMeetingList(userDetails.getUser().getId());
         return ResponseEntity.ok().body(ResponseDto.success("마이페이지 조회 완료", responseDtoList));
     }

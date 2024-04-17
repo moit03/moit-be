@@ -44,11 +44,15 @@ public class MypageServiceImpl implements MypageService {
 
         /* 참여한 모임 개수 조회 */
         int enterMeetingCount = meetingMemberRepository.countByMemberId(member.getId());
+        // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
 
         /* 개최한 모임 개수 */
         int heldMeetingCount = meetingRepository.countByCreator(member);
+        // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
+
 
         List<GetMyPageDto> studyTimeList = meetingRepository.getMyPage(member.getId());
+        // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
 
         /* 총 공부시간 */
         long totalStudyTimeMinutes = 0;
@@ -57,8 +61,6 @@ public class MypageServiceImpl implements MypageService {
             LocalDateTime endTime = meeting.getMeetingEndTime();
             long studyTimeMinutes = calculateStudyTime(startTime, endTime);
             totalStudyTimeMinutes += studyTimeMinutes;
-            log.info(meeting.getMeetingStartTime().toString());
-            log.info(meeting.getMeetingEndTime().toString());
         }
 
         /* 시간 형식으로 변환 */
@@ -84,7 +86,8 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     public List<MypageMeetingResponseDto> getMypageMeetingList(Long memberId) {
-        List<Meeting> meetingList= meetingRepository.findMeetingsByMember(memberId);
+        List<Meeting> meetingList = meetingRepository.findMeetingsByMember(memberId);
         return meetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
+    // TODO : OPEN, FULL / COMPLETE 인것 분리해서 api 작성, 모두 무한 스크롤로 구성 (pageSize 10개)
 }
