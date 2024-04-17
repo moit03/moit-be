@@ -52,7 +52,10 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .selectFrom(meeting)
                 .distinct()
                 .leftJoin(meeting.meetingMembers, meetingMember)
-                .where(meetingMember.member.id.eq(memberId))
+                .where(
+                        meetingMember.member.id.eq(memberId),
+                        isOpenOrFull()
+                )
                 .fetch();
         return response;
     }
@@ -126,7 +129,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
 
         return queryFactory.selectFrom(meeting)
-                .where(meeting.status.notIn(MeetingStatusEnum.COMPLETE, MeetingStatusEnum.DELETE))
+                .where(isOpenOrFull())
                 /* now() - 1hr <= meetingEndTime < now() */
                 .where(meeting.meetingStartTime.between(oneHourAgo, LocalDateTime.now()))
                 .fetch();
