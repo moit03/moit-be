@@ -2,6 +2,7 @@ package com.sparta.moit.domain.mypage.service;
 
 import com.sparta.moit.domain.meeting.dto.GetMyPageDto;
 import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import com.sparta.moit.domain.meeting.repository.MeetingMemberRepository;
 import com.sparta.moit.domain.meeting.repository.MeetingRepository;
 import com.sparta.moit.domain.member.entity.Member;
@@ -43,15 +44,15 @@ public class MypageServiceImpl implements MypageService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
         /* 참여한 모임 개수 조회 */
-        int enterMeetingCount = meetingMemberRepository.countByMemberId(member.getId());
+        int enterMeetingCount = meetingMemberRepository.countByMemberIdAndMeeting_StatusNot(member.getId(), MeetingStatusEnum.DELETE);
         // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
 
         /* 개최한 모임 개수 */
-        int heldMeetingCount = meetingRepository.countByCreator(member);
+        int heldMeetingCount = meetingRepository.countByCreatorAndStatusNot(member, MeetingStatusEnum.DELETE);
         // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
 
 
-        List<GetMyPageDto> studyTimeList = meetingRepository.getMyPage(member.getId());
+        List<GetMyPageDto> studyTimeList = meetingRepository.getMyPage(member.getId(), MeetingStatusEnum.DELETE);
         // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
 
         /* 총 공부시간 */
