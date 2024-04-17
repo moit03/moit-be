@@ -32,20 +32,20 @@ public class MemberController {
         return ResponseEntity.ok().body(ResponseDto.success("네이버 로그인 완료", responseDto));
     }
 
-    /*로그아웃 기능 호출*/
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest request) {
-        /*리프레시 토큰이 없으면 badRequest 반환*/
-        String refreshTokenString = request.getRefreshToken();
-        if (refreshTokenString == null || refreshTokenString.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        /*로그아웃 API 호출*/
-        kakaoService.logout(refreshTokenString);
-        /*로그아웃 메시지 반환*/
-        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");
-    }
+//    /*로그아웃 기능 호출*/
+//    @PostMapping("/logout")
+//    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest request) {
+//        /*리프레시 토큰이 없으면 badRequest 반환*/
+//        String refreshTokenString = request.getRefreshToken();
+//        if (refreshTokenString == null || refreshTokenString.isEmpty()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        /*로그아웃 API 호출*/
+//        kakaoService.logout(refreshTokenString);
+//        /*로그아웃 메시지 반환*/
+//        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");
+//    }
 
     @GetMapping("/login")
     public ResponseEntity<String> login() {

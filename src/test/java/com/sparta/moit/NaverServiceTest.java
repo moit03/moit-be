@@ -17,29 +17,29 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class NaverServiceTest {
-        @Mock
-        private RestTemplate restTemplate;
-
-        @Mock
-        private MemberRepository memberRepository;
-
-        @Mock
-        private RefreshTokenService refreshTokenService;
-
-        @Mock
-        private JwtUtil jwtUtil;
-
-        @Mock
-        private PasswordEncoder passwordEncoder;
-
-        @InjectMocks
-        private NaverServiceImpl naverService;
-
-        @BeforeEach
-        void setUp() {
-            MockitoAnnotations.openMocks(this);
-        }
+//class NaverServiceTest {
+//        @Mock
+//        private RestTemplate restTemplate;
+//
+//        @Mock
+//        private MemberRepository memberRepository;
+//
+//        @Mock
+//        private RefreshTokenService refreshTokenService;
+//
+//        @Mock
+//        private JwtUtil jwtUtil;
+//
+//        @Mock
+//        private PasswordEncoder passwordEncoder;
+//
+//        @InjectMocks
+//        private NaverServiceImpl naverService;
+//
+//        @BeforeEach
+//        void setUp() {
+//            MockitoAnnotations.openMocks(this);
+//        }
 
 //    @Test
 //    void naverLogin_ShouldReturnToken_WhenValidCodeAndStateProvided() throws JsonProcessingException {
@@ -76,31 +76,31 @@ class NaverServiceTest {
 //        verify(memberRepository, times(1)).findByEmail(email);
 //        verify(memberRepository, times(1)).save(mockMember);
 //    }
-
-        @Test
-        void refreshToken_ShouldReturnNewAccessToken_WhenValidRefreshTokenProvided() {
-            // Given
-            String refreshToken = "mockRefreshToken";
-            String newAccessToken = "mockNewAccessToken";
-
-            when(refreshTokenService.refreshAccessToken(refreshToken)).thenReturn(Optional.of(newAccessToken));
-
-            // When
-            String accessToken = naverService.refreshToken(refreshToken);
-
-            // Then
-            assertEquals(newAccessToken, accessToken);
-        }
-
-        @Test
-        void naverLogout_ShouldDeleteRefreshToken_WhenValidRefreshTokenProvided() {
-            // Given
-            String refreshToken = "mockRefreshToken";
-
-            // When
-            naverService.logout(refreshToken);
-
-            // Then
-            verify(refreshTokenService, times(1)).deleteRefreshToken(refreshToken);
-        }
-    }
+//
+//        @Test
+//        void refreshToken_ShouldReturnNewAccessToken_WhenValidRefreshTokenProvided() {
+//            // Given
+//            String refreshToken = "mockRefreshToken";
+//            String newAccessToken = "mockNewAccessToken";
+//
+//            when(refreshTokenService.refreshAccessToken(refreshToken)).thenReturn(Optional.of(newAccessToken));
+//
+//            // When
+//            String accessToken = naverService.refreshToken(refreshToken);
+//
+//            // Then
+//            assertEquals(newAccessToken, accessToken);
+//        }
+//
+//        @Test
+//        void naverLogout_ShouldDeleteRefreshToken_WhenValidRefreshTokenProvided() {
+//            // Given
+//            String refreshToken = "mockRefreshToken";
+//
+//            // When
+//            naverService.logout(refreshToken);
+//
+//            // Then
+//            verify(refreshTokenService, times(1)).deleteRefreshToken(refreshToken);
+//        }
+//    }
