@@ -178,8 +178,8 @@ public class KakaoServiceImpl implements KakaoService{
         return kakaoUser;
     }
 
-    /* 로그아웃 */
-    public void logout(String refreshTokenString){
-        refreshTokenService.deleteRefreshToken(refreshTokenString);
-    }
+//    /* 로그아웃 */
+//    public void deleteRefreshToken(String refreshTokenString){
+//        refreshTokenService.deleteRefreshToken(refreshTokenString);
+//    }
 }

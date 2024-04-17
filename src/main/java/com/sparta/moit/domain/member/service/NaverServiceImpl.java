@@ -170,10 +170,10 @@ public class NaverServiceImpl implements NaverService{
         return newAccessToken.orElseThrow(() -> new CustomValidationException("Failed to refresh access token", null));
     }
 
-    /* 로그아웃 */
-    public void logout(String refreshTokenString){
-        refreshTokenService.deleteRefreshToken(refreshTokenString);
-    }
+//    /* 로그아웃 */
+//    public void logout(String refreshTokenString){
+//        refreshTokenService.deleteRefreshToken(refreshTokenString);
+//    }
 
     public String refreshToken(String refreshToken) {
         return refreshAccessToken(refreshToken);

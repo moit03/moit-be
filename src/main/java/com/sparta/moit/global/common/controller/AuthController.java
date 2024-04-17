@@ -68,7 +68,7 @@ public class AuthController {
         }
 
         /*로그아웃 API 호출*/
-        kakaoService.logout(refreshTokenString);
+        refreshTokenService.deleteRefreshToken(refreshTokenString);
         /*로그아웃 메시지 반환*/
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");
     }
