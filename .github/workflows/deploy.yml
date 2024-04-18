@@ -25,7 +25,6 @@ jobs:
           contains(github.ref, 'feat')
         run: |
           cd ./src/main/resources
-          touch ./application-dev.properties
           echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.properties
         shell: bash
 
