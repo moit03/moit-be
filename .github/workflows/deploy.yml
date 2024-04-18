@@ -55,7 +55,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }} # 중괄호 2개는 깃헙 환경변수 접근
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
           application_name: moit # 엘리스틱 빈스톡 애플리케이션 이름!
-          environment_name: Moit-env-2 # 엘리스틱 빈스톡 환경 이름!
+          environment_name: Moit-env-3 # 엘리스틱 빈스톡 환경 이름!
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2 # 서울 서버로 압축파일을 전달해줌
           deployment_package: deploy/deploy.zip
