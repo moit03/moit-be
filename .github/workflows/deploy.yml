@@ -49,7 +49,7 @@ jobs:
           cd deploy && zip -r deploy.zip .         
 
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v22 # 엘라스틱 빈스톡 환경 사용
+        uses: einaregilsson/beanstalk-deploy@v21 # 엘라스틱 빈스톡 환경 사용
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }} # 중괄호 2개는 깃헙 환경변수 접근
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
