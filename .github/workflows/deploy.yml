@@ -55,6 +55,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
           application_name: moit-eb # 엘리스틱 빈스톡 애플리케이션 이름!
           environment_name: Moit-eb-env # 엘리스틱 빈스톡 환경 이름!
-          version_label: aws-v5-${{steps.current-time.outputs.formattedTime}}
+          version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2 # 서울 서버로 압축파일을 전달해줌
           deployment_package: deploy/deploy.zip
