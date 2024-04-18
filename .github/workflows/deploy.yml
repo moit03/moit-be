@@ -60,4 +60,4 @@ jobs:
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2 # 서울 서버로 압축파일을 전달해줌
           deployment_package: deploy/deploy.zip
-#          wait_for_environment_recovery: 60  # 배포 후 환경 복구 대기 시간
+          wait_for_environment_recovery: 60  # 배포 후 환경 복구 대기 시간
