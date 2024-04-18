@@ -42,7 +42,7 @@ jobs:
         run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # 시간 표시
       - name: Generate deployment package
         run: |
-          mkdir -p deploy # 깃헙의 테스트서버로 이동 후 폴더 생성 이후 복사설정
+          mkdir -p deploy 
           cp build/libs/*.jar deploy/application.jar 
           cp Procfile deploy/Procfile
           cp -r .ebextensions deploy/.ebextensions           
