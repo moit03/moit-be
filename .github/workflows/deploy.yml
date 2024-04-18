@@ -18,15 +18,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew # 빌드 할 수 있는 권한 설정
 
-      - name: make applicationdev.properties
+      - name: make application-dev.properties
         if: |
           contains(github.ref, 'main') ||
           contains(github.ref, 'dev')  ||
           contains(github.ref, 'feat')
         run: |
-          touch application-dev.properties
-          cd src/main/resources/
-          echo "${{ secrets.APPLICATION_DEV }}" > /application-dev.properties
+          cd ./src/main/resources
+          touch ./application-dev.properties
+          echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.properties
         shell: bash
 
 
