@@ -5,6 +5,8 @@ on:
     branches: [ "dev" ]
   pull_request:
     branches: [ "main", "dev" ]
+    types:
+      - closed
 
 jobs:
   CI-CD:
@@ -67,6 +69,7 @@ jobs:
 
   beanstalk:
     name: Deploy to EB
+    if: github.event.pull_request.merged == true &&
     runs-on: ubuntu-latest
     needs: [ CI-CD ]
     steps:

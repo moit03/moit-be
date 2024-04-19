@@ -5,6 +5,8 @@ on:
     branches: [ "dev" ]
   pull_request:
     branches: [ "main", "dev" ]
+    types:
+      - closed
 
 jobs:
   CI-CD:
@@ -88,9 +90,7 @@ jobs:
 
   docker-pull-and-run:
     runs-on: [self-hosted, dev]
-    if: ${{ needs.CI-CD.result == 'success' }} &&
-        contains(github.ref, 'main') ||
-        contains(github.ref, 'dev')
+    if: github.event.pull_request.merged == true && ${{ needs.CI-CD.result == 'success' }}
     needs: [ CI-CD ]
     steps:
       - name: ✨ 배포 스크립트 실행
