@@ -52,7 +52,7 @@ jobs:
           utcOffset: "+09:00"
 
       - name: Show Current Time
-        run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # 시간 표시
+        run: echo "CurrentTime=${{steps.CurrentTime.outputs.formattedTime}}" # 시간 표시
 
       # docker build & push
       # Dockerfile을 통해 이미지화
