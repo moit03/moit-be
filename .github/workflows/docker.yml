@@ -85,5 +85,5 @@ jobs:
           environment_name: Moit-docker-env-1
           version_label: docker-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
-          deployment_package: Dockerrun.aws.json
+          deployment_package: elasticbeanstalk/docker-compose.yml
           wait_for_deployment: 60
