@@ -88,7 +88,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
           application_name: moit-docker
-          environment_name: Moit-docker-env-1
+          environment_name: Moit-docker-env
           version_label: docker-${{ steps.current-time.outputs.time }}
           region: ap-northeast-2
           deployment_package: elasticbeanstalk/docker-compose.yml
