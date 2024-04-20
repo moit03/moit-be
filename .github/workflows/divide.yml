@@ -44,7 +44,7 @@ jobs:
 #        shell: bash
       - name: make application-dev
         run: |
-          echo "${{ secrets.ENV_PROPERTIES }}" > src/main/resources/application-dev.properties
+          echo "${{ secrets.APPLICATION_DEV }}" > src/main/resources/application-dev.properties
 
       - name: Build with Gradle
         run: ./gradlew build -x test
