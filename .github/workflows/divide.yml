@@ -41,7 +41,7 @@ jobs:
           mkdir -p src/main/resources
           cd ./src/main/resources
           touch ./application-dev.properties
-          echo "${{ secrets.APPLICATION_DEV }}" > src/main/resources/application-dev.properties
+          echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.properties
         shell: bash
 
 
