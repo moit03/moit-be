@@ -36,12 +36,15 @@ jobs:
           echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
         shell: bash
 
+#      - name: make application-dev
+#        run: |
+#          mkdir -p src/main/resources
+#          touch src/main/resources/application-dev.properties
+#          echo "${{ secrets.ENV_PROPERTIES }}" > src/main/resources/env.properties
+#        shell: bash
       - name: make application-dev
         run: |
-          mkdir -p src/main/resources
-          touch src/main/resources/application-dev.properties
-          echo "${{ secrets.ENV_PROPERTIES }}" > src/main/resources/env.properties
-        shell: bash
+          echo "${{ secrets.ENV_PROPERTIES }}" > src/main/resources/application-dev.properties
 
       - name: Build with Gradle
         run: ./gradlew build -x test
