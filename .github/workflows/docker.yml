@@ -3,7 +3,7 @@ name: beans-docker
 on:
   pull_request:
     branches: [ "main", "dev" ]
-    types:g
+    types:
       - closed
 
 jobs:
