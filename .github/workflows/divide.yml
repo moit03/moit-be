@@ -38,6 +38,7 @@ jobs:
 
       - name: make application-dev
         run: |
+          mkdir -p src/main/resources
           cd ./src/main/resources
           touch ./application-dev.properties
           echo "${{ secrets.APPLICATION_DEV }}" > src/main/resources/application-dev.properties
