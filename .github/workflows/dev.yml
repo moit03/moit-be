@@ -1,110 +1,77 @@
-name: CI/CD
-
-on:
-  push:
-    branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
-
-jobs:
-  CI-CD:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # gradle caching - 빌드 시간 향상
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-
-      - name: make env.properties
-        if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'dev')
-        run: |
-          touch env.properties
-          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
-        shell: bash
-
-
-
-      - name: Build with Gradle
-        run: ./gradlew build -x test
-
-     # 현재시간가져오기
-      - name: Get current time
-        uses: josStorer/get-current-time@v2.0.2
-        id: current-time
-        with:
-          format: YYYY-MM-DDTHH-mm-ss
-          utcOffset: "+09:00"
-
-      # docker build & push
-      # Dockerfile을 통해 이미지화
-      # push to docker hub
-      - name: Docker build & push to dev
-#        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
-        if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'dev')
-        run: |
-          docker login -u ${{ secrets.DOCKER_EMAIL }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/moit . 
-          docker push ${{ secrets.DOCKER_USERNAME }}/moit
-
-      ## pull to develop
-      - name: Pull to dev
-        uses: appleboy/ssh-action@master
-        id: pull-dev
-#        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
-        if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'dev')
-        with:
-          host: ${{ secrets.HOST_DEV }} # EC2 퍼블릭 IPv4 DNS
-          username: ubuntu # ubuntu
-          port: 22
-          key: ${{ secrets.PRIVATE_KEY }}
-          envs: GITHUB_SHA
-          script: |
-            sudo docker ps
-            docker stop $(docker ps -a -q)
-            docker rm $(docker ps -a -q)
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/moit
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/moit
-            sudo docker run -d -p 6379:6379 redis
-            sudo docker image prune -f
-
-#  docker-pull-and-run:
-#    runs-on: [self-hosted, dev]
-#    if: ${{ needs.CI-CD.result == 'success' }}
-#    needs: [ CI-CD ]
+#name: CI/CD
+#
+#on:
+#  pull_request:
+#    branches: [ "main", "dev" ]
+#    types:
+#      - closed
+#
+#jobs:
+#  CI-CD:
+#    runs-on: ubuntu-latest
+#
 #    steps:
-#      - name: ✨ 배포 스크립트 실행
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#
+#      # gradle caching - 빌드 시간 향상
+#      - name: Gradle Caching
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
+#
+#      - name: Grant execute permission for gradlew
+#        run: chmod +x ./gradlew
+#
+#      - name: make env.properties
+#        if: |
+#          contains(github.ref, 'main') ||
+#          contains(github.ref, 'dev')
 #        run: |
-#          sh /deploy.sh
-#          sudo docker image prune -f
-
+#          touch env.properties
+#          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
+#        shell: bash
+#
+#
+#
+#      - name: Build with Gradle
+#        run: ./gradlew build -x test
+#
+#      # 현재시간가져오기
+#      - name: Get current time
+#        uses: josStorer/get-current-time@v2.0.2
+#        id: current-time
+#        with:
+#          format: YYYY-MM-DDTHH-mm-ss
+#          utcOffset: "+09:00"
+#
+#      # docker build & push
+#      # Dockerfile을 통해 이미지화
+#      # push to docker hub
+#      - name: Docker build & push to dev
+#        #        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+#        if: |
+#          contains(github.ref, 'main') ||
+#          contains(github.ref, 'dev')
+#        run: |
+#          docker login -u ${{ secrets.DOCKER_EMAIL }} -p ${{ secrets.DOCKER_PASSWORD }}
+#          docker build -t ${{ secrets.DOCKER_USERNAME }}/moit .
+#          docker push ${{ secrets.DOCKER_USERNAME }}/moit
+#
 #      ## pull to develop
 #      - name: Pull to dev
 #        uses: appleboy/ssh-action@master
 #        id: pull-dev
-#        #        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+##        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
 #        if: |
 #          contains(github.ref, 'main') ||
 #          contains(github.ref, 'dev')
@@ -116,8 +83,37 @@ jobs:
 #          envs: GITHUB_SHA
 #          script: |
 #            sudo docker ps
-#            docker stop $(docker ps -a -q)
-#            docker rm $(docker ps -a -q)
 #            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/moit
-#            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/moit
-#            sudo docker image prune -f
+#
+#
+#  docker-pull-and-run:
+#    runs-on: [self-hosted, dev]
+#    if: github.event.pull_request.merged == true && ${{ needs.CI-CD.result == 'success' }}
+#    needs: [ CI-CD ]
+#    steps:
+#      - name: ✨ 배포 스크립트 실행
+#        run: |
+#          sh /deploy.sh
+#          sudo docker image prune -f
+#
+##      ## pull to develop
+##      - name: Pull to dev
+##        uses: appleboy/ssh-action@master
+##        id: pull-dev
+##        #        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+##        if: |
+##          contains(github.ref, 'main') ||
+##          contains(github.ref, 'dev')
+##        with:
+##          host: ${{ secrets.HOST_DEV }} # EC2 퍼블릭 IPv4 DNS
+##          username: ubuntu # ubuntu
+##          port: 22
+##          key: ${{ secrets.PRIVATE_KEY }}
+##          envs: GITHUB_SHA
+##          script: |
+##            sudo docker ps
+##            docker stop $(docker ps -a -q)
+##            docker rm $(docker ps -a -q)
+##            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/moit
+##            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/moit
+##            sudo docker image prune -f

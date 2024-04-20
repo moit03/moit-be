@@ -27,7 +27,7 @@ public class CommonController {
 
     @Operation(summary = "연결 체크", description = "연결 체크 API")
     @GetMapping("/")
-    public String healthCheck() {
+    public String healthCheck1() {
         log.info("Connection OK");
         return "Connection OK";
     }
