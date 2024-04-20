@@ -43,6 +43,7 @@ jobs:
           echo "${{ secrets.APPLICATION_DEV }}" > src/main/resources/application-dev.properties
         shell: bash
 
+
       - name: Build with Gradle
         run: ./gradlew build -x test
 
