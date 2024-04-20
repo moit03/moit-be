@@ -29,7 +29,7 @@ public class CommonController {
     @GetMapping("/")
     public String healthCheck1() {
         log.info("Connection OK");
-        return "Connection OK";
+        return "Connection OK divide";
     }
 
     @Operation(summary = "연결 체크", description = "연결 체크 API")
