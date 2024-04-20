@@ -83,17 +83,19 @@ public class WebSecurityConfig {
                 "/swagger-ui.html",
                 "/v1/api-docs/**",
                 "/api-docs/**",
-                "api-docs" };
+                "api-docs"};
+
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
+                        .requestMatchers("/actuator/**").permitAll() // actuator 추가
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PUBLIC_URL).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/meetings/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/region/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/skill").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/member/myinfo").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/meetings/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/region/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/skill").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/member/myinfo").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/api/member/signin/naver").permitAll()
