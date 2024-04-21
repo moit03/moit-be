@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.moit.domain.meeting.dto.GetMyPageDto;
 import com.sparta.moit.domain.meeting.entity.Meeting;
@@ -86,22 +87,27 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     /* 검색 */
     @Override
     public Slice<Meeting> findByKeyword(String keyword, Pageable pageable) {
-        List<Meeting> meetingList = queryFactory
-                .selectFrom(meeting)
-                .where(
-                        titleLike(keyword)
-                                .or(addressLike(keyword))
-                                .or(contentLike(keyword)),
-                        isOpenOrFull()
-                )
+        QMeeting subMeeting = new QMeeting("subMeeting");
+
+        List<Meeting> meetings = queryFactory.selectFrom(meeting)
+                .where(meeting.id.in(
+                        JPAExpressions.selectDistinct(subMeeting.id)
+                                .from(subMeeting)
+                                .where(
+                                        titleLike(keyword)
+                                                .or(addressLike(keyword))
+                                                .or(contentLike(keyword)),
+                                        isOpenOrFull()
+                                )
+                ))
                 .orderBy(
                         meeting.meetingDate.asc(),
                         meeting.registeredCount.desc()
                 )
-                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
+                .offset(pageable.getOffset())
                 .fetch();
-        return new SliceImpl<>(meetingList, pageable, hasNextPage(meetingList, pageable.getPageSize()));
+        return new SliceImpl<>(meetings, pageable, hasNextPage(meetings, pageable.getPageSize()));
     }
 
     @Override
