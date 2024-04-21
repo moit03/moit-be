@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -19,8 +20,7 @@ public class GetMeetingResponseDto {
     private String meetingName;
     private Short registeredCount;
     private Short totalCount;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private ZonedDateTime meetingDate;
+    private LocalDate meetingDate;
     private Double locationLat;
     private Double locationLng;
     private String locationAddress;
@@ -34,12 +34,12 @@ public class GetMeetingResponseDto {
 
 
     @Builder
-    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, List<Skill> skillList, List<Career> careerList, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
+    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, List<Skill> skillList, List<Career> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
-        this.meetingDate = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingDate = meetingDate;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
         this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
@@ -66,6 +66,7 @@ public class GetMeetingResponseDto {
                 .totalCount(meeting.getTotalCount())
                 .locationLat(meeting.getLocationLat())
                 .locationLng(meeting.getLocationLng())
+                .meetingDate(meeting.getMeetingDate())
                 .meetingStartTime(meeting.getMeetingStartTime())
                 .meetingEndTime(meeting.getMeetingEndTime())
                 .locationAddress(meeting.getLocationAddress())
