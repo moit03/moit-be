@@ -45,7 +45,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .from(meetingMember)
                 .leftJoin(meetingMember.meeting, meeting)
                 .where(meetingMember.member.id.eq(memberId)
-                        .and(meeting.status.ne(MeetingStatusEnum.DELETE))) // status != DELETE 조건 추가
+                        .and(meeting.status.eq(MeetingStatusEnum.COMPLETE))) /*완료인 경우만 조회*/
                 .fetch();
     }
 

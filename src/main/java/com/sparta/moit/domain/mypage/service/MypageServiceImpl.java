@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.mypage.service;
 
+import com.sparta.moit.domain.bookmark.repository.BookMarkRepository;
 import com.sparta.moit.domain.meeting.dto.GetMyPageDto;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j(topic = "Mypage")
@@ -27,6 +30,7 @@ public class MypageServiceImpl implements MypageService {
     private final MemberRepository memberRepository;
     private final MeetingMemberRepository meetingMemberRepository;
     private final MeetingRepository meetingRepository;
+    private final BookMarkRepository bookMarkRepository;
 
 
     /*select * from meeting
@@ -51,9 +55,8 @@ public class MypageServiceImpl implements MypageService {
         int heldMeetingCount = meetingRepository.countByCreatorAndStatusNot(member, MeetingStatusEnum.DELETE);
         // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
 
-
-        List<GetMyPageDto> studyTimeList = meetingRepository.getMyPage(member.getId(), MeetingStatusEnum.DELETE);
-        // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
+        List<GetMyPageDto> studyTimeList = meetingRepository.getMyPage(member.getId(), MeetingStatusEnum.COMPLETE);
+        // TODO: meeting 중 status = COMPLETE 인 것만 count 하도록 변경
 
         /* 총 공부시간 */
         long totalStudyTimeMinutes = 0;
@@ -78,7 +81,18 @@ public class MypageServiceImpl implements MypageService {
 
     public long calculateStudyTime(LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
         if (meetingStartTime != null && meetingEndTime != null) {
+            /* meetingStartTime이 meetingEndTime 이후나 같은지 체크*/
+            if (meetingStartTime.isAfter(meetingEndTime) || meetingStartTime.equals(meetingEndTime)) {
+                throw new IllegalArgumentException("meetingStartTime은 meetingEndTime보다 이전이어야 합니다.");
+            }
+
             Duration duration = Duration.between(meetingStartTime, meetingEndTime);
+
+            /* - 시간 방지 */
+            if (duration.isNegative()) {
+                throw new IllegalArgumentException("meetingStartTime은 meetingEndTime보다 이전이어야 합니다.");
+            }
+
             return duration.toMinutes();
         } else {
             return 0;
@@ -91,4 +105,24 @@ public class MypageServiceImpl implements MypageService {
         return meetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
     // TODO : OPEN, FULL / COMPLETE 인것 분리해서 api 작성, 모두 무한 스크롤로 구성 (pageSize 10개)
+
+    @Override
+    public List<MypageMeetingResponseDto> getMypageHeldList(Long memberId) {
+        List<Meeting> heldMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatusNot(memberId, MeetingStatusEnum.DELETE);
+        return heldMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+    }
+
+    @Override
+    public List<MypageMeetingResponseDto> getCompletedMeetings(Long memberId) {
+        List<Meeting> completedMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatus(memberId, MeetingStatusEnum.COMPLETE);
+        return completedMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+    }
+
+    @Override
+    public List<MypageMeetingResponseDto> getMypageBookmarkedMeetings(Long memberId) {
+        List<Meeting> bookmarkedMeetings = bookMarkRepository.findBookmarkedMeetingsByMemberId(memberId);
+        return bookmarkedMeetings.stream()
+                .map(MypageMeetingResponseDto::fromEntity)
+                .toList();
+    }
 }
