@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static com.sparta.moit.domain.meeting.entity.QCareer.career;
@@ -133,11 +135,18 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     @Override
     public List<Meeting> findAllIncompleteMeetingsForHour() {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime oneHourAgoTime = oneHourAgo.toLocalTime();
+        LocalTime nowTime = now.toLocalTime();
 
         return queryFactory.selectFrom(meeting)
                 .where(isOpenOrFull())
-                /* now() - 1hr <= meetingEndTime < now() */
-                .where(meeting.meetingStartTime.between(oneHourAgo, LocalDateTime.now()))
+                .where(meeting.meetingDate.eq(LocalDate.now()))
+                /* meetingDate가 오늘이고, meetingEndTime이 1시간 전부터 현재까지인 회의 */
+                .where(meeting.meetingEndTime.hour().between(
+                                oneHourAgoTime.getHour(),nowTime.getHour()
+                        )
+                )
                 .fetch();
     }
 
