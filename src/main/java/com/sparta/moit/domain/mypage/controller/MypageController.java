@@ -50,4 +50,10 @@ public class MypageController implements MypageControllerDocs {
         List<MypageMeetingResponseDto> responseDtoList = mypageService.getCompletedMeetings(userDetails.getUser().getId());
         return ResponseEntity.ok().body(ResponseDto.success("완료된 모임 조회 완료", responseDtoList));
     }
+    /* 북마크 된 모임 리스트 */
+    @GetMapping("/meeting/bookmarked")
+    public ResponseEntity<ResponseDto<List<MypageMeetingResponseDto>>> getMypageBookmarkedMeetings(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<MypageMeetingResponseDto> responseDtoList = mypageService.getMypageBookmarkedMeetings(userDetails.getUser().getId());
+        return ResponseEntity.ok().body(ResponseDto.success("북마크된 모임 조회 완료", responseDtoList));
+    }
 }

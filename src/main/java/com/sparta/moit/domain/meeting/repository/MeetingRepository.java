@@ -13,7 +13,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
 
     Optional<Meeting> findByIdAndCreator(Long meetingId, Member member);
 
-    int countByCreator(Member creator);
     int countByCreatorAndStatusNot(Member creator, MeetingStatusEnum status);
 
     @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status != :status")

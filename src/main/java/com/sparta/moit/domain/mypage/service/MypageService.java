@@ -14,4 +14,5 @@ public interface MypageService {
     List<MypageMeetingResponseDto> getMypageMeetingList(Long memberId);
     List<MypageMeetingResponseDto> getMypageHeldList(Long memberId);
     List<MypageMeetingResponseDto> getCompletedMeetings(Long memberId);
+    List<MypageMeetingResponseDto> getMypageBookmarkedMeetings(Long memberId);
 }
