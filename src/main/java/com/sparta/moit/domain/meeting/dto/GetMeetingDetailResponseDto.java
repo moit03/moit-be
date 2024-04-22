@@ -22,9 +22,9 @@ public class GetMeetingDetailResponseDto {
     private final List<String> skillNameList;
     private final LocalDate meetingDate;
 
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private final ZonedDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private final ZonedDateTime meetingEndTime;
 
     private final String locationAddress;

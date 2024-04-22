@@ -16,6 +16,12 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
     int countByCreator(Member creator);
     int countByCreatorAndStatusNot(Member creator, MeetingStatusEnum status);
 
+    @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status != :status")
+    List<Meeting> findMeetingsByCreatorIdAndStatusNot(Long memberId, MeetingStatusEnum status);
+    @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status = :status")
+    List<Meeting> findMeetingsByCreatorIdAndStatus(Long memberId, MeetingStatusEnum status);
+
+
     @Query(value = "SELECT * FROM meeting " +
             "ORDER BY ST_DISTANCE_SPHERE(point(:locationLng, :locationLat), point(location_lng, location_lat)) " +
             "LIMIT :limit OFFSET :page",

@@ -12,4 +12,6 @@ public interface MypageService {
     MypageResponseDto getMypageInfo(Member member);
     long calculateStudyTime(LocalDateTime meetingStartTime, LocalDateTime meetingEndTime);
     List<MypageMeetingResponseDto> getMypageMeetingList(Long memberId);
+    List<MypageMeetingResponseDto> getMypageHeldList(Long memberId);
+    List<MypageMeetingResponseDto> getCompletedMeetings(Long memberId);
 }

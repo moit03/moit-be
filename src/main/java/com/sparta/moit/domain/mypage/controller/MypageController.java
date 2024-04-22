@@ -36,4 +36,18 @@ public class MypageController implements MypageControllerDocs {
         List<MypageMeetingResponseDto> responseDtoList = mypageService.getMypageMeetingList(userDetails.getUser().getId());
         return ResponseEntity.ok().body(ResponseDto.success("마이페이지 조회 완료", responseDtoList));
     }
+
+    /* 개최한 모임 정보 리스트 */
+    @GetMapping("/meeting/held")
+    public ResponseEntity<ResponseDto<List<MypageMeetingResponseDto>>> getMypageHeldList(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        List<MypageMeetingResponseDto> responseDtoList = mypageService.getMypageHeldList(userDetails.getUser().getId());
+        return ResponseEntity.ok().body(ResponseDto.success("개최한 모임 조회 완료", responseDtoList));
+    }
+
+    /* 완료한 모임 정보 리스트 */
+    @GetMapping("/meeting/complete")
+    public ResponseEntity<ResponseDto<List<MypageMeetingResponseDto>>> getCompletedMeetings(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<MypageMeetingResponseDto> responseDtoList = mypageService.getCompletedMeetings(userDetails.getUser().getId());
+        return ResponseEntity.ok().body(ResponseDto.success("완료된 모임 조회 완료", responseDtoList));
+    }
 }

@@ -24,9 +24,9 @@ public class GetMeetingResponseDto {
     private Double locationLat;
     private Double locationLng;
     private String locationAddress;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private ZonedDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private ZonedDateTime meetingEndTime;
     private List<Skill> skillList;
     private List<Career> careerList;

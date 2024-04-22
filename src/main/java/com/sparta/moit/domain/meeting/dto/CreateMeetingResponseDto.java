@@ -17,9 +17,9 @@ public class CreateMeetingResponseDto {
     private final Long meetingId;
     private final String meetingName;
     private final LocalDate meetingDate;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private final ZonedDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private final ZonedDateTime meetingEndTime;
     private final String locationAddress;
     private final Integer budget;
@@ -32,9 +32,9 @@ public class CreateMeetingResponseDto {
     private final String regionSecondName;
     private final List<Skill> skillList;
     private final List<Career> careerList;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private final ZonedDateTime createdAt;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private final ZonedDateTime modifiedAt;
 
     @Builder

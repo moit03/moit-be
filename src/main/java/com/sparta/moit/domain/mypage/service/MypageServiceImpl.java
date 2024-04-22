@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j(topic = "Mypage")
@@ -78,7 +80,20 @@ public class MypageServiceImpl implements MypageService {
 
     public long calculateStudyTime(LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
         if (meetingStartTime != null && meetingEndTime != null) {
-            Duration duration = Duration.between(meetingStartTime, meetingEndTime);
+            // LocalDateTime 값을 UTC 시간대의 ZonedDateTime으로 변환합니다.
+            ZonedDateTime utcStartTime = meetingStartTime.atZone(ZoneId.of("UTC"));
+            ZonedDateTime utcEndTime = meetingEndTime.atZone(ZoneId.of("UTC"));
+
+            // UTC ZonedDateTime 값을 서울 시간대로 변환합니다.
+            ZonedDateTime seoulStartTime = utcStartTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+            ZonedDateTime seoulEndTime = utcEndTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+
+            /* 시간 범위 유효성 검증 */
+            if (seoulStartTime.isAfter(seoulEndTime)) {
+                throw new IllegalArgumentException("meetingStartTime은 meetingEndTime보다 늦을 수 없습니다.");
+            }
+
+            Duration duration = Duration.between(seoulStartTime, seoulEndTime);
             return duration.toMinutes();
         } else {
             return 0;
@@ -91,4 +106,15 @@ public class MypageServiceImpl implements MypageService {
         return meetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
     // TODO : OPEN, FULL / COMPLETE 인것 분리해서 api 작성, 모두 무한 스크롤로 구성 (pageSize 10개)
+
+    @Override
+    public List<MypageMeetingResponseDto> getMypageHeldList(Long memberId) {
+        List<Meeting> heldMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatusNot(memberId, MeetingStatusEnum.DELETE);
+        return heldMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+    }
+    @Override
+    public List<MypageMeetingResponseDto> getCompletedMeetings(Long memberId) {
+        List<Meeting> completedMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatus(memberId, MeetingStatusEnum.COMPLETE);
+        return completedMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+    }
 }
