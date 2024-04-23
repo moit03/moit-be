@@ -34,9 +34,9 @@ public class CreateMeetingResponseDto {
     private final List<Skill> skillList;
     private final List<Career> careerList;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private final Timestamped createdAt;
+    private final ZonedDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private final Timestamped modifiedAt;
+    private final ZonedDateTime modifiedAt;
 
     @Builder
     public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, Timestamped createdAt, Timestamped modifiedAt) {
@@ -56,8 +56,12 @@ public class CreateMeetingResponseDto {
         this.regionSecondName = regionSecondName;
         this.skillList = skillList;
         this.careerList = careerList;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+        this.createdAt = convertToSeoulTime(createdAt.getCreatedAt());
+        this.modifiedAt = convertToSeoulTime(modifiedAt.getModifiedAt());
+    }
+
+    private ZonedDateTime convertToSeoulTime(LocalDateTime localDateTime) {
+        return localDateTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
     }
 
     public static CreateMeetingResponseDto fromEntity(Meeting meeting) {
