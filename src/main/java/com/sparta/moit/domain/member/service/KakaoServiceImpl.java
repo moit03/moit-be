@@ -49,14 +49,11 @@ public class KakaoServiceImpl implements KakaoService{
         return jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
     }
     public MemberResponseDto kakaoLogin(String code) throws JsonProcessingException {
-        log.info("Kakao Login 시작: 인가코드 - " + code);
         /* 1. "인가 코드"로 "액세스 토큰" 요청 */
         String accessToken = getToken(code);
-        log.info("액세스 토큰 받음: " + accessToken);
 
         /* 2. 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기 */
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
-        log.info("카카오 사용자 정보 받음: " + kakaoUserInfo);
 
         /* 3. 필요시에 회원가입 */
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoUserInfo);
@@ -69,18 +66,14 @@ public class KakaoServiceImpl implements KakaoService{
         /* 4. JWT 토큰 반환 */
         /* 이게 우리서버 Access Token */
         String createToken = jwtUtil.createToken(kakaoMember.getEmail(), kakaoMember.getRole());
-        log.info("JWT Access Token 생성: " + createToken);
 
         /* 이게 우리서버 Refresh Token 발급 */
         String refreshToken = jwtUtil.createRefreshToken(kakaoMember.getEmail(), kakaoMember.getRole());
-        log.info("JWT Refresh Token 생성: " + refreshToken);
 
         /* 발급한 토큰을 DB에 저장하기 */
         String refreshTokenValue = refreshTokenService.createAndSaveRefreshToken(kakaoMember.getEmail(), refreshToken);
-        log.info("Refresh Token 저장 완료: " + refreshTokenValue);
 
         MemberResponseDto responseDto = MemberResponseDto.builder().username(kakaoMember.getUsername()).accessToken(createToken).refreshToken(refreshTokenValue).build();
-        log.info("Kakao Login 완료: " + responseDto);
         return responseDto;
     }
 
@@ -126,7 +119,6 @@ public class KakaoServiceImpl implements KakaoService{
     }
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
-        log.info("accessToken : " + accessToken);
 
         /* 요청 URL 만들기 */
         URI uri = UriComponentsBuilder
