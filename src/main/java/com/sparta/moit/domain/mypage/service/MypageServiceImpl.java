@@ -121,8 +121,6 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public List<MypageMeetingResponseDto> getMypageBookmarkedMeetings(Long memberId) {
         List<Meeting> bookmarkedMeetings = bookMarkRepository.findBookmarkedMeetingsByMemberId(memberId);
-        return bookmarkedMeetings.stream()
-                .map(MypageMeetingResponseDto::fromEntity)
-                .toList();
+        return bookmarkedMeetings.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
 }

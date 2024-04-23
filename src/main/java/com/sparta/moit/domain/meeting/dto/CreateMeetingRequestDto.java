@@ -11,6 +11,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class CreateMeetingRequestDto {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private ZonedDateTime meetingStartTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     @NotNull(message = "모임 종료 시간 선택은 필수입니다.")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private ZonedDateTime meetingEndTime;
 
     @Schema(description = "미팅 예산", example = "10000")
@@ -72,11 +73,14 @@ public class CreateMeetingRequestDto {
         if (meetingStartTime != null && meetingEndTime != null && meetingStartTime.isAfter(meetingEndTime)) {
             throw new IllegalArgumentException("모임 시작 시간은 종료 시간보다 빨라야 합니다.");
         }
+        ZonedDateTime utcMeetingStartTime = meetingStartTime.withZoneSameInstant(ZoneId.of("UTC"));
+        ZonedDateTime utcMeetingEndTime = meetingEndTime.withZoneSameInstant(ZoneId.of("UTC"));
+
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(this.meetingStartTime.toLocalDateTime())
-                .meetingEndTime(this.meetingEndTime.toLocalDateTime())
+                .meetingStartTime(utcMeetingStartTime.toLocalDateTime())
+                .meetingEndTime(utcMeetingEndTime.toLocalDateTime())
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)

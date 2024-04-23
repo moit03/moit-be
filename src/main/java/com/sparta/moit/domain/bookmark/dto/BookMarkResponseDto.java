@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class BookMarkDto {
+public class BookMarkResponseDto {
     private final Long meetingId;
     private final Long memberId;
 
