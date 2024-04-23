@@ -18,9 +18,9 @@ public class CreateMeetingResponseDto {
     private final Long meetingId;
     private final String meetingName;
     private final LocalDate meetingDate;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private final LocalDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private final LocalDateTime meetingEndTime;
     private final String locationAddress;
     private final Integer budget;
