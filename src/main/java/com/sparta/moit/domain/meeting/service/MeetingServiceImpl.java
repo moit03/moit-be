@@ -49,6 +49,8 @@ public class MeetingServiceImpl implements MeetingService {
 
         System.out.println("Meeting created at: " + savedMeeting.getCreatedAt());
         System.out.println("Meeting modified at: " + savedMeeting.getModifiedAt());
+        log.info("statTime : " + savedMeeting.getMeetingStartTime());
+        log.info("endTime : " + savedMeeting.getMeetingEndTime());
 
         saveSkills(requestDto.getSkillIds(), savedMeeting);
         saveCareers(requestDto.getCareerIds(), savedMeeting);
