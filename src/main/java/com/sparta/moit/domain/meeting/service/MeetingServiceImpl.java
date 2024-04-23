@@ -21,6 +21,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -49,8 +50,8 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = requestDto.toEntity(member);
         Meeting savedMeeting = meetingRepository.save(meeting);
 
-        ZonedDateTime seoulStartTime = savedMeeting.getMeetingStartTime().atZone(ZoneId.of("Asia/Seoul"));
-        ZonedDateTime seoulEndTime = savedMeeting.getMeetingEndTime().atZone(ZoneId.of("Asia/Seoul"));
+        LocalDateTime seoulStartTime = savedMeeting.getMeetingStartTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        LocalDateTime seoulEndTime = savedMeeting.getMeetingEndTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         log.info("statTime : " + seoulStartTime);
         log.info("endTime : " + seoulEndTime);
