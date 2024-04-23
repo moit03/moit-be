@@ -2,6 +2,7 @@ package com.sparta.moit.domain.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.*;
+import com.sparta.moit.global.common.entity.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,12 +34,12 @@ public class CreateMeetingResponseDto {
     private final List<Skill> skillList;
     private final List<Career> careerList;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private final ZonedDateTime createdAt;
+    private final Timestamped createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private final ZonedDateTime modifiedAt;
+    private final Timestamped modifiedAt;
 
     @Builder
-    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, Timestamped createdAt, Timestamped modifiedAt) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -55,8 +56,8 @@ public class CreateMeetingResponseDto {
         this.regionSecondName = regionSecondName;
         this.skillList = skillList;
         this.careerList = careerList;
-        this.createdAt = createdAt.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.modifiedAt = modifiedAt.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
 
     public static CreateMeetingResponseDto fromEntity(Meeting meeting) {
@@ -85,8 +86,8 @@ public class CreateMeetingResponseDto {
                 .regionSecondName(meeting.getRegionSecondName())
                 .skillList(skillList)
                 .careerList(careerList)
-                .createdAt(meeting.getCreatedAt())
-                .modifiedAt(meeting.getModifiedAt())
+                .createdAt(builder().createdAt)
+                .modifiedAt(builder().createdAt)
                 .build();
     }
 }
