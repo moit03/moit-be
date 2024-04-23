@@ -99,7 +99,7 @@ public class MypageServiceImpl implements MypageService {
 
             /* - 시간 방지 */
             if (duration.isNegative()) {
-                throw new IllegalArgumentException("meetingStartTime은 meetingEndTime보다 이전이어야 합니다.");
+                throw new IllegalArgumentException("meetingStartTime 은 meetingEndTime 보다 이전이어야 합니다.");
             }
 
             return duration.toMinutes();
