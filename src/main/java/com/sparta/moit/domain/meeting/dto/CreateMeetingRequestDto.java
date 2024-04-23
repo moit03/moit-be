@@ -73,14 +73,18 @@ public class CreateMeetingRequestDto {
         if (meetingStartTime != null && meetingEndTime != null && meetingStartTime.isAfter(meetingEndTime)) {
             throw new IllegalArgumentException("모임 시작 시간은 종료 시간보다 빨라야 합니다.");
         }
+
         ZonedDateTime utcMeetingStartTime = meetingStartTime.withZoneSameInstant(ZoneId.of("UTC"));
         ZonedDateTime utcMeetingEndTime = meetingEndTime.withZoneSameInstant(ZoneId.of("UTC"));
+
+        ZonedDateTime kstMeetingStartTime = utcMeetingStartTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime kstMeetingEndTime = utcMeetingEndTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
 
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(utcMeetingStartTime.toLocalDateTime())
-                .meetingEndTime(utcMeetingEndTime.toLocalDateTime())
+                .meetingStartTime(kstMeetingStartTime.toLocalDateTime()) /* KST로 변환된 시간을 LocalDateTime으로 변환 */
+                .meetingEndTime(kstMeetingEndTime.toLocalDateTime()) /* KST로 변환된 시간을 LocalDateTime으로 변환 */
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
