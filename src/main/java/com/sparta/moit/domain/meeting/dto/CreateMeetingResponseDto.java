@@ -34,12 +34,12 @@ public class CreateMeetingResponseDto {
     private final List<Skill> skillList;
     private final List<Career> careerList;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private final ZonedDateTime createdAt;
+    private final LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private final ZonedDateTime modifiedAt;
+    private final LocalDateTime modifiedAt;
 
     @Builder
-    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, Timestamped createdAt, Timestamped modifiedAt) {
+    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -56,12 +56,8 @@ public class CreateMeetingResponseDto {
         this.regionSecondName = regionSecondName;
         this.skillList = skillList;
         this.careerList = careerList;
-        this.createdAt = convertToSeoulTime(createdAt.getCreatedAt());
-        this.modifiedAt = convertToSeoulTime(modifiedAt.getModifiedAt());
-    }
-
-    private ZonedDateTime convertToSeoulTime(LocalDateTime localDateTime) {
-        return localDateTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
 
     public static CreateMeetingResponseDto fromEntity(Meeting meeting) {
@@ -72,6 +68,9 @@ public class CreateMeetingResponseDto {
         List<Career> careerList = meeting.getCareers().stream()
                 .map(MeetingCareer::getCareer)
                 .collect(Collectors.toList());
+
+        System.out.println("Meeting created at: " + meeting.getCreatedAt());
+        System.out.println("Meeting modified at: " + meeting.getModifiedAt());
 
         return CreateMeetingResponseDto.builder()
                 .meetingId(meeting.getId())
@@ -90,8 +89,9 @@ public class CreateMeetingResponseDto {
                 .regionSecondName(meeting.getRegionSecondName())
                 .skillList(skillList)
                 .careerList(careerList)
-                .createdAt(builder().createdAt)
-                .modifiedAt(builder().createdAt)
+                .createdAt(meeting.getCreatedAt())
+                .modifiedAt(meeting.getModifiedAt())
                 .build();
+
     }
 }
