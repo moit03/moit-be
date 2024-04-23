@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,8 +90,8 @@ public class Meeting extends Timestamped {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime;
-        this.meetingEndTime = meetingEndTime;
+        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         this.budget = budget;
         this.locationAddress = locationAddress;
         this.contents = contents;
