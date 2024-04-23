@@ -19,9 +19,9 @@ public class CreateMeetingResponseDto {
     private final String meetingName;
     private final LocalDate meetingDate;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private final ZonedDateTime meetingStartTime;
+    private final LocalDateTime meetingStartTime;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private final ZonedDateTime meetingEndTime;
+    private final LocalDateTime meetingEndTime;
     private final String locationAddress;
     private final Integer budget;
     private final String contents;
@@ -43,8 +43,8 @@ public class CreateMeetingResponseDto {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
         this.budget = budget;
         this.contents = contents;
         this.locationAddress = locationAddress;
@@ -68,9 +68,6 @@ public class CreateMeetingResponseDto {
         List<Career> careerList = meeting.getCareers().stream()
                 .map(MeetingCareer::getCareer)
                 .collect(Collectors.toList());
-
-        System.out.println("Meeting created at: " + meeting.getCreatedAt());
-        System.out.println("Meeting modified at: " + meeting.getModifiedAt());
 
         return CreateMeetingResponseDto.builder()
                 .meetingId(meeting.getId())

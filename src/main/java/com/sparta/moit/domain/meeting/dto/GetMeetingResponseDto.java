@@ -25,9 +25,9 @@ public class GetMeetingResponseDto {
     private Double locationLng;
     private String locationAddress;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingStartTime;
+    private LocalDateTime meetingStartTime;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingEndTime;
+    private LocalDateTime meetingEndTime;
     private List<Skill> skillList;
     private List<Career> careerList;
 
@@ -42,8 +42,8 @@ public class GetMeetingResponseDto {
         this.meetingDate = meetingDate;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
-        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
         this.locationAddress = locationAddress;
         this.skillList = skillList;
         this.careerList = careerList;
