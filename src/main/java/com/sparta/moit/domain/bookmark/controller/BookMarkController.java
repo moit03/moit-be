@@ -1,7 +1,8 @@
 package com.sparta.moit.domain.bookmark.controller;
 
 import com.sparta.moit.domain.bookmark.controller.docs.BookMarkControllerDocs;
-import com.sparta.moit.domain.bookmark.dto.BookMarkDto;
+import com.sparta.moit.domain.bookmark.dto.BookMarkRequestDto;
+import com.sparta.moit.domain.bookmark.dto.BookMarkResponseDto;
 import com.sparta.moit.domain.bookmark.service.BookMarkService;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
@@ -20,34 +21,22 @@ public class BookMarkController implements BookMarkControllerDocs {
     private final BookMarkService bookMarkService;
     private final MemberRepository memberRepository;
 
-    /**
-     * 북마크 추가
-     *
-     * @param meetingId 즐겨찾기에 추가할 모임 ID
-     * @param userDetails 현재 인증된 회원 정보
-     */
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto<BookMarkDto>> addMeetingBookmark(@RequestParam Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseDto<BookMarkResponseDto>> addMeetingBookmark(@RequestBody BookMarkRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getUser();
-        BookMarkDto bookmarkDto = new BookMarkDto(meetingId, member.getId());
+        BookMarkResponseDto bookmarkResponseDto = new BookMarkResponseDto(requestDto.getMeetingId(), member.getId());
 
-        bookMarkService.addMeetingBookmark(bookmarkDto, member);
-        return ResponseEntity.ok().body(ResponseDto.success("북마크 완료", bookmarkDto));
+        bookMarkService.addMeetingBookmark(bookmarkResponseDto, member);
+        return ResponseEntity.ok().body(ResponseDto.success("북마크 완료", bookmarkResponseDto));
     }
 
-    /**
-     * 북마크 해제
-     *
-     * @param meetingId 즐겨찾기에서 제거할 모임 ID
-     * @param userDetails 현재 인증된 회원 정보
-     */
     @DeleteMapping("/remove")
-    public ResponseEntity<ResponseDto<BookMarkDto>> removeMeetingBookmark(@RequestParam Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseDto<BookMarkResponseDto>> removeMeetingBookmark(@RequestBody BookMarkRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getUser();
-        BookMarkDto bookmarkDto = new BookMarkDto(meetingId, member.getId());
+        BookMarkResponseDto bookmarkResponseDto = new BookMarkResponseDto(requestDto.getMeetingId(), member.getId());
 
-        bookMarkService.removeMeetingBookmark(bookmarkDto, member);
-        return ResponseEntity.ok().body(ResponseDto.success("북마크 해제", bookmarkDto));
+        bookMarkService.removeMeetingBookmark(bookmarkResponseDto, member);
+        return ResponseEntity.ok().body(ResponseDto.success("북마크 해제", bookmarkResponseDto));
     }
 
     /**
@@ -63,9 +52,9 @@ public class BookMarkController implements BookMarkControllerDocs {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
         Member member = userDetails.getUser();
-        BookMarkDto bookmarkDto = new BookMarkDto(meetingId, member.getId());
+        BookMarkResponseDto bookmarkResponseDto = new BookMarkResponseDto(meetingId, member.getId());
 
-        boolean isBookmarked = bookMarkService.isBookmarked(bookmarkDto, member);
+        boolean isBookmarked = bookMarkService.isBookmarked(bookmarkResponseDto, member);
         return ResponseEntity.ok(isBookmarked);
     }
 }

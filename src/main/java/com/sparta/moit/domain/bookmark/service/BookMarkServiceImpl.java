@@ -1,6 +1,6 @@
 package com.sparta.moit.domain.bookmark.service;
 
-import com.sparta.moit.domain.bookmark.dto.BookMarkDto;
+import com.sparta.moit.domain.bookmark.dto.BookMarkResponseDto;
 import com.sparta.moit.domain.bookmark.entity.BookMark;
 import com.sparta.moit.domain.bookmark.repository.BookMarkRepository;
 import com.sparta.moit.domain.meeting.entity.Meeting;
@@ -19,11 +19,14 @@ public class BookMarkServiceImpl implements BookMarkService {
     private final BookMarkRepository bookMarkRepository;
 
     @Transactional
-    public void addMeetingBookmark(BookMarkDto bookmarkDto, Member member) {
+    public void addMeetingBookmark(BookMarkResponseDto bookmarkResponseDto, Member member) {
         if (member == null) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
-        Meeting meeting = meetingRepository.findById(bookmarkDto.getMeetingId())
+        if (isBookmarked(bookmarkResponseDto, member)) {
+            throw new CustomException(ErrorCode.ALREADY_BOOKMARKED);
+        }
+        Meeting meeting = meetingRepository.findById(bookmarkResponseDto.getMeetingId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
         BookMark bookmark = BookMark.builder()
@@ -36,21 +39,24 @@ public class BookMarkServiceImpl implements BookMarkService {
 
     @Override
     @Transactional
-    public void removeMeetingBookmark(BookMarkDto bookmarkDto, Member member) {
+    public void removeMeetingBookmark(BookMarkResponseDto bookmarkResponseDto, Member member) {
         if (member == null) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
-        BookMark bookmark = bookMarkRepository.findByMeetingIdAndMemberId(bookmarkDto.getMeetingId(), member.getId())
+        if (!isBookmarked(bookmarkResponseDto, member)) {
+            throw new CustomException(ErrorCode.NOT_BOOKMARKED);
+        }
+        BookMark bookmark = bookMarkRepository.findByMeetingIdAndMemberId(bookmarkResponseDto.getMeetingId(), member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
 
         bookMarkRepository.delete(bookmark);
     }
 
     @Override
-    public boolean isBookmarked(BookMarkDto bookmarkDto, Member member) {
+    public boolean isBookmarked(BookMarkResponseDto bookmarkResponseDto, Member member) {
         if (member == null) {
             return false;
         }
-        return bookMarkRepository.findByMeetingIdAndMemberId(bookmarkDto.getMeetingId(), member.getId()).isPresent();
+        return bookMarkRepository.findByMeetingIdAndMemberId(bookmarkResponseDto.getMeetingId(), member.getId()).isPresent();
     }
 }
