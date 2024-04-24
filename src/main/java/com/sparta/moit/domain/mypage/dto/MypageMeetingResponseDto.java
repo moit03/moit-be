@@ -5,6 +5,7 @@ import com.sparta.moit.domain.meeting.entity.Meeting;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,18 +21,18 @@ public class MypageMeetingResponseDto {
     private final LocalDate meetingDate;
 
     @JsonFormat(pattern = "HH:mm")
-    private final ZonedDateTime meetingStartTime;
+    private final LocalDateTime meetingStartTime;
 
     @JsonFormat(pattern = "HH:mm")
-    private final ZonedDateTime meetingEndTime;
+    private final LocalDateTime meetingEndTime;
 
     @Builder
     public MypageMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
     }
 
     public static MypageMeetingResponseDto fromEntity(Meeting meeting){
