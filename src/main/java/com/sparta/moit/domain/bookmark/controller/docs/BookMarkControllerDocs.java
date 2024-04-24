@@ -15,6 +15,6 @@ public interface BookMarkControllerDocs {
     ResponseEntity<ResponseDto<BookMarkResponseDto>> addMeetingBookmark(@RequestBody BookMarkRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
     @Operation(summary = "북마크 해제", description = "북마크 해제 API")
     ResponseEntity<ResponseDto<BookMarkResponseDto>> removeMeetingBookmark(@RequestBody BookMarkRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
-    @Operation(summary = "북마크 확인", description = "북마크 확인 API")
+    @Operation(summary = "북마크 확인", description = "북마크 확인하기 API")
     ResponseEntity<Boolean> isBookmarked(@RequestParam Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 }
