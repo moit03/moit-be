@@ -26,9 +26,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -110,7 +107,7 @@ public class MeetingServiceImpl implements MeetingService {
         int pageSize = 10;
         int offset = Math.max(page - 1, 0) * pageSize;
 
-        Point currentPoint = PointUtil.createPointFromLatLong(locationLat, locationLng);
+        Point currentPoint = PointUtil.createPointFromLngLat(locationLng, locationLat);
         List<Meeting> meetingList = meetingRepository.findMeetingST_Dwithin(
                 currentPoint
                 , skillIdsStr
