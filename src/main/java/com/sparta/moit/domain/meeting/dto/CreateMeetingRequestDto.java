@@ -11,6 +11,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -24,12 +25,12 @@ public class CreateMeetingRequestDto {
     private LocalDate meetingDate;
 
     @NotNull(message = "모임 시작 시간 선택은 필수입니다.")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
-    private LocalDateTime meetingStartTime;
+    @JsonFormat(pattern = "HH:mm")
+    private ZonedDateTime meetingStartTime;
 
     @NotNull(message = "모임 종료 시간 선택은 필수입니다.")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
-    private LocalDateTime meetingEndTime;
+    @JsonFormat(pattern = "HH:mm")
+    private ZonedDateTime meetingEndTime;
 
     @Schema(description = "미팅 예산", example = "10000")
     @NotNull(message = "예산 입력은 필수입니다.")
@@ -75,8 +76,8 @@ public class CreateMeetingRequestDto {
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(this.meetingStartTime)
-                .meetingEndTime(this.meetingEndTime)
+                .meetingStartTime(this.meetingStartTime.toLocalDateTime())
+                .meetingEndTime(this.meetingEndTime.toLocalDateTime())
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
