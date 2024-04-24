@@ -3,8 +3,10 @@ package com.sparta.moit.domain.meeting.repository;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import com.sparta.moit.domain.member.entity.Member;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,28 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
     List<Meeting> findMeetingsByCreatorIdAndStatusNot(Long memberId, MeetingStatusEnum status);
     @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status = :status")
     List<Meeting> findMeetingsByCreatorIdAndStatus(Long memberId, MeetingStatusEnum status);
+
+    @Query(value = "SELECT m.*, " +
+            "ST_Distance(:point, m.location_position) AS dist " +
+            "FROM meeting m " +
+            "WHERE " +
+            "   ST_Dwithin(m.location_position, :point, 5000) " +
+            "   AND (:skillIdsStr IS NULL OR EXISTS (" +
+            "         SELECT 1 FROM jsonb_array_elements(m.skill_list) AS skill_json " +
+            "         WHERE CAST(skill_json->>'skillId' AS TEXT) = ANY(string_to_array(:skillIdsStr, ',')) " +
+            "       )) " +
+            "   AND (:careerIdsStr IS NULL OR EXISTS (" +
+            "         SELECT 1 FROM jsonb_array_elements(m.career_list) AS career_json " +
+            "         WHERE CAST(career_json->>'careerId' AS TEXT) = ANY(string_to_array(:careerIdsStr, ',')) " +
+            "       )) " +
+            " ORDER BY dist asc " +
+            "LIMIT :pageSize " +
+            "OFFSET :offset", nativeQuery = true)
+    List<Meeting> findMeetingST_Dwithin(@Param("point") Point point,
+                                        @Param("skillIdsStr") String skillIdsStr,
+                                        @Param("careerIdsStr") String careerIdsStr,
+                                        @Param("pageSize") int pageSize,
+                                        @Param("offset") int offset);
 
 
     @Query(value = "SELECT * FROM meeting " +
@@ -51,4 +75,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             + "LIMIT :limit OFFSET :page",
             nativeQuery = true)
     List<Meeting> getMeetingsWithSkillAndCareer(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, int limit, int page);
+
+
 }

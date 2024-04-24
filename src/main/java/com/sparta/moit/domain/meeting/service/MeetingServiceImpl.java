@@ -13,19 +13,22 @@ import com.sparta.moit.global.common.dto.AddressResponseDto;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.util.AddressUtil;
+import com.sparta.moit.global.util.PointUtil;
+import com.sparta.moit.global.util.pagination.ListPaginator;
+import com.sparta.moit.global.util.pagination.Paginator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
 
 @Slf4j(topic = "Meeting Service Log")
 @Service
@@ -39,6 +42,8 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingSkillRepository meetingSkillRepository;
     private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
+
+    private final Paginator<Meeting> paginator = new ListPaginator<>();
 
     /*모임 등록*/
     @Override
@@ -86,6 +91,32 @@ public class MeetingServiceImpl implements MeetingService {
 
         meeting.deleteStatus();
 
+    }
+
+    @Override
+    public Slice<GetMeetingResponseDto> getMeetingListPostgre(
+            int page
+            , Double locationLat
+            , Double locationLng
+            , String skillIdsStr
+            , String careerIdsStr
+    ) {
+        int pageSize = 10;
+        int offset = Math.max(page - 1, 0) * pageSize;
+
+        Point currentPoint = PointUtil.createPointFromLatLong(locationLat, locationLng);
+        List<Meeting> meetingList = meetingRepository.findMeetingST_Dwithin(
+                currentPoint
+                , skillIdsStr
+                , careerIdsStr
+                , pageSize
+                , offset
+        );
+
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), pageSize);
+        boolean hasNext = hasNextPage(meetingList, pageable.getPageSize());
+        List<GetMeetingResponseDto> sliceList = meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+        return new SliceImpl<>(sliceList, pageable, hasNext);
     }
 
     /*모임 조회*/
@@ -265,5 +296,9 @@ public class MeetingServiceImpl implements MeetingService {
                 .meeting(meeting)
                 .build();
         meetingMemberRepository.save(meetingMember);
+    }
+
+    private boolean hasNextPage(List<Meeting> meetingList, int pageSize) {
+        return paginator.hasNextPage(meetingList, pageSize);
     }
 }
