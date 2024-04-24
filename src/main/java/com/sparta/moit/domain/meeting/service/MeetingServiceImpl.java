@@ -50,11 +50,8 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = requestDto.toEntity(member);
         Meeting savedMeeting = meetingRepository.save(meeting);
 
-        LocalDateTime seoulStartTime = savedMeeting.getMeetingStartTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-        LocalDateTime seoulEndTime = savedMeeting.getMeetingEndTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-
-        log.info("statTime : " + seoulStartTime);
-        log.info("endTime : " + seoulEndTime);
+        log.info("statTime : " + savedMeeting.getMeetingStartTime());
+        log.info("endTime : " + savedMeeting.getMeetingEndTime());
 
         log.info("Meeting created at: " + savedMeeting.getCreatedAt());
         log.info("Meeting modified at: " + savedMeeting.getModifiedAt());
