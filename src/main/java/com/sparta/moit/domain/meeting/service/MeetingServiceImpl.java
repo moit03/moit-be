@@ -169,17 +169,13 @@ public class MeetingServiceImpl implements MeetingService {
     /*모임 상세 조회 (로그인 유저) */
     @Override
     public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Optional<Member> member) {
-
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
-
-        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
-        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
         if (member.isEmpty()) {
-            return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
+            return GetMeetingDetailResponseDto.fromEntity(meeting, false);
         }
         boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
-        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, isJoin);
     }
 
     /*주소별 모임 조회*/

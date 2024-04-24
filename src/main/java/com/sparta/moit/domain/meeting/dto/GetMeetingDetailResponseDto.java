@@ -1,6 +1,5 @@
 package com.sparta.moit.domain.meeting.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class GetMeetingDetailResponseDto {
@@ -61,7 +61,15 @@ public class GetMeetingDetailResponseDto {
         this.isJoin = isJoin;
     }
 
-    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, List<String> careerNameList, List<String> skillNameList, boolean isJoin) {
+    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, boolean isJoin) {
+        List<String> careerNameList = meeting.getCareerList().stream()
+                .map(CareerResponseDto::getCareerName)
+                .collect(Collectors.toList());
+
+        List<String> skillNameList = meeting.getSkillList().stream()
+                .map(SkillResponseDto::getSkillName)
+                .collect(Collectors.toList());
+
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())

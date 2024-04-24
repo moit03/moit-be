@@ -111,26 +111,6 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     }
 
     @Override
-    public List<String> findCareerNameList(Long meetingId) {
-        return queryFactory
-                .select(career.careerName)
-                .from(meetingCareer)
-                .join(meetingCareer.career, career)
-                .where(meetingCareer.meeting.id.eq(meetingId))
-                .fetch();
-    }
-
-    @Override
-    public List<String> findSkillNameList(Long meetingId) {
-        return queryFactory
-                .select(skill.skillName)
-                .from(meetingSkill)
-                .join(meetingSkill.skill, skill)
-                .where(meetingSkill.meeting.id.eq(meetingId))
-                .fetch();
-    }
-
-    @Override
     public List<Meeting> findAllIncompleteMeetingsForHour() {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
         LocalDateTime now = LocalDateTime.now();
