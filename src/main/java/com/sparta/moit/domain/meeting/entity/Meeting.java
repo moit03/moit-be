@@ -2,11 +2,16 @@ package com.sparta.moit.domain.meeting.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.moit.domain.meeting.dto.CareerResponseDto;
+import com.sparta.moit.domain.meeting.dto.SkillResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -56,6 +61,9 @@ public class Meeting extends Timestamped {
     @Column(name = "location_lng")
     private Double locationLng;
 
+    @Column(columnDefinition = "geometry(Point,4326)")
+    private Point locationPosition;
+
     @Column(name = "region_first_name")
     private String regionFirstName;
 
@@ -74,13 +82,13 @@ public class Meeting extends Timestamped {
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MeetingSkill> skills = new ArrayList<>();
+    @Type(JsonType.class)
+    @Column(name = "skill_list",columnDefinition = "jsonb")
+    private List<SkillResponseDto> skillList = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MeetingCareer> careers = new ArrayList<>();
+    @Type(JsonType.class)
+    @Column(name = "career_list",columnDefinition = "jsonb")
+    private List<CareerResponseDto> careerList = new ArrayList<>();
 
     @Builder
     public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
