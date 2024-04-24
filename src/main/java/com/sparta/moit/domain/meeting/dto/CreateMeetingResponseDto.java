@@ -2,7 +2,6 @@ package com.sparta.moit.domain.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.*;
-import com.sparta.moit.global.common.entity.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -71,12 +70,18 @@ public class CreateMeetingResponseDto {
                 .map(MeetingCareer::getCareer)
                 .collect(Collectors.toList());
 
+        LocalDateTime startTime = meeting.getMeetingStartTime().toLocalDateTime();
+        LocalDateTime endTime = meeting.getMeetingEndTime().toLocalDateTime();
+
+        ZonedDateTime seoulStartTime = startTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime seoulEndTime = endTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+
         return CreateMeetingResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime())
-                .meetingEndTime(meeting.getMeetingEndTime().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime())
+                .meetingStartTime(seoulStartTime.toLocalDateTime())
+                .meetingEndTime(seoulEndTime.toLocalDateTime())
                 .budget(meeting.getBudget())
                 .contents(meeting.getContents())
                 .registeredCount(meeting.getRegisteredCount())
