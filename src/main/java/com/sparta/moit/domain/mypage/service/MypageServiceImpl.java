@@ -102,14 +102,23 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public List<MypageMeetingResponseDto> getMypageMeetingList(Long memberId) {
         List<Meeting> meetingList = meetingRepository.findMeetingsByMember(memberId);
-        return meetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+        return meetingList.stream()
+                .filter(meeting -> meeting.getStatus() == MeetingStatusEnum.OPEN ||
+                        meeting.getStatus() == MeetingStatusEnum.FULL ||
+                        meeting.getStatus() == MeetingStatusEnum.COMPLETE)
+                .map(MypageMeetingResponseDto::fromEntity)
+                .toList();
     }
-    // TODO : OPEN, FULL / COMPLETE 인것 분리해서 api 작성, 모두 무한 스크롤로 구성 (pageSize 10개)
 
     @Override
     public List<MypageMeetingResponseDto> getMypageHeldList(Long memberId) {
         List<Meeting> heldMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatusNot(memberId, MeetingStatusEnum.DELETE);
-        return heldMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+        return heldMeetingList.stream()
+                .filter(meeting -> meeting.getStatus() == MeetingStatusEnum.OPEN ||
+                        meeting.getStatus() == MeetingStatusEnum.FULL ||
+                        meeting.getStatus() == MeetingStatusEnum.COMPLETE)
+                .map(MypageMeetingResponseDto::fromEntity)
+                .toList();
     }
 
     @Override
