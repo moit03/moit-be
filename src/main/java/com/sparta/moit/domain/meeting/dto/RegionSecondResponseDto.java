@@ -6,14 +6,14 @@ import lombok.Getter;
 
 @Getter
 public class RegionSecondResponseDto {
-    private Short regionSecondId;
+    private Long regionSecondId;
     private String regionSecondName;
     private Double regionLat;
     private Double regionLng;
 
 
     @Builder
-    public RegionSecondResponseDto(Short regionSecondId, String regionSecondName, Double regionLat, Double regionLng) {
+    public RegionSecondResponseDto(Long regionSecondId, String regionSecondName, Double regionLat, Double regionLng) {
         this.regionSecondId = regionSecondId;
         this.regionSecondName = regionSecondName;
         this.regionLat = regionLat;

@@ -6,10 +6,10 @@ import lombok.Getter;
 
 @Getter
 public class RegionFirstResponseDto {
-    private Short regionFirstId;
+    private Long regionFirstId;
     private String regionFirstName;
     @Builder
-    public RegionFirstResponseDto(Short regionFirstId, String regionFirstName) {
+    public RegionFirstResponseDto(Long regionFirstId, String regionFirstName) {
         this.regionFirstId = regionFirstId;
         this.regionFirstName = regionFirstName;
     }

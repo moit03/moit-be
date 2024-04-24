@@ -14,7 +14,7 @@ public class RegionFirst {
 
     @Column(name = "region_first_id")
     @Id
-    private Short regionFirstId;
+    private Long regionFirstId;
 
     @Column(name = "region_first_name")
     private String regionFirstName;
