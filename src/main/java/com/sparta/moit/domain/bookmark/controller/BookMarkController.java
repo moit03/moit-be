@@ -57,4 +57,5 @@ public class BookMarkController implements BookMarkControllerDocs {
         boolean isBookmarked = bookMarkService.isBookmarked(bookmarkResponseDto, member);
         return ResponseEntity.ok(isBookmarked);
     }
+
 }
