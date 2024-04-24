@@ -18,10 +18,12 @@ public class CreateMeetingResponseDto {
     private final Long meetingId;
     private final String meetingName;
     private final LocalDate meetingDate;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
-    private final LocalDateTime meetingStartTime;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
-    private final LocalDateTime meetingEndTime;
+    private final ZonedDateTime meetingStartTime;
+    private final ZonedDateTime meetingEndTime;
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+//    private final LocalDateTime meetingStartTime;
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+//    private final LocalDateTime meetingEndTime;
     private final String locationAddress;
     private final Integer budget;
     private final String contents;
@@ -43,8 +45,8 @@ public class CreateMeetingResponseDto {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime;
-        this.meetingEndTime = meetingEndTime;
+        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         this.budget = budget;
         this.contents = contents;
         this.locationAddress = locationAddress;
@@ -73,8 +75,8 @@ public class CreateMeetingResponseDto {
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime())
-                .meetingEndTime(meeting.getMeetingEndTime())
+                .meetingStartTime(meeting.getMeetingStartTime().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime())
+                .meetingEndTime(meeting.getMeetingEndTime().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                 .budget(meeting.getBudget())
                 .contents(meeting.getContents())
                 .registeredCount(meeting.getRegisteredCount())
