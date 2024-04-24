@@ -39,8 +39,8 @@ public class MypageMeetingResponseDto {
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime())
-                .meetingEndTime(meeting.getMeetingEndTime())
+                .meetingStartTime(meeting.getMeetingStartTime().toLocalDateTime())
+                .meetingEndTime(meeting.getMeetingEndTime().toLocalDateTime())
                 .build();
     }
 }

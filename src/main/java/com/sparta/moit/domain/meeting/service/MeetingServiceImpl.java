@@ -26,6 +26,9 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,10 +55,12 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = requestDto.toEntity(member);
         Meeting savedMeeting = meetingRepository.save(meeting);
 
-        System.out.println("Meeting created at: " + savedMeeting.getCreatedAt());
-        System.out.println("Meeting modified at: " + savedMeeting.getModifiedAt());
         log.info("statTime : " + savedMeeting.getMeetingStartTime());
         log.info("endTime : " + savedMeeting.getMeetingEndTime());
+
+        log.info("Meeting created at: " + savedMeeting.getCreatedAt());
+        log.info("Meeting modified at: " + savedMeeting.getModifiedAt());
+
 
         saveSkills(requestDto.getSkillIds(), savedMeeting);
         saveCareers(requestDto.getCareerIds(), savedMeeting);
@@ -78,6 +83,7 @@ public class MeetingServiceImpl implements MeetingService {
         saveSkills(requestDto.getSkillIds(), meeting);
         saveCareers(requestDto.getCareerIds(), meeting);
         meeting.updateMeeting(requestDto);
+
         return meetingId;
     }
 

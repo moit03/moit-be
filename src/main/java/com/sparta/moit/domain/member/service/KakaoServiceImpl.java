@@ -57,6 +57,11 @@ public class KakaoServiceImpl implements KakaoService{
 
         /* 3. 필요시에 회원가입 */
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoUserInfo);
+        if (kakaoMember == null) {
+            log.error("Kakao 사용자 등록 실패");
+            throw new RuntimeException("Kakao 사용자 등록 실패");
+        }
+        log.info("Kakao 사용자 등록 완료: " + kakaoMember);
 
         /* 4. JWT 토큰 반환 */
         /* 이게 우리서버 Access Token */
@@ -114,7 +119,6 @@ public class KakaoServiceImpl implements KakaoService{
     }
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
-        log.info("accessToken : " + accessToken);
 
         /* 요청 URL 만들기 */
         URI uri = UriComponentsBuilder

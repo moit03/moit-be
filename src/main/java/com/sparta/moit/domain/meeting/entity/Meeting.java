@@ -15,6 +15,8 @@ import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +37,10 @@ public class Meeting extends Timestamped {
     private LocalDate meetingDate;
 
     @Column(name = "meeting_start_time")
-    private LocalDateTime meetingStartTime;
+    private ZonedDateTime meetingStartTime;
 
     @Column(name = "meeting_end_time")
-    private LocalDateTime meetingEndTime;
+    private ZonedDateTime meetingEndTime;
 
     @Column(name = "budget")
     private Integer budget;
@@ -97,8 +99,8 @@ public class Meeting extends Timestamped {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime;
-        this.meetingEndTime = meetingEndTime;
+        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         this.budget = budget;
         this.locationAddress = locationAddress;
         this.contents = contents;
