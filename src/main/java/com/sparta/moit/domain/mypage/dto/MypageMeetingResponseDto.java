@@ -26,22 +26,27 @@ public class MypageMeetingResponseDto {
     @JsonFormat(pattern = "HH:mm")
     private final LocalDateTime meetingEndTime;
 
+    private final String status;
+
     @Builder
-    public MypageMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
+    public MypageMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String status) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
         this.meetingStartTime = meetingStartTime;
         this.meetingEndTime = meetingEndTime;
+        this.status = status;
     }
 
     public static MypageMeetingResponseDto fromEntity(Meeting meeting){
+        String status = meeting.getStatus().toString(); /* Enum을 문자열로 변환 */
         return MypageMeetingResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .meetingDate(meeting.getMeetingDate())
                 .meetingStartTime(meeting.getMeetingStartTime())
                 .meetingEndTime(meeting.getMeetingEndTime())
+                .status(status)
                 .build();
     }
 }
