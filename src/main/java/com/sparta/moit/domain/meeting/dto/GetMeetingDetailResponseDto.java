@@ -23,9 +23,9 @@ public class GetMeetingDetailResponseDto {
     private final LocalDate meetingDate;
 
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private final LocalDateTime meetingStartTime;
+    private final ZonedDateTime meetingStartTime;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private final LocalDateTime meetingEndTime;
+    private final ZonedDateTime meetingEndTime;
 
     private final String locationAddress;
 
@@ -46,8 +46,8 @@ public class GetMeetingDetailResponseDto {
         this.careerNameList = careerNameList;
         this.skillNameList = skillNameList;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime;
-        this.meetingEndTime = meetingEndTime;
+        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         this.locationAddress = locationAddress;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
@@ -67,8 +67,8 @@ public class GetMeetingDetailResponseDto {
                 .careerNameList(careerNameList)
                 .skillNameList(skillNameList)
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime())
-                .meetingEndTime(meeting.getMeetingEndTime())
+                .meetingStartTime(meeting.getMeetingStartTime().toLocalDateTime())
+                .meetingEndTime(meeting.getMeetingEndTime().toLocalDateTime())
                 .locationAddress(meeting.getLocationAddress())
                 .registeredCount(meeting.getRegisteredCount())
                 .totalCount(meeting.getTotalCount())

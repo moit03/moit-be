@@ -43,25 +43,20 @@ public class MypageServiceImpl implements MypageService {
     @Override
     @Transactional(readOnly = true)
     public MypageResponseDto getMypageInfo(Member member) {
-        log.info("마이페이지 정보 조회 시작 - 회원 ID: {}", member.getId());
 
         Member member1 = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
-        log.info("회원 정보 조회 완료: {}", member1);
         /* 참여한 모임 개수 조회 */
         int enterMeetingCount = meetingMemberRepository.countByMemberIdAndMeeting_StatusNot(member.getId(), MeetingStatusEnum.DELETE);
         // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
-        log.info("회원이 참여한 모임 개수 조회: {}", enterMeetingCount);
 
         /* 개최한 모임 개수 */
         int heldMeetingCount = meetingRepository.countByCreatorAndStatusNot(member, MeetingStatusEnum.DELETE);
         // TODO: meeting 중 status != DELETE 인 것만 count 하도록 변경
-        log.info("회원이 개최한 모임 개수 조회: {}", heldMeetingCount);
 
         List<GetMyPageDto> studyTimeList = meetingRepository.getMyPage(member.getId(), MeetingStatusEnum.COMPLETE);
         // TODO: meeting 중 status = COMPLETE 인 것만 count 하도록 변경
-        log.info("공부 시간 계산을 위한 모임 목록 조회: {}", studyTimeList.size());
 
         /* 총 공부시간 */
         long totalStudyTimeMinutes = 0;
@@ -71,7 +66,6 @@ public class MypageServiceImpl implements MypageService {
             long studyTimeMinutes = calculateStudyTime(startTime, endTime);
             totalStudyTimeMinutes += studyTimeMinutes;
         }
-        log.info("총 공부 시간(분): {}", totalStudyTimeMinutes);
 
         /* 시간 형식으로 변환 */
         long hours = totalStudyTimeMinutes / 60;
@@ -110,26 +104,20 @@ public class MypageServiceImpl implements MypageService {
 
     @Override
     public List<MypageMeetingResponseDto> getMypageMeetingList(Long memberId) {
-        log.info("회원의 모임 목록 조회 시작 - 회원 ID: {}", memberId);
         List<Meeting> meetingList = meetingRepository.findMeetingsByMember(memberId);
-        log.info("조회된 모임 개수: {}", meetingList.size());
         return meetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
     // TODO : OPEN, FULL / COMPLETE 인것 분리해서 api 작성, 모두 무한 스크롤로 구성 (pageSize 10개)
 
     @Override
     public List<MypageMeetingResponseDto> getMypageHeldList(Long memberId) {
-        log.info("회원의 개최한 모임 목록 조회 시작 - 회원 ID: {}", memberId);
         List<Meeting> heldMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatusNot(memberId, MeetingStatusEnum.DELETE);
-        log.info("조회된 개최한 모임 개수: {}", heldMeetingList.size());
         return heldMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
 
     @Override
     public List<MypageMeetingResponseDto> getCompletedMeetings(Long memberId) {
-        log.info("회원의 완료된 모임 목록 조회 시작 - 회원 ID: {}", memberId);
         List<Meeting> completedMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatus(memberId, MeetingStatusEnum.COMPLETE);
-        log.info("조회된 완료된 모임 개수: {}", completedMeetingList.size());
         return completedMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
     }
 
