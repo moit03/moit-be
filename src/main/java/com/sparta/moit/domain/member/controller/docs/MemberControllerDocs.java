@@ -21,7 +21,7 @@ public interface MemberControllerDocs {
     ResponseEntity<?> naverLogin(@RequestParam String code,@RequestParam String state) throws JsonProcessingException;
 
     @Operation(summary = "회원탈퇴", description = "회원 탈퇴 API")
-    ResponseEntity<ResponseDto<String>> signout(@AuthenticationPrincipal UserDetailsImpl userDetails);
+    ResponseEntity<ResponseDto<String>> signOut(@AuthenticationPrincipal UserDetailsImpl userDetails);
 }
 
 
