@@ -2,6 +2,7 @@ package com.sparta.moit.domain.meeting.controller;
 
 import com.sparta.moit.domain.meeting.controller.docs.RegionControllerDocs;
 import com.sparta.moit.domain.meeting.dto.RegionFirstResponseDto;
+import com.sparta.moit.domain.meeting.dto.RegionIntegratedResponseDto;
 import com.sparta.moit.domain.meeting.dto.RegionSecondResponseDto;
 import com.sparta.moit.domain.meeting.service.RegionService;
 import com.sparta.moit.global.common.dto.ResponseDto;
@@ -19,6 +20,12 @@ import java.util.List;
 @RequestMapping("/api/region")
 public class RegionController implements RegionControllerDocs {
     private final RegionService regionService;
+
+    @GetMapping()
+    public ResponseEntity getRegion() {
+        List<RegionIntegratedResponseDto> responseDto = regionService.getRegion();
+        return ResponseEntity.ok().body(ResponseDto.success("시-도 정보 통합 조회 성공", responseDto));
+    }
 
     @GetMapping("/first")
     public ResponseEntity<?> getRegionFirst(){
