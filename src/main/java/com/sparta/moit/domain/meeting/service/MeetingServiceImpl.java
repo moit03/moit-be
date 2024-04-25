@@ -1,6 +1,7 @@
 package com.sparta.moit.domain.meeting.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.moit.domain.bookmark.repository.BookMarkRepository;
 import com.sparta.moit.domain.meeting.dto.*;
 import com.sparta.moit.domain.meeting.entity.*;
 import com.sparta.moit.domain.meeting.repository.*;
@@ -36,6 +37,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingSkillRepository meetingSkillRepository;
     private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
+    private final BookMarkRepository bookMarkRepository;
 
     /*모임 등록*/
     @Override
@@ -136,7 +138,7 @@ public class MeetingServiceImpl implements MeetingService {
             return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false, false);
         }
         boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
-        boolean isbookMarked = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
+        boolean isbookMarked = bookMarkRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
         return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin, isbookMarked);
     }
 
