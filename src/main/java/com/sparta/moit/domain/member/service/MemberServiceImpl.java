@@ -11,7 +11,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
 
-    public void singOut(Long memberId) {
+    public void signOut(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다. memberId=" + memberId));
 

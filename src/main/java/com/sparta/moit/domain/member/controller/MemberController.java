@@ -41,7 +41,7 @@ public class MemberController implements MemberControllerDocs {
     @DeleteMapping("/signout")
     public ResponseEntity<ResponseDto<String>> signOut(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long memberId = userDetails.getUser().getId();
-        memberService.singOut(memberId);
+        memberService.signOut(memberId);
         return ResponseEntity.ok().body(ResponseDto.success("회원 탈퇴 완료", "회원 탈퇴가 완료되었습니다."));
     }
 
