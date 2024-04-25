@@ -7,6 +7,7 @@ import com.sparta.moit.domain.meeting.dto.SkillResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
+import com.sparta.moit.global.util.PointUtil;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,8 +16,6 @@ import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +36,10 @@ public class Meeting extends Timestamped {
     private LocalDate meetingDate;
 
     @Column(name = "meeting_start_time")
-    private ZonedDateTime meetingStartTime;
+    private LocalDateTime meetingStartTime;
 
     @Column(name = "meeting_end_time")
-    private ZonedDateTime meetingEndTime;
+    private LocalDateTime meetingEndTime;
 
     @Column(name = "budget")
     private Integer budget;
@@ -100,8 +99,8 @@ public class Meeting extends Timestamped {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
         this.budget = budget;
         this.locationAddress = locationAddress;
         this.contents = contents;
@@ -109,6 +108,7 @@ public class Meeting extends Timestamped {
         this.totalCount = totalCount;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
+        this.locationPosition = PointUtil.createPointFromLngLat(locationLat, locationLat);
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
         this.status = MeetingStatusEnum.OPEN;

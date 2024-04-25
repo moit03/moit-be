@@ -61,8 +61,8 @@ public class CreateMeetingResponseDto {
     }
 
     public static CreateMeetingResponseDto fromEntity(Meeting meeting) {
-        LocalDateTime startTime = meeting.getMeetingStartTime().toLocalDateTime();
-        LocalDateTime endTime = meeting.getMeetingEndTime().toLocalDateTime();
+        LocalDateTime startTime = meeting.getMeetingStartTime();
+        LocalDateTime endTime = meeting.getMeetingEndTime();
 
         ZonedDateTime seoulStartTime = startTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         ZonedDateTime seoulEndTime = endTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));

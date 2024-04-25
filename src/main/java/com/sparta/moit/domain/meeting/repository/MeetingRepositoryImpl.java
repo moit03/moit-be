@@ -20,12 +20,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static com.sparta.moit.domain.bookmark.entity.QBookMark.bookMark;
 import static com.sparta.moit.domain.meeting.entity.QCareer.career;
 import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
-import static com.sparta.moit.domain.meeting.entity.QMeetingCareer.meetingCareer;
 import static com.sparta.moit.domain.meeting.entity.QMeetingMember.meetingMember;
 import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
-import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
 
 
 @RequiredArgsConstructor
@@ -125,6 +124,25 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                                 oneHourAgoTime.getHour(),nowTime.getHour()
                         )
                 )
+                .fetch();
+    }
+
+    /*      SELECT m.*
+                FROM meeting m
+                         JOIN book_mark b ON m.id = b.meeting_id
+                GROUP BY b.meeting_id
+                ORDER BY COUNT(b.meeting_id) DESC
+                LIMIT 5;
+             */
+
+    @Override
+    public List<Meeting> getPopularMeetings() {
+        return queryFactory.select(meeting)
+                .from(meeting)
+                .join(bookMark).on(bookMark.meeting.eq(meeting))
+                .groupBy(bookMark.meeting)
+                .orderBy(bookMark.meeting.count().desc())
+                .limit(5)
                 .fetch();
     }
 

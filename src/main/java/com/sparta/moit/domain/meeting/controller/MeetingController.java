@@ -1,10 +1,7 @@
 package com.sparta.moit.domain.meeting.controller;
 
 import com.sparta.moit.domain.meeting.controller.docs.MeetingControllerDocs;
-import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
-import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
-import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
-import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.*;
 import com.sparta.moit.domain.meeting.service.MeetingService;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.dto.ResponseDto;
@@ -108,6 +105,13 @@ public class MeetingController implements MeetingControllerDocs {
     public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page) {
         Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListBySearch(keyword, page);
         return ResponseEntity.ok().body(ResponseDto.success("검색 완료", responseDtoList));
+    }
+
+    /* 인기 모임 top 5 */
+    @GetMapping("/popular")
+    public ResponseEntity<?> getPopularMeeting() {
+        List<GetPopularResponseDto> responseDtoList = meetingService.getPopularMeeting();
+        return ResponseEntity.ok().body(ResponseDto.success("인기 모임 top 5", responseDtoList));
     }
 
     /*모임 참가*/

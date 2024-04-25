@@ -1,10 +1,7 @@
 package com.sparta.moit.domain.meeting.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
-import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
-import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
-import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.*;
 import com.sparta.moit.domain.meeting.entity.*;
 import com.sparta.moit.domain.meeting.repository.*;
 import com.sparta.moit.domain.member.entity.Member;
@@ -52,6 +49,11 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = requestDto.toEntity(member);
 
         Meeting savedMeeting = meetingRepository.save(meeting);
+
+        log.info("Meeting created at: " + savedMeeting.getCreatedAt());
+        log.info("Meeting modified at: " + savedMeeting.getModifiedAt());
+        log.info("meetingStartTime : " + savedMeeting.getMeetingStartTime());
+        log.info("meetingEndTime : " + savedMeeting.getMeetingEndTime());
 
         saveMeetingMember(member, savedMeeting);
 
@@ -146,26 +148,22 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
     }
 
-    /*모임 상세 조회 (비로그인)*/
-//    @Override
-//    public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId) {
-//
-//        Meeting meeting = meetingRepository.findById(meetingId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
-//
-//        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
-//        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
-//        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
-//    }
 
-    /*모임 상세 조회 (로그인 유저) */
+
+    /*모임 상세 조회 */
     @Override
     public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Optional<Member> member) {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        if (meeting.getStatus().equals(MeetingStatusEnum.DELETE)) {
+            throw new CustomException(ErrorCode.MEETING_NOT_FOUND);
+        }
+
         if (member.isEmpty()) {
             return GetMeetingDetailResponseDto.fromEntity(meeting, false);
         }
+
         boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
         return GetMeetingDetailResponseDto.fromEntity(meeting, isJoin);
     }
@@ -184,6 +182,13 @@ public class MeetingServiceImpl implements MeetingService {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 10);
         Slice<Meeting> meetingList = meetingRepository.findByKeyword(keyword, pageable);
         return meetingList.map(GetMeetingResponseDto::fromEntity);
+    }
+
+    /* 인기 모임 top 5 */
+    @Override
+    public List<GetPopularResponseDto> getPopularMeeting() {
+        List<Meeting> meetingList = meetingRepository.getPopularMeetings();
+        return meetingList.stream().map(GetPopularResponseDto::fromEntity).toList();
     }
 
     /*모임 참가*/

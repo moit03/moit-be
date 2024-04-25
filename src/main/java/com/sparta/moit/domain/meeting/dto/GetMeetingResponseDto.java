@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -24,9 +22,9 @@ public class GetMeetingResponseDto {
     private Double locationLng;
     private String locationAddress;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingStartTime;
+    private LocalDateTime meetingStartTime;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingEndTime;
+    private LocalDateTime meetingEndTime;
     private List<SkillResponseDto> skillList;
     private List<CareerResponseDto> careerList;
 
@@ -41,8 +39,8 @@ public class GetMeetingResponseDto {
         this.meetingDate = meetingDate;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
-        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
         this.locationAddress = locationAddress;
         this.skillList = skillList;
         this.careerList = careerList;
@@ -59,8 +57,8 @@ public class GetMeetingResponseDto {
                 .locationLat(meeting.getLocationLat())
                 .locationLng(meeting.getLocationLng())
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime().toLocalDateTime())
-                .meetingEndTime(meeting.getMeetingEndTime().toLocalDateTime())
+                .meetingStartTime(meeting.getMeetingStartTime())
+                .meetingEndTime(meeting.getMeetingEndTime())
                 .locationAddress(meeting.getLocationAddress())
                 .skillList(meeting.getSkillList())
                 .careerList(meeting.getCareerList())

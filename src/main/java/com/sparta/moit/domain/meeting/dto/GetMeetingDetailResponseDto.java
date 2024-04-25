@@ -1,15 +1,15 @@
 package com.sparta.moit.domain.meeting.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Getter
 public class GetMeetingDetailResponseDto {
@@ -22,13 +22,10 @@ public class GetMeetingDetailResponseDto {
     private final List<String> skillNameList;
     private final LocalDate meetingDate;
 
-//    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-//    private final LocalDateTime meetingStartTime;
-//    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
-//    private final LocalDateTime meetingEndTime;
-
-    private final ZonedDateTime meetingStartTime;
-    private final ZonedDateTime meetingEndTime;
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    private final LocalDateTime meetingStartTime;
+    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    private final LocalDateTime meetingEndTime;
 
     private final String locationAddress;
 
@@ -49,8 +46,8 @@ public class GetMeetingDetailResponseDto {
         this.careerNameList = careerNameList;
         this.skillNameList = skillNameList;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
         this.locationAddress = locationAddress;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
@@ -78,8 +75,8 @@ public class GetMeetingDetailResponseDto {
                 .careerNameList(careerNameList)
                 .skillNameList(skillNameList)
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime().toLocalDateTime())
-                .meetingEndTime(meeting.getMeetingEndTime().toLocalDateTime())
+                .meetingStartTime(meeting.getMeetingStartTime())
+                .meetingEndTime(meeting.getMeetingEndTime())
                 .locationAddress(meeting.getLocationAddress())
                 .registeredCount(meeting.getRegisteredCount())
                 .totalCount(meeting.getTotalCount())

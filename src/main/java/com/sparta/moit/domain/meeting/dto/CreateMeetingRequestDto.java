@@ -26,11 +26,11 @@ public class CreateMeetingRequestDto {
     private LocalDate meetingDate;
 
     @NotNull(message = "모임 시작 시간 선택은 필수입니다.")
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private ZonedDateTime meetingStartTime;
 
     @NotNull(message = "모임 종료 시간 선택은 필수입니다.")
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private ZonedDateTime meetingEndTime;
 
     @Schema(description = "미팅 예산", example = "10000")
