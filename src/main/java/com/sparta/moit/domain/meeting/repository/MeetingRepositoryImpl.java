@@ -161,6 +161,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     public List<Meeting> getPopularMeetings() {
         return queryFactory.select(meeting)
                 .from(meeting)
+                .where(isOpenOrFull())
                 .join(bookMark).on(bookMark.meeting.eq(meeting))
                 .groupBy(bookMark.meeting)
                 .orderBy(bookMark.meeting.count().desc())
