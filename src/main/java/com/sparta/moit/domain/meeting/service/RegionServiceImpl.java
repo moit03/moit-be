@@ -2,6 +2,7 @@ package com.sparta.moit.domain.meeting.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.RegionFirstResponseDto;
+import com.sparta.moit.domain.meeting.dto.RegionIntegratedResponseDto;
 import com.sparta.moit.domain.meeting.dto.RegionSecondResponseDto;
 import com.sparta.moit.domain.meeting.entity.RegionFirst;
 import com.sparta.moit.domain.meeting.entity.RegionSecond;
@@ -25,6 +26,12 @@ public class RegionServiceImpl implements RegionService {
     private final RegionFirstRepository regionFirstRepository;
     private final RegionSecondRepository regionSecondRepository;
     private final AddressUtil addressUtil;
+
+    @Override
+    public List<RegionIntegratedResponseDto> getRegion() {
+        List<RegionFirst> regionIntegegratedList = regionFirstRepository.findAll();
+        return regionIntegegratedList.stream().map(RegionIntegratedResponseDto::fromEntity).toList();
+    }
 
     @Override
     public List<RegionFirstResponseDto> getRegionFirst() {
