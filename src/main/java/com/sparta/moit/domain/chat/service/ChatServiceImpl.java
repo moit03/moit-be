@@ -6,6 +6,7 @@ import com.sparta.moit.domain.chat.dto.SendChatResponseDto;
 import com.sparta.moit.domain.chat.entity.Chat;
 import com.sparta.moit.domain.chat.repository.ChatRepository;
 import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import com.sparta.moit.domain.meeting.repository.MeetingMemberRepository;
 import com.sparta.moit.domain.meeting.repository.MeetingRepository;
 import com.sparta.moit.domain.member.entity.Member;
@@ -42,6 +43,10 @@ public class ChatServiceImpl implements ChatService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
+        if (meeting.getStatus().equals(MeetingStatusEnum.DELETE)) {
+            throw new CustomException(ErrorCode.MEETING_NOT_FOUND);
+        }
+
         if (!isMeetingMember(member, meeting)) {
             throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
         }
@@ -67,6 +72,10 @@ public class ChatServiceImpl implements ChatService {
 
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+
+        if (meeting.getStatus().equals(MeetingStatusEnum.COMPLETE)){
+            throw new CustomException(ErrorCode.MEETING_NOT_FOUND);
+        }
 
         if (!isMeetingMember(testMember, meeting)) {
             throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);

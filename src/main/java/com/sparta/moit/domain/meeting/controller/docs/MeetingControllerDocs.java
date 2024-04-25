@@ -53,6 +53,9 @@ public interface MeetingControllerDocs {
     @Operation(summary = "모임 검색 기능", description = "모임 검색 API")
     ResponseEntity<?> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page);
 
+    @Operation(summary = "인기 모임", description = "인기 모임 API")
+    public ResponseEntity<?> getPopularMeeting();
+
     @Operation(summary = "회원 모임 참가 기능", description = "모임 참가 API")
     ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
