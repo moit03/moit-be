@@ -2,10 +2,13 @@ package com.sparta.moit.domain.member.controller.docs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.global.common.dto.RefreshTokenRequest;
+import com.sparta.moit.global.common.dto.ResponseDto;
+import com.sparta.moit.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,6 +19,9 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "네이버 로그인", description = "네이버 로그인 API")
     ResponseEntity<?> naverLogin(@RequestParam String code,@RequestParam String state) throws JsonProcessingException;
+
+    @Operation(summary = "회원탈퇴", description = "회원 탈퇴 API")
+    ResponseEntity<ResponseDto<String>> signout(@AuthenticationPrincipal UserDetailsImpl userDetails);
 }
 
 

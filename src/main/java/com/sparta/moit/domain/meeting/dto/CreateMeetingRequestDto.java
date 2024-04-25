@@ -27,11 +27,11 @@ public class CreateMeetingRequestDto {
 
     @NotNull(message = "모임 시작 시간 선택은 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingStartTime;
+    private LocalDateTime meetingStartTime;
 
     @NotNull(message = "모임 종료 시간 선택은 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingEndTime;
+    private LocalDateTime meetingEndTime;
 
     @Schema(description = "미팅 예산", example = "10000")
     @NotNull(message = "예산 입력은 필수입니다.")
@@ -74,17 +74,11 @@ public class CreateMeetingRequestDto {
             throw new IllegalArgumentException("모임 시작 시간은 종료 시간보다 빨라야 합니다.");
         }
 
-        ZonedDateTime utcMeetingStartTime = meetingStartTime.withZoneSameInstant(ZoneId.of("UTC"));
-        ZonedDateTime utcMeetingEndTime = meetingEndTime.withZoneSameInstant(ZoneId.of("UTC"));
-
-        ZonedDateTime kstMeetingStartTime = utcMeetingStartTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        ZonedDateTime kstMeetingEndTime = utcMeetingEndTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(kstMeetingStartTime.toLocalDateTime()) /* KST로 변환된 시간을 LocalDateTime으로 변환 */
-                .meetingEndTime(kstMeetingEndTime.toLocalDateTime()) /* KST로 변환된 시간을 LocalDateTime으로 변환 */
+                .meetingStartTime(meetingStartTime)
+                .meetingEndTime(meetingEndTime)
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
