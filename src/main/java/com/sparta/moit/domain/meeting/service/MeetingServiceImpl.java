@@ -1,6 +1,7 @@
 package com.sparta.moit.domain.meeting.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.moit.domain.bookmark.repository.BookMarkRepository;
 import com.sparta.moit.domain.meeting.dto.*;
 import com.sparta.moit.domain.meeting.entity.*;
 import com.sparta.moit.domain.meeting.repository.*;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
+
 @Slf4j(topic = "Meeting Service Log")
 @Service
 @RequiredArgsConstructor
@@ -39,6 +42,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingSkillRepository meetingSkillRepository;
     private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
+    private final BookMarkRepository bookMarkRepository;
 
     private final Paginator<Meeting> paginator = new ListPaginator<>();
 
@@ -47,7 +51,6 @@ public class MeetingServiceImpl implements MeetingService {
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
         Meeting meeting = requestDto.toEntity(member);
-
         Meeting savedMeeting = meetingRepository.save(meeting);
 
         log.info("Meeting created at: " + savedMeeting.getCreatedAt());
@@ -69,7 +72,6 @@ public class MeetingServiceImpl implements MeetingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
         meeting.updateMeeting(requestDto);
-
         return meetingId;
     }
 
@@ -144,10 +146,10 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
 
-
     /*모임 상세 조회 */
     @Override
     public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Optional<Member> member) {
+
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
 
@@ -156,11 +158,12 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         if (member.isEmpty()) {
-            return GetMeetingDetailResponseDto.fromEntity(meeting, false);
+            return GetMeetingDetailResponseDto.fromEntity(meeting, false, false);
         }
 
         boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
-        return GetMeetingDetailResponseDto.fromEntity(meeting, isJoin);
+        boolean isbookMarked = bookMarkRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, isJoin, isbookMarked);
     }
 
     /*주소별 모임 조회*/

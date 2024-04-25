@@ -24,14 +24,30 @@ public class MypageMeetingResponseDto {
 
     private final String status;
 
+    private boolean isBookmarked;
+
     @Builder
-    public MypageMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String status) {
+    public MypageMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String status, boolean isBookmarked) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
         this.meetingStartTime = meetingStartTime;
         this.meetingEndTime = meetingEndTime;
         this.status = status;
+        this.isBookmarked = isBookmarked;
+    }
+
+    public static MypageMeetingResponseDto fromEntity(Meeting meeting, boolean isBookmarked){
+        String status = meeting.getStatus().toString(); /* Enum을 문자열로 변환 */
+        return MypageMeetingResponseDto.builder()
+                .meetingId(meeting.getId())
+                .meetingName(meeting.getMeetingName())
+                .meetingDate(meeting.getMeetingDate())
+                .meetingStartTime(meeting.getMeetingStartTime())
+                .meetingEndTime(meeting.getMeetingEndTime())
+                .status(status)
+                .isBookmarked(isBookmarked)
+                .build();
     }
 
     public static MypageMeetingResponseDto fromEntity(Meeting meeting){

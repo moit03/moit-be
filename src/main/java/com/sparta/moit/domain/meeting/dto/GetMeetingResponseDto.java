@@ -1,7 +1,7 @@
 package com.sparta.moit.domain.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.entity.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,11 +27,12 @@ public class GetMeetingResponseDto {
     private LocalDateTime meetingEndTime;
     private List<SkillResponseDto> skillList;
     private List<CareerResponseDto> careerList;
+    private MeetingStatusEnum status;
 
 
 
     @Builder
-    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng,  List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
+    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng,  List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, MeetingStatusEnum status) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.registeredCount = registeredCount;
@@ -44,6 +45,7 @@ public class GetMeetingResponseDto {
         this.locationAddress = locationAddress;
         this.skillList = skillList;
         this.careerList = careerList;
+        this.status = status;
     }
 
 
@@ -62,6 +64,7 @@ public class GetMeetingResponseDto {
                 .locationAddress(meeting.getLocationAddress())
                 .skillList(meeting.getSkillList())
                 .careerList(meeting.getCareerList())
+                .status(meeting.getStatus())
                 .build();
     }
 }

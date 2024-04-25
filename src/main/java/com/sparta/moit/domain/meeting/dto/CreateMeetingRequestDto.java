@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -27,11 +27,11 @@ public class CreateMeetingRequestDto {
 
     @NotNull(message = "모임 시작 시간 선택은 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingStartTime;
+    private LocalDateTime meetingStartTime;
 
     @NotNull(message = "모임 종료 시간 선택은 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
-    private ZonedDateTime meetingEndTime;
+    private LocalDateTime meetingEndTime;
 
     @Schema(description = "미팅 예산", example = "10000")
     @NotNull(message = "예산 입력은 필수입니다.")
@@ -82,8 +82,8 @@ public class CreateMeetingRequestDto {
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(this.meetingStartTime.toLocalDateTime())
-                .meetingEndTime(this.meetingEndTime.toLocalDateTime())
+                .meetingStartTime(meetingStartTime)
+                .meetingEndTime(meetingEndTime)
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)

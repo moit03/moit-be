@@ -71,7 +71,6 @@ public class MypageServiceImpl implements MypageService {
         long hours = totalStudyTimeMinutes / 60;
         long minutes = totalStudyTimeMinutes % 60;
         String studyTime = String.format("%02d:%02d", hours, minutes);
-        log.info("총 공부 시간(시간:분): {}", studyTime);
 
         return MypageResponseDto.builder()
                 .enterMeeting(enterMeetingCount)
@@ -81,8 +80,6 @@ public class MypageServiceImpl implements MypageService {
     }
 
     public long calculateStudyTime(LocalDateTime meetingStartTime, LocalDateTime meetingEndTime) {
-        log.info("공부 시간 계산 시작 - 시작 시간: {}, 종료 시간: {}", meetingStartTime, meetingEndTime);
-
         if (meetingStartTime != null && meetingEndTime != null) {
             /* meetingStartTime이 meetingEndTime 이후나 같은지 체크*/
             if (meetingStartTime.isAfter(meetingEndTime) || meetingStartTime.equals(meetingEndTime)) {
@@ -93,7 +90,7 @@ public class MypageServiceImpl implements MypageService {
 
             /* - 시간 방지 */
             if (duration.isNegative()) {
-                throw new IllegalArgumentException("meetingStartTime 은 meetingEndTime 보다 이전이어야 합니다.");
+                throw new IllegalArgumentException("meetingStartTime은 meetingEndTime보다 이전이어야 합니다.");
             }
 
             return duration.toMinutes();
@@ -127,14 +124,16 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public List<MypageMeetingResponseDto> getCompletedMeetings(Long memberId) {
         List<Meeting> completedMeetingList = meetingRepository.findMeetingsByCreatorIdAndStatus(memberId, MeetingStatusEnum.COMPLETE);
-        return completedMeetingList.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+        return completedMeetingList.stream()
+                .map(MypageMeetingResponseDto::fromEntity)
+                .toList();
     }
 
     @Override
     public List<MypageMeetingResponseDto> getMypageBookmarkedMeetings(Long memberId) {
-        log.info("북마크 목록 조회 시작 - 회원 ID: {}", memberId);
         List<Meeting> bookmarkedMeetings = bookMarkRepository.findBookmarkedMeetingsByMemberId(memberId);
-        log.info("조회된 북마크 개수: {}", bookmarkedMeetings.size());
-        return bookmarkedMeetings.stream().map(MypageMeetingResponseDto::fromEntity).toList();
+        return bookmarkedMeetings.stream()
+                .map(meeting -> MypageMeetingResponseDto.fromEntity(meeting, true))
+                .toList();
     }
 }

@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class GetPopularResponseDto {
     private Long meetingId;
     private String meetingName;
-    private String meetingDate;
+    private LocalDate meetingDate;
     private String locationAddress;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetingStartTime;
@@ -25,7 +25,7 @@ public class GetPopularResponseDto {
 
 
     @Builder
-    public GetPopularResponseDto(Long meetingId, String meetingName, String meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
+    public GetPopularResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -36,12 +36,11 @@ public class GetPopularResponseDto {
 
     public static GetPopularResponseDto fromEntity(Meeting meeting){
         String formattedLocationAddress = formatLocationAddress(meeting.getLocationAddress());
-        String formattedMeetingDate = formatMeetingDate(meeting.getMeetingDate());
 
         return GetPopularResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
-                .meetingDate(formattedMeetingDate)
+                .meetingDate(meeting.getMeetingDate())
                 .meetingStartTime(meeting.getMeetingStartTime())
                 .meetingEndTime(meeting.getMeetingEndTime())
                 .locationAddress(formattedLocationAddress)
