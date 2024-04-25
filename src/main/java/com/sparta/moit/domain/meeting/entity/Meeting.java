@@ -93,9 +93,10 @@ public class Meeting extends Timestamped {
     private List<CareerResponseDto> careerList = new ArrayList<>();
 
     @Builder
-    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
-                   String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status, Member creator, List<MeetingMember> meetingMembers) {
+    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime,
+                   Integer budget, String locationAddress, String contents, Short registeredCount, Short totalCount,
+                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status,
+                   Member creator, List<MeetingMember> meetingMembers, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList) {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -113,6 +114,8 @@ public class Meeting extends Timestamped {
         this.status = MeetingStatusEnum.OPEN;
         this.creator = creator;
         this.meetingMembers = new ArrayList<>();
+        this.skillList = skillList;
+        this.careerList = careerList;
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {

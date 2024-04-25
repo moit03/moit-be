@@ -3,6 +3,8 @@ package com.sparta.moit.domain.meeting.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.global.util.CareerMapper;
+import com.sparta.moit.global.util.SkillMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -71,6 +73,11 @@ public class CreateMeetingRequestDto {
         if (meetingStartTime != null && meetingEndTime != null && meetingStartTime.isAfter(meetingEndTime)) {
             throw new IllegalArgumentException("모임 시작 시간은 종료 시간보다 빨라야 합니다.");
         }
+        SkillMapper skillMapper = new SkillMapper();
+        List<SkillResponseDto> skillList = skillMapper.createSkillResponseList(skillIds);
+
+        CareerMapper careerMapper = new CareerMapper();
+        List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(careerIds);
 
         return Meeting.builder()
                 .meetingName(this.meetingName)
@@ -87,6 +94,8 @@ public class CreateMeetingRequestDto {
                 .regionFirstName(this.regionFirstName)
                 .regionSecondName(this.regionSecondName)
                 .creator(creator)
+                .skillList(skillList)
+                .careerList(careerList)
                 .build();
     }
 }

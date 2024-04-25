@@ -50,17 +50,9 @@ public class MeetingServiceImpl implements MeetingService {
     @Transactional
     public Long createMeeting(CreateMeetingRequestDto requestDto, Member member) {
         Meeting meeting = requestDto.toEntity(member);
+
         Meeting savedMeeting = meetingRepository.save(meeting);
 
-        log.info("statTime : " + savedMeeting.getMeetingStartTime());
-        log.info("endTime : " + savedMeeting.getMeetingEndTime());
-
-        log.info("Meeting created at: " + savedMeeting.getCreatedAt());
-        log.info("Meeting modified at: " + savedMeeting.getModifiedAt());
-
-
-        saveSkills(requestDto.getSkillIds(), savedMeeting);
-        saveCareers(requestDto.getCareerIds(), savedMeeting);
         saveMeetingMember(member, savedMeeting);
 
         return savedMeeting.getId();
