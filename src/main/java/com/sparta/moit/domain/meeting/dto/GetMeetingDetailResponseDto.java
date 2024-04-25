@@ -8,8 +8,6 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -23,9 +21,9 @@ public class GetMeetingDetailResponseDto {
     private final List<String> skillNameList;
     private final LocalDate meetingDate;
 
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "HH:mm")
     private final LocalDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "HH:mm")
     private final LocalDateTime meetingEndTime;
 
     private final String locationAddress;
