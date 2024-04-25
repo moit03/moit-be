@@ -30,11 +30,12 @@ public class GetMeetingResponseDto {
     private LocalDateTime meetingEndTime;
     private List<Skill> skillList;
     private List<Career> careerList;
+    private MeetingStatusEnum status;
 
 
 
     @Builder
-    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, List<Skill> skillList, List<Career> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
+    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, List<Skill> skillList, List<Career> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, MeetingStatusEnum status) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.registeredCount = registeredCount;
@@ -47,6 +48,7 @@ public class GetMeetingResponseDto {
         this.locationAddress = locationAddress;
         this.skillList = skillList;
         this.careerList = careerList;
+        this.status = status;
     }
 
 
@@ -72,6 +74,7 @@ public class GetMeetingResponseDto {
                 .locationAddress(meeting.getLocationAddress())
                 .skillList(skillList)
                 .careerList(careerList)
+                .status(meeting.getStatus())
                 .build();
     }
 }
