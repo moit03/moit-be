@@ -8,10 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor()
@@ -28,14 +25,14 @@ public class GetMeetingResponseDto {
     private LocalDateTime meetingStartTime;
     @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetingEndTime;
-    private List<Skill> skillList;
-    private List<Career> careerList;
+    private List<SkillResponseDto> skillList;
+    private List<CareerResponseDto> careerList;
     private MeetingStatusEnum status;
 
 
 
     @Builder
-    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, List<Skill> skillList, List<Career> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, MeetingStatusEnum status) {
+    public GetMeetingResponseDto(Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat, Double locationLng,  List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, MeetingStatusEnum status) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.registeredCount = registeredCount;
@@ -54,13 +51,6 @@ public class GetMeetingResponseDto {
 
 
     public static GetMeetingResponseDto fromEntity(Meeting meeting){
-        List<Skill> skillList = meeting.getSkills().stream()
-                .map(MeetingSkill::getSkill)
-                .collect(Collectors.toList());
-        List<Career> careerList = meeting.getCareers().stream()
-                .map(MeetingCareer::getCareer)
-                .collect(Collectors.toList());
-
         return GetMeetingResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
@@ -72,8 +62,8 @@ public class GetMeetingResponseDto {
                 .meetingStartTime(meeting.getMeetingStartTime())
                 .meetingEndTime(meeting.getMeetingEndTime())
                 .locationAddress(meeting.getLocationAddress())
-                .skillList(skillList)
-                .careerList(careerList)
+                .skillList(meeting.getSkillList())
+                .careerList(meeting.getCareerList())
                 .status(meeting.getStatus())
                 .build();
     }

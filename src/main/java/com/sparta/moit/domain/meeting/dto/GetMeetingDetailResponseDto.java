@@ -10,6 +10,8 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Getter
 public class GetMeetingDetailResponseDto {
@@ -62,7 +64,15 @@ public class GetMeetingDetailResponseDto {
         this.isBookmarked = isBookmarked;
     }
 
-    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, List<String> careerNameList, List<String> skillNameList, boolean isJoin, boolean isBookmarked) {
+    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, boolean isJoin, boolean isBookmarked) {
+        List<String> careerNameList = meeting.getCareerList().stream()
+                .map(CareerResponseDto::getCareerName)
+                .collect(Collectors.toList());
+
+        List<String> skillNameList = meeting.getSkillList().stream()
+                .map(SkillResponseDto::getSkillName)
+                .collect(Collectors.toList());
+
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())

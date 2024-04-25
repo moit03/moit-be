@@ -2,11 +2,19 @@ package com.sparta.moit.domain.meeting.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.moit.domain.meeting.dto.CareerResponseDto;
+import com.sparta.moit.domain.meeting.dto.SkillResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
+import com.sparta.moit.global.util.CareerMapper;
+import com.sparta.moit.global.util.PointUtil;
+import com.sparta.moit.global.util.SkillMapper;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -56,6 +64,9 @@ public class Meeting extends Timestamped {
     @Column(name = "location_lng")
     private Double locationLng;
 
+    @Column(columnDefinition = "geometry(Point,4326)")
+    private Point locationPosition;
+
     @Column(name = "region_first_name")
     private String regionFirstName;
 
@@ -74,18 +85,19 @@ public class Meeting extends Timestamped {
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MeetingSkill> skills = new ArrayList<>();
+    @Type(JsonType.class)
+    @Column(name = "skill_list",columnDefinition = "jsonb")
+    private List<SkillResponseDto> skillList = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MeetingCareer> careers = new ArrayList<>();
+    @Type(JsonType.class)
+    @Column(name = "career_list",columnDefinition = "jsonb")
+    private List<CareerResponseDto> careerList = new ArrayList<>();
 
     @Builder
-    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
-                   String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status, Member creator, List<MeetingMember> meetingMembers) {
+    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime,
+                   Integer budget, String locationAddress, String contents, Short registeredCount, Short totalCount,
+                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status,
+                   Member creator, List<MeetingMember> meetingMembers, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList) {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -98,14 +110,23 @@ public class Meeting extends Timestamped {
         this.totalCount = totalCount;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
+        this.locationPosition = PointUtil.createPointFromLngLat(locationLat, locationLat);
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
         this.status = MeetingStatusEnum.OPEN;
         this.creator = creator;
         this.meetingMembers = new ArrayList<>();
+        this.skillList = skillList;
+        this.careerList = careerList;
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
+        SkillMapper skillMapper = new SkillMapper();
+        List<SkillResponseDto> skillList = skillMapper.createSkillResponseList(requestDto.getSkillIds());
+
+        CareerMapper careerMapper = new CareerMapper();
+        List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(requestDto.getCareerIds());
+
         this.meetingName = requestDto.getMeetingName();
         this.budget = requestDto.getBudget();
         this.locationAddress = requestDto.getLocationAddress();
@@ -113,8 +134,11 @@ public class Meeting extends Timestamped {
         this.totalCount = requestDto.getTotalCount();
         this.locationLat = requestDto.getLocationLat();
         this.locationLng = requestDto.getLocationLng();
+        this.locationPosition = PointUtil.createPointFromLngLat(requestDto.getLocationLng(), requestDto.getLocationLat());
         this.regionFirstName = requestDto.getRegionFirstName();
         this.regionSecondName = requestDto.getRegionSecondName();
+        this.skillList = skillList;
+        this.careerList = careerList;
     }
 
     public Short incrementRegisteredCount() {

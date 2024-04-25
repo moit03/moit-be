@@ -23,10 +23,8 @@ import java.util.List;
 import static com.sparta.moit.domain.bookmark.entity.QBookMark.bookMark;
 import static com.sparta.moit.domain.meeting.entity.QCareer.career;
 import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
-import static com.sparta.moit.domain.meeting.entity.QMeetingCareer.meetingCareer;
 import static com.sparta.moit.domain.meeting.entity.QMeetingMember.meetingMember;
 import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
-import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
 
 
 @RequiredArgsConstructor
@@ -68,8 +66,8 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
         List<Meeting> meetingList = queryFactory
                 .selectFrom(meeting)
                 .distinct()
-                .leftJoin(meeting.skills, meetingSkill)
-                .leftJoin(meeting.careers, meetingCareer)
+//                .leftJoin(meeting.skills, meetingSkill)
+//                .leftJoin(meeting.careers, meetingCareer)
                 .where(
                         skillEq(skillId),
                         careerEq(careerId),
@@ -109,26 +107,6 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .offset(pageable.getOffset())
                 .fetch();
         return new SliceImpl<>(meetings, pageable, hasNextPage(meetings, pageable.getPageSize()));
-    }
-
-    @Override
-    public List<String> findCareerNameList(Long meetingId) {
-        return queryFactory
-                .select(career.careerName)
-                .from(meetingCareer)
-                .join(meetingCareer.career, career)
-                .where(meetingCareer.meeting.id.eq(meetingId))
-                .fetch();
-    }
-
-    @Override
-    public List<String> findSkillNameList(Long meetingId) {
-        return queryFactory
-                .select(skill.skillName)
-                .from(meetingSkill)
-                .join(meetingSkill.skill, skill)
-                .where(meetingSkill.meeting.id.eq(meetingId))
-                .fetch();
     }
 
     @Override

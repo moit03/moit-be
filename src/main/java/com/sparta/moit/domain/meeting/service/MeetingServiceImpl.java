@@ -11,11 +11,16 @@ import com.sparta.moit.global.common.dto.AddressResponseDto;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.util.AddressUtil;
+import com.sparta.moit.global.util.PointUtil;
+import com.sparta.moit.global.util.pagination.ListPaginator;
+import com.sparta.moit.global.util.pagination.Paginator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +44,8 @@ public class MeetingServiceImpl implements MeetingService {
     private final AddressUtil addressUtil;
     private final BookMarkRepository bookMarkRepository;
 
+    private final Paginator<Meeting> paginator = new ListPaginator<>();
+
     /*모임 등록*/
     @Override
     @Transactional
@@ -51,9 +58,6 @@ public class MeetingServiceImpl implements MeetingService {
         log.info("meetingStartTime : " + savedMeeting.getMeetingStartTime());
         log.info("meetingEndTime : " + savedMeeting.getMeetingEndTime());
 
-
-        saveSkills(requestDto.getSkillIds(), savedMeeting);
-        saveCareers(requestDto.getCareerIds(), savedMeeting);
         saveMeetingMember(member, savedMeeting);
 
         return savedMeeting.getId();
@@ -67,11 +71,6 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
-        meetingSkillRepository.deleteByMeeting(meeting);
-        meetingCareerRepository.deleteByMeeting(meeting);
-
-        saveSkills(requestDto.getSkillIds(), meeting);
-        saveCareers(requestDto.getCareerIds(), meeting);
         meeting.updateMeeting(requestDto);
         return meetingId;
     }
@@ -86,6 +85,32 @@ public class MeetingServiceImpl implements MeetingService {
 
         meeting.deleteStatus();
 
+    }
+
+    @Override
+    public Slice<GetMeetingResponseDto> getMeetingListPostgre(
+            int page
+            , Double locationLat
+            , Double locationLng
+            , String skillIdsStr
+            , String careerIdsStr
+    ) {
+        int pageSize = 10;
+        int offset = Math.max(page - 1, 0) * pageSize;
+
+        Point currentPoint = PointUtil.createPointFromLngLat(locationLng, locationLat);
+        List<Meeting> meetingList = meetingRepository.findMeetingST_Dwithin(
+                currentPoint
+                , skillIdsStr
+                , careerIdsStr
+                , pageSize
+                , offset
+        );
+
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), pageSize);
+        boolean hasNext = hasNextPage(meetingList, pageable.getPageSize());
+        List<GetMeetingResponseDto> sliceList = meetingList.stream().map(GetMeetingResponseDto::fromEntity).toList();
+        return new SliceImpl<>(sliceList, pageable, hasNext);
     }
 
     /*모임 조회*/
@@ -132,14 +157,13 @@ public class MeetingServiceImpl implements MeetingService {
             throw new CustomException(ErrorCode.MEETING_NOT_FOUND);
         }
 
-        List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
-        List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
         if (member.isEmpty()) {
-            return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false, false);
+            return GetMeetingDetailResponseDto.fromEntity(meeting, false, false);
         }
+
         boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
         boolean isbookMarked = bookMarkRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
-        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin, isbookMarked);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, isJoin, isbookMarked);
     }
 
     /*주소별 모임 조회*/
@@ -266,5 +290,9 @@ public class MeetingServiceImpl implements MeetingService {
                 .meeting(meeting)
                 .build();
         meetingMemberRepository.save(meetingMember);
+    }
+
+    private boolean hasNextPage(List<Meeting> meetingList, int pageSize) {
+        return paginator.hasNextPage(meetingList, pageSize);
     }
 }

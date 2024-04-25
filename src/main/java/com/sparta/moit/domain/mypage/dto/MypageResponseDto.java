@@ -9,7 +9,6 @@ public class MypageResponseDto {
     private String studyTime;
     private int heldMeeting;
 
-
     @Builder
     public MypageResponseDto(int enterMeeting, String studyTime, int heldMeeting) {
         this.enterMeeting = enterMeeting;

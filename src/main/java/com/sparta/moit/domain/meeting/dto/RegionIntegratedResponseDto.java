@@ -7,12 +7,12 @@ import lombok.Getter;
 import java.util.List;
 @Getter
 public class RegionIntegratedResponseDto {
-    private Short regionFirstId;
+    private Long regionFirstId;
     private String regionFirstName;
     private List<RegionSecondResponseDto> secondResponseDtos;
 
     @Builder
-    public RegionIntegratedResponseDto(Short regionFirstId, String regionFirstName, List<RegionSecondResponseDto> secondResponseDtos) {
+    public RegionIntegratedResponseDto(Long regionFirstId, String regionFirstName, List<RegionSecondResponseDto> secondResponseDtos) {
         this.regionFirstId = regionFirstId;
         this.regionFirstName = regionFirstName;
         this.secondResponseDtos = secondResponseDtos;

@@ -1,8 +1,7 @@
 package com.sparta.moit.domain.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sparta.moit.domain.meeting.entity.*;
-import com.sparta.moit.global.common.entity.Timestamped;
+import com.sparta.moit.domain.meeting.entity.Meeting;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,17 +10,18 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class CreateMeetingResponseDto {
     private final Long meetingId;
     private final String meetingName;
     private final LocalDate meetingDate;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private final ZonedDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
     private final ZonedDateTime meetingEndTime;
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+//    private final LocalDateTime meetingStartTime;
+//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+//    private final LocalDateTime meetingEndTime;
     private final String locationAddress;
     private final Integer budget;
     private final String contents;
@@ -31,15 +31,15 @@ public class CreateMeetingResponseDto {
     private final Double locationLng;
     private final String regionFirstName;
     private final String regionSecondName;
-    private final List<Skill> skillList;
-    private final List<Career> careerList;
+    private final List<SkillResponseDto> skillList;
+    private final List<CareerResponseDto> careerList;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private final LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private final LocalDateTime modifiedAt;
 
     @Builder
-    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<Skill> skillList, List<Career> careerList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CreateMeetingResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Integer budget, String contents, Short registeredCount, Short totalCount, Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -61,23 +61,18 @@ public class CreateMeetingResponseDto {
     }
 
     public static CreateMeetingResponseDto fromEntity(Meeting meeting) {
-        List<Skill> skillList = meeting.getSkills().stream()
-                .map(MeetingSkill::getSkill)
-                .collect(Collectors.toList());
+        LocalDateTime startTime = meeting.getMeetingStartTime();
+        LocalDateTime endTime = meeting.getMeetingEndTime();
 
-        List<Career> careerList = meeting.getCareers().stream()
-                .map(MeetingCareer::getCareer)
-                .collect(Collectors.toList());
-
-        System.out.println("Meeting created at: " + meeting.getCreatedAt());
-        System.out.println("Meeting modified at: " + meeting.getModifiedAt());
+        ZonedDateTime seoulStartTime = startTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime seoulEndTime = endTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
 
         return CreateMeetingResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime())
-                .meetingEndTime(meeting.getMeetingEndTime())
+                .meetingStartTime(seoulStartTime.toLocalDateTime())
+                .meetingEndTime(seoulEndTime.toLocalDateTime())
                 .budget(meeting.getBudget())
                 .contents(meeting.getContents())
                 .registeredCount(meeting.getRegisteredCount())
@@ -87,8 +82,8 @@ public class CreateMeetingResponseDto {
                 .locationLng(meeting.getLocationLng())
                 .regionFirstName(meeting.getRegionFirstName())
                 .regionSecondName(meeting.getRegionSecondName())
-                .skillList(skillList)
-                .careerList(careerList)
+                .skillList(meeting.getSkillList())
+                .careerList(meeting.getCareerList())
                 .createdAt(meeting.getCreatedAt())
                 .modifiedAt(meeting.getModifiedAt())
                 .build();

@@ -1,18 +1,12 @@
 package com.sparta.moit.domain.mypage.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sparta.moit.domain.bookmark.entity.BookMark;
 import com.sparta.moit.domain.meeting.entity.Meeting;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 @Getter
 public class MypageMeetingResponseDto {

@@ -13,7 +13,7 @@ public class RegionSecond {
     @Column(name = "region_second_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Short regionSecondId;
+    private Long regionSecondId;
 
     private Double regionLat;
 

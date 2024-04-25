@@ -15,7 +15,7 @@ public interface MypageControllerDocs {
     ResponseEntity<?> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails);
     @Operation(summary = "마이페이지 참여 모임 리스트", description = "마이페이지 참여 모임 리스트 API")
     ResponseEntity<?> getMypageMeetingList(@AuthenticationPrincipal UserDetailsImpl userDetails);
-    @Operation(summary = "마이페이지 개최 모임 리스트", description = "마이페이지 개최 모임 리스트 API")
+    @Operation(summary = "마이페이지 개최 모임 리스트", description = "마이페이지 개최한 모임 리스트 API")
     public ResponseEntity<ResponseDto<List<MypageMeetingResponseDto>>> getMypageHeldList(@AuthenticationPrincipal UserDetailsImpl userDetails);
     @Operation(summary = "마이페이지 참여 완료 리스트", description = "마이페이지 참여 완료 리스트 API")
     public ResponseEntity<ResponseDto<List<MypageMeetingResponseDto>>> getCompletedMeetings(@AuthenticationPrincipal UserDetailsImpl userDetails);
