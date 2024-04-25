@@ -2,6 +2,7 @@ package com.sparta.moit.domain.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -36,9 +37,10 @@ public class GetMeetingDetailResponseDto {
     private final Double locationLat;
     private final Double locationLng;
     private final boolean isJoin;
+    private final MeetingStatusEnum status;
 
     @Builder
-    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin) {
+    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin, MeetingStatusEnum status) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.creatorName = creatorName;
@@ -56,6 +58,7 @@ public class GetMeetingDetailResponseDto {
         this.locationLat = locationLat;
         this.locationLng = locationLng;
         this.isJoin = isJoin;
+        this.status = status;
     }
 
     public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, List<String> careerNameList, List<String> skillNameList, boolean isJoin) {
@@ -77,6 +80,7 @@ public class GetMeetingDetailResponseDto {
                 .locationLat(meeting.getLocationLat())
                 .locationLng(meeting.getLocationLng())
                 .isJoin(isJoin)
+                .status(meeting.getStatus())
                 .build();
     }
 }
