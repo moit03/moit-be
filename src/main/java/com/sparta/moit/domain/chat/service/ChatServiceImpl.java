@@ -56,7 +56,7 @@ public class ChatServiceImpl implements ChatService {
 
         Slice<Chat> chatList = chatRepository.findAllByMeetingOrderByIdDesc(meeting, pageable);
 
-        return ChatResponseDto.fromEntity(chatList, meetingId);
+        return ChatResponseDto.fromEntity(chatList, meetingId, meeting.getStatus());
     }
 
     @Override
