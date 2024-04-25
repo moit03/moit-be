@@ -3,6 +3,7 @@ package com.sparta.moit.domain.meeting.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
+import com.sparta.moit.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -36,9 +37,10 @@ public class GetMeetingDetailResponseDto {
     private final Double locationLng;
     private final boolean isJoin;
     private final MeetingStatusEnum status;
+    private final boolean isBookmarked;
 
     @Builder
-    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin, MeetingStatusEnum status) {
+    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin, MeetingStatusEnum status, boolean isBookmarked) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.creatorName = creatorName;
@@ -57,9 +59,10 @@ public class GetMeetingDetailResponseDto {
         this.locationLng = locationLng;
         this.isJoin = isJoin;
         this.status = status;
+        this.isBookmarked = isBookmarked;
     }
 
-    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, List<String> careerNameList, List<String> skillNameList, boolean isJoin) {
+    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, List<String> careerNameList, List<String> skillNameList, boolean isJoin, boolean isBookmarked) {
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
@@ -79,6 +82,7 @@ public class GetMeetingDetailResponseDto {
                 .locationLng(meeting.getLocationLng())
                 .isJoin(isJoin)
                 .status(meeting.getStatus())
+                .isBookmarked(isBookmarked)
                 .build();
     }
 }

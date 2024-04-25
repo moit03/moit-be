@@ -134,10 +134,11 @@ public class MeetingServiceImpl implements MeetingService {
         List<String> careerNameList = meetingRepository.findCareerNameList(meetingId);
         List<String> skillNameList = meetingRepository.findSkillNameList(meetingId);
         if (member.isEmpty()) {
-            return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false);
+            return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, false, false);
         }
         boolean isJoin = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
-        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin);
+        boolean isbookMarked = meetingMemberRepository.existsByMemberIdAndMeetingId(member.get().getId(), meetingId);
+        return GetMeetingDetailResponseDto.fromEntity(meeting, careerNameList, skillNameList, isJoin, isbookMarked);
     }
 
     /*주소별 모임 조회*/
