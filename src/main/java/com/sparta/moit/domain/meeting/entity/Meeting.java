@@ -7,7 +7,9 @@ import com.sparta.moit.domain.meeting.dto.SkillResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
+import com.sparta.moit.global.util.CareerMapper;
 import com.sparta.moit.global.util.PointUtil;
+import com.sparta.moit.global.util.SkillMapper;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -119,6 +121,12 @@ public class Meeting extends Timestamped {
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
+        SkillMapper skillMapper = new SkillMapper();
+        List<SkillResponseDto> skillList = skillMapper.createSkillResponseList(requestDto.getSkillIds());
+
+        CareerMapper careerMapper = new CareerMapper();
+        List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(requestDto.getCareerIds());
+
         this.meetingName = requestDto.getMeetingName();
         this.budget = requestDto.getBudget();
         this.locationAddress = requestDto.getLocationAddress();
@@ -126,8 +134,11 @@ public class Meeting extends Timestamped {
         this.totalCount = requestDto.getTotalCount();
         this.locationLat = requestDto.getLocationLat();
         this.locationLng = requestDto.getLocationLng();
+        this.locationPosition = PointUtil.createPointFromLngLat(requestDto.getLocationLng(), requestDto.getLocationLat());
         this.regionFirstName = requestDto.getRegionFirstName();
         this.regionSecondName = requestDto.getRegionSecondName();
+        this.skillList = skillList;
+        this.careerList = careerList;
     }
 
     public Short incrementRegisteredCount() {

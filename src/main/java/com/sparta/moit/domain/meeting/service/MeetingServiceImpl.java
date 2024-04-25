@@ -68,11 +68,6 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
-        meetingSkillRepository.deleteByMeeting(meeting);
-        meetingCareerRepository.deleteByMeeting(meeting);
-
-        saveSkills(requestDto.getSkillIds(), meeting);
-        saveCareers(requestDto.getCareerIds(), meeting);
         meeting.updateMeeting(requestDto);
 
         return meetingId;
