@@ -23,10 +23,10 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
     List<Meeting> findMeetingsByCreatorIdAndStatus(Long memberId, MeetingStatusEnum status);
 
     @Query(value = "SELECT m.*, " +
-            "ST_Distance(:point, m.location_position) AS dist " +
+            "ST_Distance( CAST (:point AS geography), CAST(m.location_position AS geography)) AS dist " +
             "FROM meeting m " +
             "WHERE " +
-            "   ST_Dwithin(m.location_position, :point, 5000) " +
+            "   ST_Dwithin( CAST (:point AS geography), CAST(m.location_position AS geography), 5000) " +
             "   AND (:skillIdsStr IS NULL OR EXISTS (" +
             "         SELECT 1 FROM jsonb_array_elements(m.skill_list) AS skill_json " +
             "         WHERE CAST(skill_json->>'skillId' AS TEXT) = ANY(string_to_array(:skillIdsStr, ',')) " +
