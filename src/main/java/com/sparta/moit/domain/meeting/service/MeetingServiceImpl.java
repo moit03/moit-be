@@ -119,7 +119,6 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
 
-
     /*모임 상세 조회 */
     @Override
     public GetMeetingDetailResponseDto getMeetingDetail(Long meetingId, Optional<Member> member) {
