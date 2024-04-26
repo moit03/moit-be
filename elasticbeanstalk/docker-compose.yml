@@ -18,5 +18,3 @@ services:
     restart: unless-stopped
     volumes:
       - '/:/host:ro,rslave'
-    environment:
-      TZ: Asia/Seoul

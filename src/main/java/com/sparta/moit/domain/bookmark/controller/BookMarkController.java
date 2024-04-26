@@ -3,6 +3,9 @@ package com.sparta.moit.domain.bookmark.controller;
 import com.sparta.moit.domain.bookmark.controller.docs.BookMarkControllerDocs;
 import com.sparta.moit.domain.bookmark.dto.BookMarkRequestDto;
 import com.sparta.moit.domain.bookmark.dto.BookMarkResponseDto;
+import com.sparta.moit.domain.bookmark.dto.GetBookMarkResponseDto;
+import com.sparta.moit.domain.bookmark.entity.BookMark;
+import com.sparta.moit.domain.bookmark.repository.BookMarkRepository;
 import com.sparta.moit.domain.bookmark.service.BookMarkService;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
@@ -14,12 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/bookmark")
 @RequiredArgsConstructor
 public class BookMarkController implements BookMarkControllerDocs {
     private final BookMarkService bookMarkService;
     private final MemberRepository memberRepository;
+    private final BookMarkRepository bookMarkRepository;
 
     @PostMapping("/add")
     public ResponseEntity<ResponseDto<BookMarkResponseDto>> addMeetingBookmark(@RequestBody BookMarkRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -56,5 +63,29 @@ public class BookMarkController implements BookMarkControllerDocs {
 
         boolean isBookmarked = bookMarkService.isBookmarked(bookmarkResponseDto, member);
         return ResponseEntity.ok(isBookmarked);
+    }
+
+    /**
+     *
+     * @param userDetails 현재 인증된 회원 정보
+     * @return 즐겨찾기에 있으면 true, 없으면 false
+     */
+    @GetMapping("/checkByMemberId")
+    public ResponseEntity<ResponseDto<GetBookMarkResponseDto>> isBookmarkedByMemberId(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long memberId = userDetails.getUser().getId();
+
+        try {
+            List<BookMark> bookmarks = bookMarkRepository.findByMemberId(memberId);
+
+            List<Long> bookmarkedMeetingIds = bookmarks.stream()
+                    .map(bookmark -> bookmark.getMeeting().getId())
+                    .toList();
+
+            GetBookMarkResponseDto responseDto = new GetBookMarkResponseDto(bookmarkedMeetingIds);
+
+            return ResponseEntity.ok().body(ResponseDto.success("유저가 북마크한 모임 조회 완료", responseDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.fail("북마크 조회 실패", null));
+        }
     }
 }
