@@ -32,14 +32,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: make env.properties
-        if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'dev')
-        run: |
-          touch env.properties
-          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
-        shell: bash
+#      - name: make env.properties
+#        if: |
+#          contains(github.ref, 'main') ||
+#          contains(github.ref, 'dev')
+#        run: |
+#          touch env.properties
+#          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
+#        shell: bash
 
       - name: make application-dev
         if: |
