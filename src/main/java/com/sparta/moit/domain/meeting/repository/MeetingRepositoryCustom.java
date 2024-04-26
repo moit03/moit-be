@@ -21,4 +21,6 @@ public interface MeetingRepositoryCustom {
     List<Meeting> findAllIncompleteMeetingsForHour();
 
     List<Meeting> getPopularMeetings();
+
+    List<Meeting> findHeldMeetingsByCreatorId(Long memberId);
 }

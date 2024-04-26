@@ -10,7 +10,9 @@ import java.util.Optional;
 
 public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
     Optional<BookMark> findByMeetingIdAndMemberId(Long meetingId, Long memberId);
-    @Query("SELECT b.meeting FROM BookMark b WHERE b.member.id = :memberId")
+    @Query("SELECT b.meeting FROM BookMark b WHERE b.member.id = :memberId and b.meeting.status != 'DELETE' " +
+            "ORDER BY CASE WHEN b.meeting.status = 'OPEN' OR b.meeting.status = 'FULL' THEN b.meeting.meetingDate END ASC, " +
+            "CASE WHEN b.meeting.status = 'COMPLETE' THEN b.meeting.meetingDate END DESC")
     List<Meeting> findBookmarkedMeetingsByMemberId(Long memberId);
     boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
     List<BookMark> findByMemberId(Long memberId);

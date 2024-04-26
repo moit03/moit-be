@@ -1,9 +1,8 @@
 package com.sparta.moit.domain.meeting.repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.moit.domain.meeting.dto.GetMyPageDto;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.SliceImpl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sparta.moit.domain.bookmark.entity.QBookMark.bookMark;
@@ -56,6 +56,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                         meetingMember.member.id.eq(memberId),
                         isOpenOrFull()
                 )
+                .orderBy(meeting.meetingDate.asc())
                 .fetch();
         return response;
     }
@@ -127,14 +128,6 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .fetch();
     }
 
-    /*      SELECT m.*
-                FROM meeting m
-                         JOIN book_mark b ON m.id = b.meeting_id
-                GROUP BY b.meeting_id
-                ORDER BY COUNT(b.meeting_id) DESC
-                LIMIT 5;
-             */
-
     @Override
     public List<Meeting> getPopularMeetings() {
         return queryFactory.select(meeting)
@@ -144,6 +137,26 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .groupBy(bookMark.meeting)
                 .orderBy(bookMark.meeting.count().desc())
                 .limit(5)
+                .fetch();
+    }
+
+    public List<Meeting> findHeldMeetingsByCreatorId(Long memberId) {
+        QMeeting m = QMeeting.meeting;
+
+        BooleanExpression whereClause = m.creator.id.eq(memberId)
+                .and(m.status.ne(MeetingStatusEnum.DELETE));
+
+        List<OrderSpecifier<?>> orderBy = new ArrayList<>();
+        orderBy.add(new CaseBuilder()
+                .when(m.status.eq(MeetingStatusEnum.OPEN).or(m.status.eq(MeetingStatusEnum.FULL)))
+                .then(1)
+                .otherwise(2).asc());
+        orderBy.add(m.meetingDate.asc());
+
+        return queryFactory
+                .selectFrom(m)
+                .where(whereClause)
+                .orderBy(orderBy.toArray(new OrderSpecifier[0]))
                 .fetch();
     }
 
