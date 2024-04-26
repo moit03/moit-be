@@ -36,6 +36,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             "         WHERE CAST(career_json->>'careerId' AS TEXT) = ANY(string_to_array(:careerIdsStr, ',')) " +
             "       )) " +
             "   AND m.status <> 'DELETE' " +
+            "   AND m.status <> 'COMPLETE' "+
             " ORDER BY dist asc " +
             "LIMIT :pageSize " +
             "OFFSET :offset", nativeQuery = true)
