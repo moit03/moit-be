@@ -17,9 +17,13 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
 
     int countByCreatorAndStatusNot(Member creator, MeetingStatusEnum status);
 
-    @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status != :status")
+    @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status != :status " +
+            "ORDER BY CASE WHEN m.status = 'OPEN' OR m.status = 'FULL' THEN m.meetingDate END ASC, " +
+            "CASE WHEN m.status = 'COMPLETE' THEN m.meetingDate END DESC")
     List<Meeting> findMeetingsByCreatorIdAndStatusNot(Long memberId, MeetingStatusEnum status);
-    @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status = :status")
+
+    @Query("SELECT m FROM meeting m WHERE m.creator.id = :memberId AND m.status = :status " +
+            "ORDER BY m.meetingDate DESC ")
     List<Meeting> findMeetingsByCreatorIdAndStatus(Long memberId, MeetingStatusEnum status);
 
     @Query(value = "SELECT m.*, " +
