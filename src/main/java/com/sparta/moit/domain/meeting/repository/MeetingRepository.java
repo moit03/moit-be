@@ -23,10 +23,10 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
     List<Meeting> findMeetingsByCreatorIdAndStatus(Long memberId, MeetingStatusEnum status);
 
     @Query(value = "SELECT m.*, " +
-            "ST_Distance( CAST (:point AS geography), CAST(m.location_position AS geography)) AS dist " +
+            "ST_Distance( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), CAST(ST_SetSRID(ST_MakePoint(m.location_lng, m.location_lat), 4326) AS geography)) AS dist " +
             "FROM meeting m " +
             "WHERE " +
-            "   ST_Dwithin( CAST (:point AS geography), CAST(m.location_position AS geography), 5000) " +
+            "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), CAST(ST_SetSRID(ST_MakePoint(m.location_lng, m.location_lat), 4326) AS geography), 5000) " +
             "   AND (:skillIdsStr IS NULL OR EXISTS (" +
             "         SELECT 1 FROM jsonb_array_elements(m.skill_list) AS skill_json " +
             "         WHERE CAST(skill_json->>'skillId' AS TEXT) = ANY(string_to_array(:skillIdsStr, ',')) " +
@@ -36,10 +36,12 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             "         WHERE CAST(career_json->>'careerId' AS TEXT) = ANY(string_to_array(:careerIdsStr, ',')) " +
             "       )) " +
             "   AND m.status <> 'DELETE' " +
+            "   AND m.status <> 'COMPLETE' "+
             " ORDER BY dist asc " +
             "LIMIT :pageSize " +
             "OFFSET :offset", nativeQuery = true)
-    List<Meeting> findMeetingST_Dwithin(@Param("point") Point point,
+    List<Meeting> findMeetingST_Dwithin(@Param("locationLng") Double locationLng,
+                                        @Param("locationLat") Double locationLat,
                                         @Param("skillIdsStr") String skillIdsStr,
                                         @Param("careerIdsStr") String careerIdsStr,
                                         @Param("pageSize") int pageSize,
