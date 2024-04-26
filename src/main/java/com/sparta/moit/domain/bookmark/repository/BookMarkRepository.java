@@ -13,4 +13,5 @@ public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
     @Query("SELECT b.meeting FROM BookMark b WHERE b.member.id = :memberId")
     List<Meeting> findBookmarkedMeetingsByMemberId(Long memberId);
     boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
+    List<BookMark> findByMemberId(Long memberId);
 }
