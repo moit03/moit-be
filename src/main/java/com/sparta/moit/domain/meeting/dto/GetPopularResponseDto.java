@@ -17,12 +17,10 @@ public class GetPopularResponseDto {
     private String meetingName;
     private LocalDate meetingDate;
     private String locationAddress;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "HH:mm")
     private LocalDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "HH:mm")
     private LocalDateTime meetingEndTime;
-
-
 
     @Builder
     public GetPopularResponseDto(Long meetingId, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress) {
@@ -41,8 +39,8 @@ public class GetPopularResponseDto {
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime())
-                .meetingEndTime(meeting.getMeetingEndTime())
+                .meetingStartTime(meeting.getMeetingStartTime().minusHours(9))
+                .meetingEndTime(meeting.getMeetingEndTime().minusHours(9))
                 .locationAddress(formattedLocationAddress)
                 .build();
     }

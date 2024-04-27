@@ -27,7 +27,7 @@ public class GetMeetingDetailResponseDto {
     private final List<String> skillNameList;
     private final LocalDate meetingDate;
 
-    //    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     private final LocalDateTime meetingStartTime;
     @JsonFormat(pattern = "HH:mm")
     private final LocalDateTime meetingEndTime;
@@ -45,7 +45,7 @@ public class GetMeetingDetailResponseDto {
     private final boolean isBookmarked;
 
     @Builder
-    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Date jsonFormatStartTime, LocalDateTime localJsonFormatStartTime, LocalDateTime utcFormatStartTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin, MeetingStatusEnum status, boolean isBookmarked) {
+    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin, MeetingStatusEnum status, boolean isBookmarked) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.creatorName = creatorName;
@@ -55,9 +55,6 @@ public class GetMeetingDetailResponseDto {
         this.meetingDate = meetingDate;
         this.meetingStartTime = meetingStartTime;
         this.meetingEndTime = meetingEndTime;
-        this.jsonFormatStartTime = jsonFormatStartTime;
-        this.localJsonFormatStartTime = localJsonFormatStartTime;
-        this.utcFormatStartTime = utcFormatStartTime;
         this.locationAddress = locationAddress;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
@@ -90,11 +87,8 @@ public class GetMeetingDetailResponseDto {
                 .careerNameList(careerNameList)
                 .skillNameList(skillNameList)
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime())
-                .meetingEndTime(meeting.getMeetingEndTime())
-                .jsonFormatStartTime(jsonFormatStartTime)
-                .localJsonFormatStartTime(meeting.getMeetingStartTime())
-                .utcFormatStartTime(meeting.getMeetingStartTime())
+                .meetingStartTime(meeting.getMeetingStartTime().minusHours(9))
+                .meetingEndTime(meeting.getMeetingEndTime().minusHours(9))
                 .locationAddress(meeting.getLocationAddress())
                 .registeredCount(meeting.getRegisteredCount())
                 .totalCount(meeting.getTotalCount())

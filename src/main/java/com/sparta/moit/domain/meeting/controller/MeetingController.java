@@ -95,13 +95,8 @@ public class MeetingController implements MeetingControllerDocs {
         Optional<Member> member = Optional.ofNullable(userDetails).map(UserDetailsImpl::getUser);
         GetMeetingDetailResponseDto responseDto = meetingService.getMeetingDetail(meetingId, member);
 
-        //로그점...
-        log.info("jsonFormatStartTime : " + responseDto.getJsonFormatStartTime());
-        log.info("LocalJsonFormatStartTime : " + responseDto.getLocalJsonFormatStartTime());
-        log.info("UtcFormatStartTime : " + responseDto.getUtcFormatStartTime());
         log.info("MeetingStartTime : " + responseDto.getMeetingStartTime());
         log.info("MeetingEndTime : " + responseDto.getMeetingEndTime());
-
 
         String message = member.isPresent() ? "로그인 유저의 조회 완료" : "비로그인 조회 완료";
         return ResponseEntity.ok().body(ResponseDto.success(message, responseDto));
