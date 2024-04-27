@@ -3,16 +3,19 @@ package com.sparta.moit.domain.meeting.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
-import com.sparta.moit.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j(topic = "GetMeetingDetailResponseDto")
 @Getter
 public class GetMeetingDetailResponseDto {
 
@@ -73,6 +76,9 @@ public class GetMeetingDetailResponseDto {
                 .map(SkillResponseDto::getSkillName)
                 .collect(Collectors.toList());
 
+        log.info("meeting.getMeetingStartTime() = " + meeting.getMeetingStartTime().toString());
+        log.info("meeting.getMeetingEndTime() = " + meeting.getMeetingEndTime().toString());
+
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
@@ -81,8 +87,8 @@ public class GetMeetingDetailResponseDto {
                 .careerNameList(careerNameList)
                 .skillNameList(skillNameList)
                 .meetingDate(meeting.getMeetingDate())
-                .meetingStartTime(meeting.getMeetingStartTime())
-                .meetingEndTime(meeting.getMeetingEndTime())
+                .meetingStartTime(meeting.getMeetingStartTime().minusHours(9))
+                .meetingEndTime(meeting.getMeetingEndTime().minusHours(9))
                 .locationAddress(meeting.getLocationAddress())
                 .registeredCount(meeting.getRegisteredCount())
                 .totalCount(meeting.getTotalCount())
