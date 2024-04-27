@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j(topic = "Kakao Login")
@@ -152,6 +153,7 @@ public class KakaoServiceImpl implements KakaoService{
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
 
+        log.info("서버 로그인 시간: " + LocalDateTime.now());
         log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(id, nickname, email);
     }
