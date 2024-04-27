@@ -1,5 +1,9 @@
 package com.sparta.moit.domain.member.service;
 
+import com.sparta.moit.domain.member.entity.Member;
+
 public interface MemberService {
-    void signOut(Long memberId);
+
+    void signOut(Member member);
+
 }

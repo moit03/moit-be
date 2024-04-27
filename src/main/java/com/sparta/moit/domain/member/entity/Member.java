@@ -16,15 +16,26 @@ import java.util.List;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
+
     private String username;
+
     private String email;
+
     private String password;
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private MemberStatusEnum status;
+
     @Column(name = "kakao_id")
     private Long kakaoId;
+
     @Column(name = "naver_id")
     private String naverId;
 
@@ -32,20 +43,21 @@ public class Member {
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
-
-    public Member(String username, String password, String email, UserRoleEnum role) {
+    public Member(String username, String password, String email, UserRoleEnum role, MemberStatusEnum status) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.status = MemberStatusEnum.MEMBER;
     }
 
     @Builder
-    public Member (String username, String password, String email, UserRoleEnum role, Long kakaoId, String naverId){
+    public Member (String username, String password, String email, UserRoleEnum role, MemberStatusEnum status, Long kakaoId, String naverId){
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.status = MemberStatusEnum.MEMBER;
         this.kakaoId = kakaoId;
         this.naverId = naverId;
     }
@@ -58,6 +70,10 @@ public class Member {
     public Member updateNaverId(String naverId) {
         this.naverId = naverId;
         return this;
+    }
+
+    public void signOutStatus() {
+        this.status = MemberStatusEnum.NONMEMBER;
     }
 
     /* 테스트용 */
