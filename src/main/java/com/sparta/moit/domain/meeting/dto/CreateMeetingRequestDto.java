@@ -83,20 +83,20 @@ public class CreateMeetingRequestDto {
         CareerMapper careerMapper = new CareerMapper();
         List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(careerIds);
 
-        ZonedDateTime seoulStartTime = meetingStartTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(18);
-        ZonedDateTime seoulEndTime = meetingEndTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(18);
+//        ZonedDateTime seoulStartTime = meetingStartTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(18);
+//        ZonedDateTime seoulEndTime = meetingEndTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(18);
 
-        log.info("RequestDto의 meetingStartTime " + meetingStartTime.toString());
-        log.info("RequestDto의 meetingEndTime " + meetingEndTime.toString());
-
-        log.info("ZonedDateTime seoulStartTime.toString() " + seoulStartTime.toString());
-        log.info("ZonedDateTime seoulStartTime.toString() " + seoulStartTime.toLocalDateTime());
+//        log.info("RequestDto의 meetingStartTime " + meetingStartTime.toString());
+//        log.info("RequestDto의 meetingEndTime " + meetingEndTime.toString());
+//
+//        log.info("ZonedDateTime seoulStartTime.toString() " + seoulStartTime.toString());
+//        log.info("ZonedDateTime seoulStartTime.toString() " + seoulStartTime.toLocalDateTime());
 
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(seoulStartTime.toLocalDateTime())
-                .meetingEndTime(seoulEndTime.toLocalDateTime())
+                .meetingStartTime(this.meetingStartTime.plusHours(9))
+                .meetingEndTime(this.meetingEndTime.plusHours(9))
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
