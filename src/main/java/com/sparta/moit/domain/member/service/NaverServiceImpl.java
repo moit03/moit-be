@@ -6,11 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.dto.NaverUserInfoDto;
 import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.domain.member.entity.MemberStatusEnum;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
+import com.sparta.moit.global.common.service.RefreshTokenService;
 import com.sparta.moit.global.error.CustomValidationException;
 import com.sparta.moit.global.jwt.JwtUtil;
-import com.sparta.moit.global.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ import java.util.UUID;
 @Slf4j(topic = "Naver Login")
 @Service
 @RequiredArgsConstructor
-public class NaverServiceImpl implements NaverService{
+public class NaverServiceImpl implements NaverService {
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
@@ -48,7 +49,7 @@ public class NaverServiceImpl implements NaverService{
     private String redirectUri;
 
     public MemberResponseDto naverLogin(String code, String state) throws JsonProcessingException {
-        String accessToken = getAccessToken(code,state);
+        String accessToken = getAccessToken(code, state);
         NaverUserInfoDto naverUserInfo = getNaverUserInfo(accessToken);
         Member naverMember = registerNaverUserIfNeeded(naverUserInfo);
         String createToken = jwtUtil.createToken(naverMember.getEmail(), naverMember.getRole());
@@ -71,7 +72,7 @@ public class NaverServiceImpl implements NaverService{
                 .queryParam("client_secret", clientSecret)
                 .queryParam("redirect_uri", redirectUri)
                 .queryParam("code", code)
-                .queryParam("state",state)
+                .queryParam("state", state)
                 .encode()
                 .build()
                 .toUri();
@@ -156,6 +157,7 @@ public class NaverServiceImpl implements NaverService{
                         .password(encodedPassword)
                         .email(naverUserInfo.getEmail())
                         .role(UserRoleEnum.USER)
+                        .status(MemberStatusEnum.MEMBER)
                         .naverId(naverId)
                         .build();
             }
@@ -164,11 +166,13 @@ public class NaverServiceImpl implements NaverService{
         }
         return naverUser;
     }
+
     /* refreshAccessToken */
     private String refreshAccessToken(String refreshToken) {
         Optional<String> newAccessToken = refreshTokenService.refreshAccessToken(refreshToken);
         return newAccessToken.orElseThrow(() -> new CustomValidationException("Failed to refresh access token", null));
     }
+
     public String refreshToken(String refreshToken) {
         return refreshAccessToken(refreshToken);
     }
