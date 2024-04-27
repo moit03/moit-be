@@ -21,9 +21,9 @@ public class GetMeetingResponseDto {
     private Double locationLat;
     private Double locationLng;
     private String locationAddress;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "HH:mm") // 타임존 아시아 있었음
     private LocalDateTime meetingStartTime;
-    @JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "HH:mm")
     private LocalDateTime meetingEndTime;
     private List<SkillResponseDto> skillList;
     private List<CareerResponseDto> careerList;

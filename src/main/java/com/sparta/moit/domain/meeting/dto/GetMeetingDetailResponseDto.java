@@ -6,6 +6,7 @@ import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,17 +29,8 @@ public class GetMeetingDetailResponseDto {
 
     //    @JsonFormat(pattern = "HH:mm")
     private final LocalDateTime meetingStartTime;
-//    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     private final LocalDateTime meetingEndTime;
-
-    @JsonFormat(pattern = "HH:mm", timezone = "GMT+9")
-    private final Date jsonFormatStartTime;
-
-    @JsonFormat(pattern = "HH:mm", timezone = "GMT+9")
-    private final LocalDateTime localJsonFormatStartTime;
-
-    @JsonFormat(pattern = "HH:mm", timezone = "GMT+9")
-    private final LocalDateTime utcFormatStartTime;
 
     private final String locationAddress;
 
@@ -87,8 +79,6 @@ public class GetMeetingDetailResponseDto {
                 .map(SkillResponseDto::getSkillName)
                 .collect(Collectors.toList());
 
-
-        Date jsonFormatStartTime = Date.from(meeting.getMeetingStartTime().atZone(ZoneId.systemDefault()).toInstant());
         log.info("meeting.getMeetingStartTime() = " + meeting.getMeetingStartTime().toString());
         log.info("meeting.getMeetingEndTime() = " + meeting.getMeetingEndTime().toString());
 
