@@ -2,7 +2,9 @@ package com.sparta.moit.global.common.service;
 
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.global.common.entity.RedisRefreshToken;
+import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.CustomValidationException;
+import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.common.repository.RedisRefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +61,7 @@ public class RefreshTokenService {
             redisRefreshTokenRepository.delete(refreshTokenOptional.get());
         } else {
             /*DB에 해당 토큰이 존재하지 않는 경우, 예외를 던집니다.*/
-            throw new CustomValidationException("토큰이 유효하지 않거나 이미 삭제되었습니다.", Map.of("refreshToken", "토큰이 존재하지 않습니다."));
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
     }
 }

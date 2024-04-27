@@ -35,38 +35,29 @@ public enum ErrorCode {
         }
     */
 
+    /* 회원 */
     DUPLICATED_EMAIL("DUPLICATED_EMAIL", "중복된 이메일입니다.", HttpStatus.BAD_REQUEST),
     DUPLICATED_MEMBER("DUPLICATED_MEMBER", "중복된 회원입니다.", HttpStatus.BAD_REQUEST),
     ALREADY_MEMBER("ALREADY_MEMBER", "이미 참가한 회원입니다.", HttpStatus.BAD_REQUEST),
-    MEETING_FULL("MEETING_FULL", "가득찬 모임입니다.", HttpStatus.BAD_REQUEST),
     NOT_EXIST_USER("NOT_EXIST_USER", "해당 유저는 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
     NOT_MATCH_PWD("NOT_MATCH_PWD", "비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
-    AUTHORITY_ACCESS("AUTHORITY_ACCESS", "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
-    VALIDATION_ERROR("VALIDATION_ERROR", "잘못된 입력입니다.", HttpStatus.BAD_REQUEST),
-    FORBIDDEN("FORBIDDEN", "접근 권한이 없습니다. ADMIN에게 문의하세요.", HttpStatus.FORBIDDEN),
-    UNAUTHORIZED("UNAUTHORIZED", "로그인 후 이용할 수 있습니다. 계정이 없다면 회원 가입을 진행해주세요.", HttpStatus.UNAUTHORIZED),
-    NOT_EXIST_COMMENT("NOT_EXIST_COMMENT", "해당 댓글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
-    NOT_EXIST_POST("NOT_EXIST_POST", "해당 글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
-    NOT_YOUR_POST("NOT_YOUR_POST","해당 게시글을 작성한 유저가 아닙니다." ,HttpStatus.BAD_REQUEST),
-    NOT_YOUR_IMG("NOT_YOUR_IMG", "imgId를 확인해주세요", HttpStatus.BAD_REQUEST),
-    NOT_EXIST_IMG("NOT_EXIST_IMG", "해당 사진이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
-    FAIL_TO_SEND_MAIL("FAIL_TO_SEND_MAIL", "메일을 보내는데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    DUPLICATED_PHONE_NUMBER("DUPLICATED_PHONE_NUMBER", "중복된 전화번호입니다.", HttpStatus.BAD_REQUEST),
-    INVALID_CATEGORY_INPUT("INVALID_CATEGORY_INPUT", "잘못된 카테고리 입력입니다.", HttpStatus.BAD_REQUEST),
-    NOT_YOUR_COMMENT("NOT_YOUR_COMMENT", "해당 댓글을 작성한 유저가 아닙니다.", HttpStatus.BAD_REQUEST),
-    NOT_MATCH_CODE("NOT_MATCH_CODE", "인증번호가 일치하지 않습니다", HttpStatus.UNAUTHORIZED),
-    MSG_TIME_OUT("MSG_TIME_OUT", "인증시간이 초과되었습니다.", HttpStatus.REQUEST_TIMEOUT),
-    NOT_EXIST_PROFILE("NOT_EXIST_PROFILE", "프로필사진이 없습니다", HttpStatus.BAD_REQUEST),
-    INVALID_PARENT_COMMENT("INVALID_PARENT_COMMENT", "유효하지 않은 부모 댓글입니다.", HttpStatus.BAD_REQUEST),
-    CHATROOM_NOT_FOUND("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    MEETING_NOT_FOUND("MEETING_NOT_FOUND", "모임을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    /* 모임 */
+    MEETING_FULL("MEETING_FULL", "가득찬 모임입니다.", HttpStatus.BAD_REQUEST),
     NOT_MEETING_MEMBER("NOT_MEETING_MEMBER", "모임에 가입한 유저가 아닙니다.", HttpStatus.FORBIDDEN),
+    MEETING_NOT_FOUND("MEETING_NOT_FOUND", "모임을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     CREATOR_CAN_NOT_LEAVE("CREATOR_CAN_NOT_LEAVE", "작성자는 탈퇴할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    //STARTTIME_CAN_NOT_LATER_THAN_ENDTIME("STARTTIME_CAN_NOT_LATER_THAN_ENDTIME", "d", HttpStatus.BAD_REQUEST),
+    /* 토큰 */
+    AUTHORITY_ACCESS("AUTHORITY_ACCESS", "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED("UNAUTHORIZED", "로그인 후 이용할 수 있습니다. 계정이 없다면 회원 가입을 진행해주세요.", HttpStatus.UNAUTHORIZED),
+    INVALID_TOKEN("INVALID_TOKEN", "토큰이 유효하지 않거나 이미 삭제되었습니다.", HttpStatus.UNAUTHORIZED),
+    /* 유효성 검사 */
+    VALIDATION_ERROR("VALIDATION_ERROR", "잘못된 입력입니다.", HttpStatus.BAD_REQUEST),
+    /* 채팅 */
+    CHATROOM_NOT_FOUND("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    /* 북마크 */
     NOT_BOOKMARKED("NOT_BOOKMARKED", "북마크 하지 않은 모임입니다.",HttpStatus.BAD_REQUEST),
     ALREADY_BOOKMARKED("ALREADY_BOOKMARKED", "이미 북마크 된 모임입니다.", HttpStatus.BAD_REQUEST),
-    BOOKMARK_NOT_FOUND("BOOKMARK_NOT_FOUND", "북마크를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    NOT_EXIST_MY_PAGE("NOT_EXIST_MY_PAGE", "마이페이지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    BOOKMARK_NOT_FOUND("BOOKMARK_NOT_FOUND", "북마크를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
 
 
