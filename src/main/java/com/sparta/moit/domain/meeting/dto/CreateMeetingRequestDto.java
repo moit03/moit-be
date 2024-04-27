@@ -10,11 +10,15 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
+@Slf4j(topic = "CreateRequestDto")
 @Getter
 public class CreateMeetingRequestDto {
     @Schema(description = "미팅 제목", example = "[모각코] 석촌호수 카페 모집중!")
@@ -25,12 +29,12 @@ public class CreateMeetingRequestDto {
     @NotNull(message = "미팅 날짜 선택은 필수입니다.")
     private LocalDate meetingDate;
 
-    @NotNull(message = "모임 시작 시간 선택은 필수입니다.")
 //    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
+    @NotNull(message = "모임 시작 시간 선택은 필수입니다.")
     private LocalDateTime meetingStartTime;
 
     @NotNull(message = "모임 종료 시간 선택은 필수입니다.")
-//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime meetingEndTime;
 
     @Schema(description = "미팅 예산", example = "10000")
@@ -79,11 +83,20 @@ public class CreateMeetingRequestDto {
         CareerMapper careerMapper = new CareerMapper();
         List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(careerIds);
 
+        ZonedDateTime seoulStartTime = meetingStartTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(9);
+        ZonedDateTime seoulEndTime = meetingEndTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(9);
+
+        log.info("RequestDto의 meetingStartTime " + meetingStartTime.toString());
+        log.info("RequestDto의 meetingEndTime " + meetingEndTime.toString());
+
+        log.info("ZonedDateTime seoulStartTime.toString() " + seoulStartTime.toString());
+        log.info("ZonedDateTime seoulStartTime.toString() " + seoulStartTime.toLocalDateTime());
+
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(meetingStartTime)
-                .meetingEndTime(meetingEndTime)
+                .meetingStartTime(seoulStartTime.toLocalDateTime())
+                .meetingEndTime(seoulEndTime.toLocalDateTime())
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
