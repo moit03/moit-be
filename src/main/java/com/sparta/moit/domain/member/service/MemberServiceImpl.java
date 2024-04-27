@@ -20,6 +20,6 @@ public class MemberServiceImpl implements MemberService {
         Member member1 = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다. memberId= " + member));
 
-        member.signOutStatus();
+        member1.signOutStatus();
     }
 }

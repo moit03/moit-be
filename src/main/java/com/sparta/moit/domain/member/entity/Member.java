@@ -1,6 +1,5 @@
 package com.sparta.moit.domain.member.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.moit.domain.meeting.entity.MeetingMember;
 import jakarta.persistence.*;
@@ -29,7 +28,7 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    @Column(nullable = false)
+    //    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private MemberStatusEnum status;
 
@@ -48,16 +47,16 @@ public class Member {
         this.password = password;
         this.email = email;
         this.role = role;
-        this.status = MemberStatusEnum.MEMBER;
+        this.status = status;
     }
 
     @Builder
-    public Member (String username, String password, String email, UserRoleEnum role, MemberStatusEnum status, Long kakaoId, String naverId){
+    public Member(String username, String password, String email, UserRoleEnum role, MemberStatusEnum status, Long kakaoId, String naverId) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.status = MemberStatusEnum.MEMBER;
+        this.status = status;
         this.kakaoId = kakaoId;
         this.naverId = naverId;
     }
