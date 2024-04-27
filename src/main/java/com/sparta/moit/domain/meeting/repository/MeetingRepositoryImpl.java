@@ -130,13 +130,15 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
     @Override
     public List<Meeting> getPopularMeetings() {
-        return queryFactory.select(meeting)
-                .from(meeting)
-                .where(isOpenOrFull())
-                .join(bookMark).on(bookMark.meeting.eq(meeting))
+        List<Long> ids= queryFactory.select(bookMark.meeting.id)
+                .from(bookMark)
                 .groupBy(bookMark.meeting)
                 .orderBy(bookMark.meeting.count().desc())
                 .limit(5)
+                .fetch();
+
+        return queryFactory.selectFrom(meeting)
+                .where(meeting.id.in(ids))
                 .fetch();
     }
 
