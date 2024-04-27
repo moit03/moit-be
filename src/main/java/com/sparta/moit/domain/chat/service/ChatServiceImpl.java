@@ -22,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @Slf4j(topic = "채팅 로그")
 @RestController
 @RequestMapping("/api/chats")
@@ -34,7 +36,7 @@ public class ChatServiceImpl implements ChatService {
     private final MemberRepository memberRepository;
 
     @Override
-    public ChatResponseDto getChatList(Long meetingId, int page, Member member) {
+    public ChatResponseDto getChatList(Long meetingId, int page, LocalDateTime userEnterTime, Member member) {
         /*
          * 해당 모임이 존재하는지 확인한다.
          * 해당 모임에 가입한 유져가 맞는 지 확인한다.
@@ -54,7 +56,7 @@ public class ChatServiceImpl implements ChatService {
         int CHAT_PAGE_SIZE = 20;
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), CHAT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "id"));
 
-        Slice<Chat> chatList = chatRepository.findAllByMeetingOrderByIdDesc(meeting, pageable);
+        Slice<Chat> chatList = chatRepository.getPreviousChats(meeting, userEnterTime, pageable);
 
         return ChatResponseDto.fromEntity(chatList, meetingId, meeting.getStatus());
     }
@@ -80,10 +82,12 @@ public class ChatServiceImpl implements ChatService {
         if (!isMeetingMember(testMember, meeting)) {
             throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
         }
+
         Chat chat = Chat.builder()
                 .content(sendChatRequestDto.getContent())
                 .member(testMember)
                 .meeting(meeting)
+//                .createdAt(LocalDateTime.now())
                 .build();
 
         chatRepository.save(chat);

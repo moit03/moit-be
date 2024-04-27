@@ -20,10 +20,10 @@ public class Chat extends Timestamped {
     @Column(length=10000)
     private String content;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Member member;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Meeting meeting;
 
     @Builder
