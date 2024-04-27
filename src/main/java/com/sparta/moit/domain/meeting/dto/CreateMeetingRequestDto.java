@@ -83,8 +83,8 @@ public class CreateMeetingRequestDto {
         CareerMapper careerMapper = new CareerMapper();
         List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(careerIds);
 
-        ZonedDateTime seoulStartTime = meetingStartTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(9);
-        ZonedDateTime seoulEndTime = meetingEndTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(9);
+        ZonedDateTime seoulStartTime = meetingStartTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(18);
+        ZonedDateTime seoulEndTime = meetingEndTime.atZone(ZoneId.of("Asia/Seoul")).plusHours(18);
 
         log.info("RequestDto의 meetingStartTime " + meetingStartTime.toString());
         log.info("RequestDto의 meetingEndTime " + meetingEndTime.toString());
