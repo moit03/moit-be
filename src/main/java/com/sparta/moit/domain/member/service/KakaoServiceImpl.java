@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.moit.domain.member.dto.KakaoUserInfoDto;
 import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.domain.member.entity.MemberStatusEnum;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
-import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.common.service.RefreshTokenService;
+import com.sparta.moit.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ import java.util.UUID;
 @Slf4j(topic = "Kakao Login")
 @Service
 @RequiredArgsConstructor
-public class KakaoServiceImpl implements KakaoService{
+public class KakaoServiceImpl implements KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
@@ -49,6 +50,7 @@ public class KakaoServiceImpl implements KakaoService{
     public String login() {
         return jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
     }
+
     public MemberResponseDto kakaoLogin(String code) throws JsonProcessingException {
         /* 1. "인가 코드"로 "액세스 토큰" 요청 */
         String accessToken = getToken(code);
@@ -185,6 +187,7 @@ public class KakaoServiceImpl implements KakaoService{
                         .password(encodedPassword)
                         .email(kakaoUserInfo.getEmail())
                         .role(UserRoleEnum.USER)
+                        .status(MemberStatusEnum.MEMBER)
                         .kakaoId(kakaoId)
                         .build();
             }

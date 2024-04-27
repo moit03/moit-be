@@ -205,6 +205,7 @@ gradle-app.setting
 env.properties
 prometheus.yml
 application-dev.properties
+application-local.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,intellij,gradle
 /.idea/.name

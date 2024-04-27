@@ -22,6 +22,7 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "회원탈퇴", description = "회원 탈퇴 API")
     ResponseEntity<ResponseDto<String>> signOut(@AuthenticationPrincipal UserDetailsImpl userDetails);
+
 }
 
 
