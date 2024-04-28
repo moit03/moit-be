@@ -91,11 +91,20 @@ public class CreateMeetingRequestDto {
         log.info("ZonedDateTime seoulStartTime.toString " + seoulStartTime.toString());
         log.info("ZonedDateTime seoulStartTime.toLocalDateTime " + seoulStartTime.toLocalDateTime());
 
+
+        /* startTime, endTime 변환해보기 */
+
+        LocalDateTime combineStartTime = meetingDate.atTime(meetingStartTime.getHour(), meetingStartTime.getMinute());
+        LocalDateTime combineEndTime = meetingDate.atTime(meetingEndTime.getHour(), meetingEndTime.getMinute());
+
+        log.info("combineStartTime: " + combineStartTime.toString());
+        log.info("combineEndTime: " + combineEndTime.toString());
+
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
-                .meetingStartTime(this.meetingStartTime.plusHours(9))
-                .meetingEndTime(this.meetingEndTime.plusHours(9))
+                .meetingStartTime(combineStartTime.plusHours(9))
+                .meetingEndTime(combineEndTime.plusHours(9))
                 .budget(this.budget)
                 .contents(this.contents)
                 .locationAddress(this.locationAddress)
