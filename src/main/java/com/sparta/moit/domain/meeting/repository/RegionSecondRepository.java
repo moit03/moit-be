@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RegionSecondRepository extends JpaRepository<RegionSecond, Short> {
-    List<RegionSecond> findAllByRegionFirst(RegionFirst regionFirst);
+    List<RegionSecond> findAllByRegionFirstOrderByRegionSecondId(RegionFirst regionFirst);
 
     @Query(value = "SELECT s.*, f.region_first_id AS region_first_id_alias "
             + "FROM region_second s "
