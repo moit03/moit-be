@@ -44,7 +44,7 @@ public class RegionServiceImpl implements RegionService {
         RegionFirst regionFirst = regionFirstRepository.findById(regionFirstId).orElseThrow(() ->
                 new CustomException(ErrorCode.VALIDATION_ERROR)
         );
-        List<RegionSecond> regionSecondList = regionSecondRepository.findAllByRegionFirst(regionFirst);
+        List<RegionSecond> regionSecondList = regionSecondRepository.findAllByRegionFirstOrderByRegionSecondId(regionFirst);
         return regionSecondList.stream().map(RegionSecondResponseDto::fromEntity).toList();
     }
 

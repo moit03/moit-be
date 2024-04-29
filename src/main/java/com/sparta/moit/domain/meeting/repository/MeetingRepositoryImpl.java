@@ -132,7 +132,9 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     public List<Meeting> getPopularMeetings() {
         List<Long> ids= queryFactory.select(bookMark.meeting.id)
                 .from(bookMark)
-                .groupBy(bookMark.meeting)
+                .join(bookMark.meeting, meeting)
+                .where(meeting.status.eq(MeetingStatusEnum.OPEN).or(meeting.status.eq(MeetingStatusEnum.FULL)))
+                .groupBy(bookMark.meeting.id)
                 .orderBy(bookMark.meeting.count().desc())
                 .limit(5)
                 .fetch();
