@@ -47,8 +47,49 @@ public class KakaoServiceImpl implements KakaoService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
+    @Value("${kakao.admin-key}")
+    private String serviceAdminKey;
+
     public String login() {
         return jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
+    }
+
+    @Override
+    public String signOut(Member member) throws JsonProcessingException {
+        /* 요청 URL 만들기 */
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://kauth.kakao.com")
+                .path("/user/unlink")
+                .encode()
+                .build()
+                .toUri();
+
+        /* HTTP Header 생성 */
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", "KakaoAK " + serviceAdminKey);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("target_id_type", "user_id");
+        body.add("target_id", String.valueOf(member.getKakaoId()));
+
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
+                .post(uri)
+                .headers(headers)
+                .body(body);
+
+        /* HTTP 요청 보내기 */
+        ResponseEntity<String> response = restTemplate.exchange(
+                requestEntity,
+                String.class
+        );
+
+        /* HTTP 응답 (JSON) -> 카카오ID 파싱 */
+        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        String kakaoId = jsonNode.get("id").asText();
+
+        /*  access token 반환 */
+        return kakaoId;
     }
 
     public MemberResponseDto kakaoLogin(String code) throws JsonProcessingException {
@@ -81,7 +122,6 @@ public class KakaoServiceImpl implements KakaoService {
     }
 
     private String getToken(String code) throws JsonProcessingException {
-        log.info("인가코드 : " + code);
         /* 요청 URL 만들기 */
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kauth.kakao.com")
