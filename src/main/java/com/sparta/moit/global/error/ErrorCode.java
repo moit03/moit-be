@@ -39,6 +39,7 @@ public enum ErrorCode {
     DUPLICATED_MEMBER("DUPLICATED_MEMBER", "중복된 회원입니다.", HttpStatus.BAD_REQUEST),
     ALREADY_MEMBER("ALREADY_MEMBER", "이미 참가한 회원입니다.", HttpStatus.BAD_REQUEST),
     MEETING_FULL("MEETING_FULL", "가득찬 모임입니다.", HttpStatus.BAD_REQUEST),
+    MEETING_COMPLETE("MEETING_COMPLETE", "가득찬 모임입니다.", HttpStatus.BAD_REQUEST),
     NOT_EXIST_USER("NOT_EXIST_USER", "해당 유저는 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
     NOT_MATCH_PWD("NOT_MATCH_PWD", "비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     AUTHORITY_ACCESS("AUTHORITY_ACCESS", "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
