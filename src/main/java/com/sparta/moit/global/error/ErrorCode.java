@@ -67,7 +67,10 @@ public enum ErrorCode {
     NOT_BOOKMARKED("NOT_BOOKMARKED", "북마크 하지 않은 모임입니다.",HttpStatus.BAD_REQUEST),
     ALREADY_BOOKMARKED("ALREADY_BOOKMARKED", "이미 북마크 된 모임입니다.", HttpStatus.BAD_REQUEST),
     BOOKMARK_NOT_FOUND("BOOKMARK_NOT_FOUND", "북마크를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    NOT_EXIST_MY_PAGE("NOT_EXIST_MY_PAGE", "마이페이지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    NOT_EXIST_MY_PAGE("NOT_EXIST_MY_PAGE", "마이페이지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    KAKAOID_UNLINK_FAILURE("KAKAOID_UNLINK_FAILURE", "카카오 ID 연동에 실패했습니다.", HttpStatus.FAILED_DEPENDENCY)
+    ;
+
 
 
 
