@@ -47,10 +47,10 @@ public class MeetingController implements MeetingControllerDocs {
 
     @GetMapping
     public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListPostgre(@RequestParam Double locationLat,
-                                                   @RequestParam Double locationLng,
-                                                   @RequestParam(required = false) List<String> skillId,
-                                                   @RequestParam(required = false) List<String> careerId,
-                                                   @RequestParam(defaultValue = "1") int page) {
+                                                                                           @RequestParam Double locationLng,
+                                                                                           @RequestParam(required = false) List<String> skillId,
+                                                                                           @RequestParam(required = false) List<String> careerId,
+                                                                                           @RequestParam(defaultValue = "1") int page) {
 
         String skillIdsStr = (skillId == null || skillId.isEmpty()) ? null : String.join(",", skillId);
         String careerIdsStr = (careerId == null || careerId.isEmpty()) ? null : String.join(",", careerId);
