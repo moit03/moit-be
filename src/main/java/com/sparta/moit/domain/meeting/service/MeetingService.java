@@ -18,6 +18,8 @@ public interface MeetingService {
 
     Slice<GetMeetingResponseDto> getMeetingListPostgre(int page ,Double locationLat ,Double locationLng ,String skillIdsStr ,String careerIdsStr);
 
+    Slice<GetMeetingResponseDto> getMeetingListPostgreWithJoin(int page ,Double locationLat ,Double locationLng ,List<Long> skillId, List<Long> careerId);
+
     Slice<GetMeetingResponseDto> getMeetingList(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);
 
     List<GetMeetingResponseDto> getMeetingListNativeQuery(int page, Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId);

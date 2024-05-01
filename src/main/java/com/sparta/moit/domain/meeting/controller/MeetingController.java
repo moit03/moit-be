@@ -45,6 +45,31 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("모임 삭제 완료", "삭제"));
     }
 
+    @GetMapping("/withJoin")
+    public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListPostgreWithJoin(@RequestParam Double locationLat,
+                                                   @RequestParam Double locationLng,
+                                                   @RequestParam(required = false) List<Long> skillId,
+                                                   @RequestParam(required = false) List<Long> careerId,
+                                                   @RequestParam(defaultValue = "1") int page) {
+
+        if (skillId == null || skillId.isEmpty()) {
+            skillId = new ArrayList<Long>();
+        }
+        if (careerId == null || careerId.isEmpty()) {
+            careerId = new ArrayList<Long>();
+        }
+
+        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListPostgreWithJoin(
+                page
+                , locationLat
+                , locationLng
+                , skillId
+                , careerId
+        );
+
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
+
     @GetMapping
     public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListPostgre(@RequestParam Double locationLat,
                                                                                            @RequestParam Double locationLng,

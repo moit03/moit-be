@@ -27,7 +27,29 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
     List<Meeting> findMeetingsByCreatorIdAndStatus(Long memberId, MeetingStatusEnum status);
 
     @Query(value = "SELECT m.*, " +
-            "ST_Distance( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), CAST(ST_SetSRID(ST_MakePoint(m.location_lng, m.location_lat), 4326) AS geography)) AS dist " +
+            "ST_Distance( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position) as dist " +
+            "FROM meeting m " +
+            "JOIN meeting_career mc ON mc.meeting_id = m.id " +
+            "JOIN meeting_skill ms ON ms.meeting_id = m.id " +
+            "WHERE " +
+            "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position, 5000) " +
+            "   AND m.status <> 'DELETE' " +
+            "   AND m.status <> 'COMPLETE' "+
+            "   AND (ms.skill_id IN (:skillId) OR (:skillId IS NULL)) "+
+            "   AND (mc.career_id in (:careerId) OR (:careerId IS NULL)) "+
+            " ORDER BY dist asc " +
+            "LIMIT :pageSize " +
+            "OFFSET :offset", nativeQuery = true)
+    List<Meeting> findMeetingST_Dwithin_withJoin(@Param("locationLng") Double locationLng,
+                                        @Param("locationLat") Double locationLat,
+                                        @Param("skillId") List<Long> skillId,
+                                        @Param("careerId") List<Long> careerId,
+                                        @Param("pageSize") int pageSize,
+                                        @Param("offset") int offset);
+
+
+    @Query(value = "SELECT m.*, " +
+            "ST_Distance( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position) as dist " +
             "FROM meeting m " +
             "WHERE " +
             "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position, 5000) " +
