@@ -30,7 +30,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             "ST_Distance( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), CAST(ST_SetSRID(ST_MakePoint(m.location_lng, m.location_lat), 4326) AS geography)) AS dist " +
             "FROM meeting m " +
             "WHERE " +
-            "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), CAST(ST_SetSRID(ST_MakePoint(m.location_lng, m.location_lat), 4326) AS geography), 5000) " +
+            "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position, 5000) " +
             "   AND (:skillIdsStr IS NULL OR EXISTS (" +
             "         SELECT 1 FROM jsonb_array_elements(m.skill_list) AS skill_json " +
             "         WHERE CAST(skill_json->>'skillId' AS TEXT) = ANY(string_to_array(:skillIdsStr, ',')) " +
