@@ -78,8 +78,10 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             "FROM meeting m " +
             "WHERE " +
             "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position, 5000) " +
-            "   AND ((:skillId IS NULL OR m.skill_id_list && :skillId) " +
-            "    OR (:careerId IS NULL OR m.career_id_list && :careerId)) " +
+            "   AND (" +
+            "       (:skillIdsStr IS NULL OR m.skill_id_list && CAST(string_to_array(:skillIdsStr, ',') AS bigint[])) " +
+            "    OR (:careerIdsStr IS NULL OR m.career_id_list && CAST(string_to_array(:careerIdsStr, ',') AS bigint[])) " +
+            ")" +
             "   AND m.status <> 'DELETE' " +
             "   AND m.status <> 'COMPLETE' "+
             " ORDER BY dist asc " +
@@ -87,8 +89,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             "OFFSET :offset", nativeQuery = true)
     List<Meeting> findMeetingST_Dwithin_array(@Param("locationLng") Double locationLng,
                                         @Param("locationLat") Double locationLat,
-                                        @Param("skillId") List<Long> skillId,
-                                        @Param("careerId") List<Long> careerId,
+                                        @Param("skillIdsStr") String skillIdsStr,
+                                        @Param("careerIdsStr") String careerIdsStr,
                                         @Param("pageSize") int pageSize,
                                         @Param("offset") int offset);
 

@@ -1,7 +1,9 @@
 package com.sparta.moit.global.util;
 
+import com.sparta.moit.domain.meeting.dto.CareerDto;
 import com.sparta.moit.domain.meeting.dto.CareerResponseDto;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +26,14 @@ public class CareerMapper {
     public List<CareerResponseDto> createCareerResponseList(List<Long> careerIds) {
         return careerIds.stream()
                 .map(id -> CareerResponseDto.builder()
+                        .careerId(id)
+                        .careerName(CAREER_MAP.get(id))
+                        .build())
+                .collect(Collectors.toList());
+    }
+    public List<CareerDto> createCareerResponseList(long[] careerIds) {
+        return Arrays.stream(careerIds) // Creates an IntStream
+                .mapToObj(id -> CareerDto.builder()
                         .careerId(id)
                         .careerName(CAREER_MAP.get(id))
                         .build())

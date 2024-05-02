@@ -93,11 +93,20 @@ public class Meeting extends Timestamped {
     @Column(name = "career_list",columnDefinition = "jsonb")
     private List<CareerResponseDto> careerList = new ArrayList<>();
 
+    @Column(name = "career_id_list", columnDefinition = "bigint[]")
+    private long[] careerIdList;
+
+    @Column(name = "skill_id_list", columnDefinition = "bigint[]")
+    private long[] skillIdList;
+
+
+
+
     @Builder
     public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime,
                    Integer budget, String locationAddress, String contents, Short registeredCount, Short totalCount,
                    Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status,
-                   Member creator, List<MeetingMember> meetingMembers, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList) {
+                   Member creator, List<MeetingMember> meetingMembers, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, List<Skill> skillJoinList, List<Career> careerJoinList) {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;

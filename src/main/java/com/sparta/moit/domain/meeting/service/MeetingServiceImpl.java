@@ -138,6 +138,33 @@ public class MeetingServiceImpl implements MeetingService {
         return new SliceImpl<>(sliceList, pageable, hasNext);
     }
 
+    @Override
+    public Slice<GetMeetingArrayResponseDto> getMeetingListPostgreArray(
+            int page
+            , Double locationLat
+            , Double locationLng
+            , String skillIdsStr
+            , String careerIdsStr
+    ) {
+        int extraItem = 1; // pagination 을 위한 추가 요청
+        int pageSize = 10;
+        int offset = Math.max(page - 1, 0) * pageSize;
+
+        List<Meeting> meetingList = meetingRepository.findMeetingST_Dwithin_array(
+                locationLng
+                , locationLat
+                , skillIdsStr
+                , careerIdsStr
+                , pageSize + extraItem
+                , offset
+        );
+
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), pageSize);
+        boolean hasNext = hasNextPage(meetingList, pageable.getPageSize());
+        List<GetMeetingArrayResponseDto> sliceList = meetingList.stream().limit(pageSize).map(GetMeetingArrayResponseDto::fromEntity).toList();
+        return new SliceImpl<>(sliceList, pageable, hasNext);
+    }
+
 
     /*모임 조회*/
     @Override
