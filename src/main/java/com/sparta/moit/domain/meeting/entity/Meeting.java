@@ -64,7 +64,7 @@ public class Meeting extends Timestamped {
     @Column(name = "location_lng")
     private Double locationLng;
 
-    @Column(columnDefinition = "geometry(Point,4326)")
+    @Column(columnDefinition = "geography(Point,4326)")
     private Point locationPosition;
 
     @Column(name = "region_first_name")
