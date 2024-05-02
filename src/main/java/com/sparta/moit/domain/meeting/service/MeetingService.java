@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface MeetingService {
 
     Long createMeeting(CreateMeetingRequestDto requestDto, Member member);
+    Long createMeetingArray(CreateMeetingRequestDto requestDto, Member member);
 
     Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
 

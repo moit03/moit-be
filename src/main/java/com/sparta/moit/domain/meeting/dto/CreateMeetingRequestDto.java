@@ -83,10 +83,6 @@ public class CreateMeetingRequestDto {
         CareerMapper careerMapper = new CareerMapper();
         List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(careerIds);
 
-        /* startTime, endTime 변환 */
-        LocalDateTime combineStartTime = meetingDate.atTime(meetingStartTime.getHour(), meetingStartTime.getMinute());
-        LocalDateTime combineEndTime = meetingDate.atTime(meetingEndTime.getHour(), meetingEndTime.getMinute());
-
         return Meeting.builder()
                 .meetingName(this.meetingName)
                 .meetingDate(this.meetingDate)
@@ -106,4 +102,34 @@ public class CreateMeetingRequestDto {
                 .careerList(careerList)
                 .build();
     }
+
+    public Meeting toEntityArray(Member creator) {
+        /* 시간 관련 validation */
+        if (meetingStartTime != null && meetingEndTime != null && meetingStartTime.isAfter(meetingEndTime)) {
+            throw new IllegalArgumentException("모임 시작 시간은 종료 시간보다 빨라야 합니다.");
+        }
+
+        Long[] skillArray = skillIds.toArray(new Long[0]);
+        Long[] careerArray = careerIds.toArray(new Long[0]);
+
+        return Meeting.builder()
+                .meetingName(this.meetingName)
+                .meetingDate(this.meetingDate)
+                .meetingStartTime(this.meetingStartTime.plusHours(9))
+                .meetingEndTime(this.meetingEndTime.plusHours(9))
+                .budget(this.budget)
+                .contents(this.contents)
+                .locationAddress(this.locationAddress)
+                .registeredCount((short) 1)
+                .totalCount(this.totalCount)
+                .locationLat(this.locationLat)
+                .locationLng(this.locationLng)
+                .regionFirstName(this.regionFirstName)
+                .regionSecondName(this.regionSecondName)
+                .creator(creator)
+                .skillIdList(skillArray)
+                .careerIdList(careerArray)
+                .build();
+    }
+
 }

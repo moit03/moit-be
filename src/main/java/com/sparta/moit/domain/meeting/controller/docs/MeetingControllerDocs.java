@@ -24,6 +24,10 @@ public interface MeetingControllerDocs {
     @Operation(summary = "모임 등록 기능", description = "모임 등록 API")
     ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
+    @Operation(summary = "모임 등록 기능", description = "모임 등록 API")
+    ResponseEntity<?> createMeetingArray(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
+
+
     @Operation(summary = "모임 수정 기능", description = "모임 수정 API")
     ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 

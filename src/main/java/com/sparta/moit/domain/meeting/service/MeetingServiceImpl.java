@@ -55,6 +55,17 @@ public class MeetingServiceImpl implements MeetingService {
         return savedMeeting.getId();
     }
 
+    @Override
+    @Transactional
+    public Long createMeetingArray(CreateMeetingRequestDto requestDto, Member member) {
+        Meeting meeting = requestDto.toEntityArray(member);
+        Meeting savedMeeting = meetingRepository.save(meeting);
+
+        saveMeetingMember(member, savedMeeting);
+
+        return savedMeeting.getId();
+    }
+
     /*모임 수정*/
     @Override
     @Transactional

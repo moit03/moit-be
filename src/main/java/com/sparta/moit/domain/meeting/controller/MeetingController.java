@@ -31,6 +31,13 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("모임 등록 완료", meetingId));
     }
 
+    /*모임 등록*/
+    @PostMapping("/array")
+    public ResponseEntity<ResponseDto<Long>> createMeetingArray(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long meetingId = meetingService.createMeetingArray(requestDto, userDetails.getUser());
+        return ResponseEntity.ok().body(ResponseDto.success("모임 등록 완료", meetingId));
+    }
+
     /*모임 수정*/
     @PutMapping("/{meetingId}")
     public ResponseEntity<ResponseDto<Long>> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
