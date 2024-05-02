@@ -31,12 +31,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MeetingServiceImpl implements MeetingService {
     private final MeetingRepository meetingRepository;
-    private final SkillRepository skillRepository;
-    private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
     private final MeetingMemberRepository meetingMemberRepository;
-    private final MeetingSkillRepository meetingSkillRepository;
-    private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
     private final BookMarkRepository bookMarkRepository;
 
@@ -109,33 +105,6 @@ public class MeetingServiceImpl implements MeetingService {
                 , locationLat
                 , skillIdsStr
                 , careerIdsStr
-                , pageSize + extraItem
-                , offset
-        );
-
-        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), pageSize);
-        boolean hasNext = hasNextPage(meetingList, pageable.getPageSize());
-        List<GetMeetingResponseDto> sliceList = meetingList.stream().limit(pageSize).map(GetMeetingResponseDto::fromEntity).toList();
-        return new SliceImpl<>(sliceList, pageable, hasNext);
-    }
-
-    @Override
-    public Slice<GetMeetingResponseDto> getMeetingListPostgreWithJoin(
-            int page
-            , Double locationLat
-            , Double locationLng
-            , List<Long> skillId
-            , List<Long> careerId
-    ) {
-        int extraItem = 1; // pagination 을 위한 추가 요청
-        int pageSize = 10;
-        int offset = Math.max(page - 1, 0) * pageSize;
-
-        List<Meeting> meetingList = meetingRepository.findMeetingST_Dwithin_withJoin(
-                locationLng
-                , locationLat
-                , skillId
-                , careerId
                 , pageSize + extraItem
                 , offset
         );

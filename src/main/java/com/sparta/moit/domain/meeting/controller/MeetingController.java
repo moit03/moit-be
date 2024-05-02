@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,34 +62,6 @@ public class MeetingController implements MeetingControllerDocs {
                 , locationLng
                 , skillIdsStr
                 , careerIdsStr
-        );
-
-        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
-    }
-
-
-    @GetMapping("/withJoin")
-    public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListPostgreWithJoin(
-            @RequestParam Double locationLat,
-            @RequestParam Double locationLng,
-            @RequestParam(required = false) List<Long> skillId,
-            @RequestParam(required = false) List<Long> careerId,
-            @RequestParam(defaultValue = "1") int page)
-    {
-
-        if (skillId == null || skillId.isEmpty()) {
-            skillId = new ArrayList<>();
-        }
-        if (careerId == null || careerId.isEmpty()) {
-            careerId = new ArrayList<>();
-        }
-
-        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListPostgreWithJoin(
-                  page
-                , locationLat
-                , locationLng
-                , skillId
-                , careerId
         );
 
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
