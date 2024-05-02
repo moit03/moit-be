@@ -67,6 +67,14 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
 
+        if (meeting.getStatus().equals(MeetingStatusEnum.DELETE)) {
+            throw new CustomException(ErrorCode.MEETING_DELETE);
+        }
+
+        if (meeting.getStatus().equals(MeetingStatusEnum.COMPLETE)) {
+            throw new CustomException(ErrorCode.MEETING_COMPLETE);
+        }
+
         meeting.updateMeeting(requestDto);
         return meetingId;
     }
