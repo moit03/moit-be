@@ -76,9 +76,6 @@ public class GetMeetingDetailResponseDto {
                 .map(SkillResponseDto::getSkillName)
                 .collect(Collectors.toList());
 
-        log.info("meeting.getMeetingStartTime() = " + meeting.getMeetingStartTime().toString());
-        log.info("meeting.getMeetingEndTime() = " + meeting.getMeetingEndTime().toString());
-
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())

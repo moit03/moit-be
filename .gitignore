@@ -208,6 +208,9 @@ application-dev.properties
 application-local.properties
 application-sql.properties
 
+### Logging files ###
+/log
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,intellij,gradle
 /.idea/.name
 /.idea/dataSources.xml
