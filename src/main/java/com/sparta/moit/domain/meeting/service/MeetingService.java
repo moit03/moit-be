@@ -14,6 +14,7 @@ public interface MeetingService {
     Long createMeetingArray(CreateMeetingRequestDto requestDto, Member member);
 
     Long updateMeeting(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
+    Long updateMeetingArray(UpdateMeetingRequestDto requestDto, Member member, Long meetingId);
 
     void deleteMeeting(Member member, Long meetingId);
 

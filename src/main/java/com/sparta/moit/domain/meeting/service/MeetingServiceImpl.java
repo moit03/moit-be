@@ -85,6 +85,26 @@ public class MeetingServiceImpl implements MeetingService {
         meeting.updateMeeting(requestDto);
         return meetingId;
     }
+    /*모임 수정*/
+    @Override
+    @Transactional
+    public Long updateMeetingArray(UpdateMeetingRequestDto requestDto, Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        if (meeting.getStatus().equals(MeetingStatusEnum.DELETE)) {
+            throw new CustomException(ErrorCode.MEETING_DELETE);
+        }
+
+        if (meeting.getStatus().equals(MeetingStatusEnum.COMPLETE)) {
+            throw new CustomException(ErrorCode.MEETING_COMPLETE);
+        }
+
+        meeting.updateMeetingArray(requestDto);
+
+        return meetingId;
+    }
 
     /*모임 삭제*/
     @Override
