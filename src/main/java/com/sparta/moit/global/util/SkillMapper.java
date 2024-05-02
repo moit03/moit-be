@@ -78,9 +78,9 @@ public class SkillMapper {
                         .build())
                 .collect(Collectors.toList());
     }
-    public List<SkillDto> createSkillResponseList(long[] skillIds) {
-        return Arrays.stream(skillIds) // Creates an IntStream
-                .mapToObj(id -> SkillDto.builder()
+    public List<SkillDto> createSkillResponseList(Long[] skillIds) {
+        return Arrays.stream(skillIds)
+                .map(id -> SkillDto.builder()
                         .skillId(id)
                         .skillName(SKILL_MAP.get(id))
                         .build())

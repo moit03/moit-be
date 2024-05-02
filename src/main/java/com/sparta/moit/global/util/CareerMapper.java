@@ -31,9 +31,9 @@ public class CareerMapper {
                         .build())
                 .collect(Collectors.toList());
     }
-    public List<CareerDto> createCareerResponseList(long[] careerIds) {
-        return Arrays.stream(careerIds) // Creates an IntStream
-                .mapToObj(id -> CareerDto.builder()
+    public List<CareerDto> createCareerResponseList(Long[] careerIds) {
+        return Arrays.stream(careerIds)
+                .map(id -> CareerDto.builder()
                         .careerId(id)
                         .careerName(CAREER_MAP.get(id))
                         .build())

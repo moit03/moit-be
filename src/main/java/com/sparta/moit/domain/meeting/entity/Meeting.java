@@ -94,10 +94,10 @@ public class Meeting extends Timestamped {
     private List<CareerResponseDto> careerList = new ArrayList<>();
 
     @Column(name = "career_id_list", columnDefinition = "bigint[]")
-    private long[] careerIdList;
+    private Long[] careerIdList;
 
     @Column(name = "skill_id_list", columnDefinition = "bigint[]")
-    private long[] skillIdList;
+    private Long[] skillIdList;
 
 
 
@@ -106,7 +106,8 @@ public class Meeting extends Timestamped {
     public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime,
                    Integer budget, String locationAddress, String contents, Short registeredCount, Short totalCount,
                    Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status,
-                   Member creator, List<MeetingMember> meetingMembers, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, List<Skill> skillJoinList, List<Career> careerJoinList) {
+                   Member creator, List<MeetingMember> meetingMembers, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, Long[] careerIdList,
+                   Long[] skillIdList) {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -127,6 +128,8 @@ public class Meeting extends Timestamped {
         this.meetingMembers = new ArrayList<>();
         this.skillList = skillList;
         this.careerList = careerList;
+        this.skillIdList = skillIdList;
+        this.careerIdList = careerIdList;
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
@@ -148,6 +151,23 @@ public class Meeting extends Timestamped {
         this.regionSecondName = requestDto.getRegionSecondName();
         this.skillList = skillList;
         this.careerList = careerList;
+    }
+    public void updateMeetingArray(UpdateMeetingRequestDto requestDto) {
+        Long[] skillArray = requestDto.getSkillIds().toArray(new Long[0]);
+        Long[] careerArray = requestDto.getCareerIds().toArray(new Long[0]);
+
+        this.meetingName = requestDto.getMeetingName();
+        this.budget = requestDto.getBudget();
+        this.locationAddress = requestDto.getLocationAddress();
+        this.contents = requestDto.getContents();
+        this.totalCount = requestDto.getTotalCount();
+        this.locationLat = requestDto.getLocationLat();
+        this.locationLng = requestDto.getLocationLng();
+        this.locationPosition = PointUtil.createPointFromLngLat(requestDto.getLocationLng(), requestDto.getLocationLat());
+        this.regionFirstName = requestDto.getRegionFirstName();
+        this.regionSecondName = requestDto.getRegionSecondName();
+        this.skillIdList = skillArray;
+        this.careerIdList = careerArray;
     }
 
     public Short incrementRegisteredCount() {
