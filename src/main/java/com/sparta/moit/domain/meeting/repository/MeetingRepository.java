@@ -35,8 +35,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position, 5000) " +
             "   AND m.status <> 'DELETE' " +
             "   AND m.status <> 'COMPLETE' "+
-            "   AND (ms.skill_id IN (:skillId) OR (:skillId IS NULL)) "+
-            "   AND (mc.career_id in (:careerId) OR (:careerId IS NULL)) "+
+            "   AND ((ms.skill_id IN (:skillId) OR (:skillId IS NULL)) "+
+            "    OR (mc.career_id in (:careerId) OR (:careerId IS NULL))) "+
             " ORDER BY dist asc " +
             "LIMIT :pageSize " +
             "OFFSET :offset", nativeQuery = true)
@@ -53,14 +53,14 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
             "FROM meeting m " +
             "WHERE " +
             "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position, 5000) " +
-            "   AND (:skillIdsStr IS NULL OR EXISTS (" +
+            "   AND ((:skillIdsStr IS NULL OR EXISTS (" +
             "         SELECT 1 FROM jsonb_array_elements(m.skill_list) AS skill_json " +
             "         WHERE CAST(skill_json->>'skillId' AS TEXT) = ANY(string_to_array(:skillIdsStr, ',')) " +
             "       )) " +
-            "   AND (:careerIdsStr IS NULL OR EXISTS (" +
+            "   OR (:careerIdsStr IS NULL OR EXISTS (" +
             "         SELECT 1 FROM jsonb_array_elements(m.career_list) AS career_json " +
             "         WHERE CAST(career_json->>'careerId' AS TEXT) = ANY(string_to_array(:careerIdsStr, ',')) " +
-            "       )) " +
+            "       ))) " +
             "   AND m.status <> 'DELETE' " +
             "   AND m.status <> 'COMPLETE' "+
             " ORDER BY dist asc " +
@@ -70,6 +70,25 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, Meeting
                                         @Param("locationLat") Double locationLat,
                                         @Param("skillIdsStr") String skillIdsStr,
                                         @Param("careerIdsStr") String careerIdsStr,
+                                        @Param("pageSize") int pageSize,
+                                        @Param("offset") int offset);
+
+    @Query(value = "SELECT m.*, " +
+            "ST_Distance( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position) as dist " +
+            "FROM meeting m " +
+            "WHERE " +
+            "   ST_Dwithin( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position, 5000) " +
+            "   AND ((:skillId IS NULL OR m.skill_id_list && :skillId) " +
+            "    OR (:careerId IS NULL OR m.career_id_list && :careerId)) " +
+            "   AND m.status <> 'DELETE' " +
+            "   AND m.status <> 'COMPLETE' "+
+            " ORDER BY dist asc " +
+            "LIMIT :pageSize " +
+            "OFFSET :offset", nativeQuery = true)
+    List<Meeting> findMeetingST_Dwithin_array(@Param("locationLng") Double locationLng,
+                                        @Param("locationLat") Double locationLat,
+                                        @Param("skillId") List<Long> skillId,
+                                        @Param("careerId") List<Long> careerId,
                                         @Param("pageSize") int pageSize,
                                         @Param("offset") int offset);
 
