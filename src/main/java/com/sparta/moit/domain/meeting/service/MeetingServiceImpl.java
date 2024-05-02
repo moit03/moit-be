@@ -283,36 +283,6 @@ public class MeetingServiceImpl implements MeetingService {
         meetingMemberRepository.delete(meetingMember);
     }
 
-    /*기술 저장*/
-    private void saveSkills(List<Long> skillIds, Meeting meeting) {
-        for (Long skillId : skillIds) {
-            Skill skill = skillRepository.findById(skillId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.VALIDATION_ERROR));
-
-            MeetingSkill meetingSkill = MeetingSkill.builder()
-                    .meeting(meeting)
-                    .skill(skill)
-                    .build();
-
-            meetingSkillRepository.save(meetingSkill);
-        }
-    }
-
-    /*경력 저장*/
-    private void saveCareers(List<Long> careerIds, Meeting meeting) {
-        for (Long careerId : careerIds) {
-            Career career = careerRepository.findById(careerId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.VALIDATION_ERROR));
-
-            MeetingCareer meetingCareer = MeetingCareer.builder()
-                    .meeting(meeting)
-                    .career(career)
-                    .build();
-
-            meetingCareerRepository.save(meetingCareer);
-        }
-    }
-
     /* 모임 회원 저장 */
     private void saveMeetingMember(Member member, Meeting meeting) {
         MeetingMember meetingMember = MeetingMember.builder()
