@@ -18,3 +18,12 @@ services:
     restart: unless-stopped
     volumes:
       - '/:/host:ro,rslave'
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - /var/log:/var/log
+    command: -config.file=/etc/promtail/promtail.yml
+    ports:
+      - "9080:9080"  # Promtail HTTP endpoint
+    restart: unless-stopped
