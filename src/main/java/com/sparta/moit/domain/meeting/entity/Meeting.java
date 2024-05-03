@@ -100,13 +100,11 @@ public class Meeting extends Timestamped {
     private Long[] skillIdList;
 
 
-
-
     @Builder
     public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime,
                    Integer budget, String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status,
-                   Member creator, List<MeetingMember> meetingMembers, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, Long[] careerIdList,
+                   Double locationLat, Double locationLng, Point locationPosition, String regionFirstName, String regionSecondName, MeetingStatusEnum status,
+                   Member creator, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, Long[] careerIdList,
                    Long[] skillIdList) {
         this.id = id;
         this.meetingName = meetingName;
@@ -120,12 +118,11 @@ public class Meeting extends Timestamped {
         this.totalCount = totalCount;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
-        this.locationPosition = PointUtil.createPointFromLngLat(locationLat, locationLat);
+        this.locationPosition = locationPosition;
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
         this.status = MeetingStatusEnum.OPEN;
         this.creator = creator;
-        this.meetingMembers = new ArrayList<>();
         this.skillList = skillList;
         this.careerList = careerList;
         this.skillIdList = skillIdList;

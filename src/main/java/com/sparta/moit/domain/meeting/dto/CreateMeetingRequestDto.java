@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.util.CareerMapper;
+import com.sparta.moit.global.util.PointUtil;
 import com.sparta.moit.global.util.SkillMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
@@ -14,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j(topic = "CreateRequestDto")
@@ -95,6 +94,7 @@ public class CreateMeetingRequestDto {
                 .totalCount(this.totalCount)
                 .locationLat(this.locationLat)
                 .locationLng(this.locationLng)
+                .locationPosition(PointUtil.createPointFromLngLat(locationLng, locationLat))
                 .regionFirstName(this.regionFirstName)
                 .regionSecondName(this.regionSecondName)
                 .creator(creator)
@@ -124,6 +124,7 @@ public class CreateMeetingRequestDto {
                 .totalCount(this.totalCount)
                 .locationLat(this.locationLat)
                 .locationLng(this.locationLng)
+                .locationPosition(PointUtil.createPointFromLngLat(locationLng, locationLat))
                 .regionFirstName(this.regionFirstName)
                 .regionSecondName(this.regionSecondName)
                 .creator(creator)
