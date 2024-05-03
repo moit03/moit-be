@@ -31,12 +31,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MeetingServiceImpl implements MeetingService {
     private final MeetingRepository meetingRepository;
-    private final SkillRepository skillRepository;
-    private final CareerRepository careerRepository;
     private final MemberRepository memberRepository;
     private final MeetingMemberRepository meetingMemberRepository;
-    private final MeetingSkillRepository meetingSkillRepository;
-    private final MeetingCareerRepository meetingCareerRepository;
     private final AddressUtil addressUtil;
     private final BookMarkRepository bookMarkRepository;
 
@@ -49,10 +45,16 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = requestDto.toEntity(member);
         Meeting savedMeeting = meetingRepository.save(meeting);
 
-        log.info("Meeting created at: " + savedMeeting.getCreatedAt());
-        log.info("Meeting modified at: " + savedMeeting.getModifiedAt());
-        log.info("meetingStartTime : " + savedMeeting.getMeetingStartTime());
-        log.info("meetingEndTime : " + savedMeeting.getMeetingEndTime());
+        saveMeetingMember(member, savedMeeting);
+
+        return savedMeeting.getId();
+    }
+
+    @Override
+    @Transactional
+    public Long createMeetingArray(CreateMeetingRequestDto requestDto, Member member) {
+        Meeting meeting = requestDto.toEntityArray(member);
+        Meeting savedMeeting = meetingRepository.save(meeting);
 
         saveMeetingMember(member, savedMeeting);
 
@@ -76,6 +78,26 @@ public class MeetingServiceImpl implements MeetingService {
         }
 
         meeting.updateMeeting(requestDto);
+        return meetingId;
+    }
+    /*모임 수정*/
+    @Override
+    @Transactional
+    public Long updateMeetingArray(UpdateMeetingRequestDto requestDto, Member member, Long meetingId) {
+
+        Meeting meeting = meetingRepository.findByIdAndCreator(meetingId, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTHORITY_ACCESS));
+
+        if (meeting.getStatus().equals(MeetingStatusEnum.DELETE)) {
+            throw new CustomException(ErrorCode.MEETING_DELETE);
+        }
+
+        if (meeting.getStatus().equals(MeetingStatusEnum.COMPLETE)) {
+            throw new CustomException(ErrorCode.MEETING_COMPLETE);
+        }
+
+        meeting.updateMeetingArray(requestDto);
+
         return meetingId;
     }
 
@@ -118,6 +140,34 @@ public class MeetingServiceImpl implements MeetingService {
         List<GetMeetingResponseDto> sliceList = meetingList.stream().limit(pageSize).map(GetMeetingResponseDto::fromEntity).toList();
         return new SliceImpl<>(sliceList, pageable, hasNext);
     }
+
+    @Override
+    public Slice<GetMeetingArrayResponseDto> getMeetingListPostgreArray(
+            int page
+            , Double locationLat
+            , Double locationLng
+            , String skillIdsStr
+            , String careerIdsStr
+    ) {
+        int extraItem = 1; // pagination 을 위한 추가 요청
+        int pageSize = 10;
+        int offset = Math.max(page - 1, 0) * pageSize;
+
+        List<Meeting> meetingList = meetingRepository.findMeetingST_Dwithin_array(
+                locationLng
+                , locationLat
+                , skillIdsStr
+                , careerIdsStr
+                , pageSize + extraItem
+                , offset
+        );
+
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), pageSize);
+        boolean hasNext = hasNextPage(meetingList, pageable.getPageSize());
+        List<GetMeetingArrayResponseDto> sliceList = meetingList.stream().limit(pageSize).map(GetMeetingArrayResponseDto::fromEntity).toList();
+        return new SliceImpl<>(sliceList, pageable, hasNext);
+    }
+
 
     /*모임 조회*/
     @Override
@@ -257,36 +307,6 @@ public class MeetingServiceImpl implements MeetingService {
         meeting.decrementRegisteredCount();
 
         meetingMemberRepository.delete(meetingMember);
-    }
-
-    /*기술 저장*/
-    private void saveSkills(List<Long> skillIds, Meeting meeting) {
-        for (Long skillId : skillIds) {
-            Skill skill = skillRepository.findById(skillId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.VALIDATION_ERROR));
-
-            MeetingSkill meetingSkill = MeetingSkill.builder()
-                    .meeting(meeting)
-                    .skill(skill)
-                    .build();
-
-            meetingSkillRepository.save(meetingSkill);
-        }
-    }
-
-    /*경력 저장*/
-    private void saveCareers(List<Long> careerIds, Meeting meeting) {
-        for (Long careerId : careerIds) {
-            Career career = careerRepository.findById(careerId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.VALIDATION_ERROR));
-
-            MeetingCareer meetingCareer = MeetingCareer.builder()
-                    .meeting(meeting)
-                    .career(career)
-                    .build();
-
-            meetingCareerRepository.save(meetingCareer);
-        }
     }
 
     /* 모임 회원 저장 */

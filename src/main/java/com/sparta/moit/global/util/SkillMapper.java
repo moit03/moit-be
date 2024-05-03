@@ -1,7 +1,9 @@
 package com.sparta.moit.global.util;
 
+import com.sparta.moit.domain.meeting.dto.SkillDto;
 import com.sparta.moit.domain.meeting.dto.SkillResponseDto;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,6 +73,14 @@ public class SkillMapper {
     public List<SkillResponseDto> createSkillResponseList(List<Long> skillIds) {
         return skillIds.stream()
                 .map(id -> SkillResponseDto.builder()
+                        .skillId(id)
+                        .skillName(SKILL_MAP.get(id))
+                        .build())
+                .collect(Collectors.toList());
+    }
+    public List<SkillDto> createSkillResponseList(Long[] skillIds) {
+        return Arrays.stream(skillIds)
+                .map(id -> SkillDto.builder()
                         .skillId(id)
                         .skillName(SKILL_MAP.get(id))
                         .build())
