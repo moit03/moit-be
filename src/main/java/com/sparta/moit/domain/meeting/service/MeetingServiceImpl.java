@@ -45,11 +45,6 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = requestDto.toEntity(member);
         Meeting savedMeeting = meetingRepository.save(meeting);
 
-        log.info("Meeting created at: " + savedMeeting.getCreatedAt());
-        log.info("Meeting modified at: " + savedMeeting.getModifiedAt());
-        log.info("meetingStartTime : " + savedMeeting.getMeetingStartTime());
-        log.info("meetingEndTime : " + savedMeeting.getMeetingEndTime());
-
         saveMeetingMember(member, savedMeeting);
 
         return savedMeeting.getId();
