@@ -1,6 +1,6 @@
 ## moit-be
 
-![썸네일3_완.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/898ec95e-e5aa-4307-8703-c3b69a7b0123/111807da-9e0a-4841-b700-e8623ec9761f/%E1%84%8A%E1%85%A5%E1%86%B7%E1%84%82%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%AF3_%E1%84%8B%E1%85%AA%E1%86%AB.png)
+![썸네일3_완 (1)](https://github.com/moit03/moit-be/assets/157124813/63ecc417-5e4c-40fb-a67e-0c4ea8cebd84)
 
 평생 공부하는! 
 
