@@ -18,8 +18,11 @@ public class PerformanceAspect {
 
         String methodName = joinPoint.getSignature().getName();
         String className = joinPoint.getTarget().getClass().getSimpleName();
+        if (totalTime > 1000L) {
+            log.warn("[" + className + "." + methodName + "] took " + totalTime + " ms.");
+            return returnValue;
+        }
         log.info("[" + className + "." + methodName + "] took " + totalTime + " ms.");
-
         return returnValue;
     }
 }
