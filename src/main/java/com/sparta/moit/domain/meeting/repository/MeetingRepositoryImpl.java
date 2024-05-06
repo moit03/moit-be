@@ -113,22 +113,10 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
     @Override
     public List<Meeting> findAllIncompleteMeetingsForHour() {
-
-/*
-        2024-05-06 17`:40:00.009 [MessageBroker-1] INFO  스케줄러 - oneHourAgo.toString(): 2024-05-07T01:40:00.008886810
-        2024-05-06 17:40:00.021 [MessageBroker-1] INFO  스케줄러 - now.toString(): 2024-05-07T02:40:00.021213330
-        2024-05-06 17:40:00.025 [MessageBroker-1] INFO  스케줄러 - oneHourAgoTime: 01:40:00.008886810
-        2024-05-06 17`:40:00.025 [MessageBroker-1] INFO  스케줄러 - nowTime: 02:40:00.021213330
-* */
-
         LocalDateTime oneHourAgo = LocalDateTime.now().plusHours(8);
-        log.info("oneHourAgo.toString(): " + oneHourAgo);
         LocalDateTime now = LocalDateTime.now().plusHours(9);
-        log.info("now.toString(): " + now);
         LocalTime oneHourAgoTime = oneHourAgo.toLocalTime();
-        log.info("oneHourAgoTime: " + oneHourAgoTime);
         LocalTime nowTime = now.toLocalTime();
-        log.info("nowTime: " + nowTime);
 
         return queryFactory.selectFrom(meeting)
                 .where(isOpenOrFull())
