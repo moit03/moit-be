@@ -25,27 +25,27 @@ public class MeetingController implements MeetingControllerDocs {
     private final MeetingService meetingService;
 
     /*모임 등록*/
-    @PostMapping
+    @PostMapping("/json")
     public ResponseEntity<ResponseDto<Long>> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long meetingId = meetingService.createMeeting(requestDto, userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("모임 등록 완료", meetingId));
     }
 
     /*모임 등록*/
-    @PostMapping("/array")
+    @PostMapping
     public ResponseEntity<ResponseDto<Long>> createMeetingArray(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long meetingId = meetingService.createMeetingArray(requestDto, userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("모임 등록 완료", meetingId));
     }
 
     /*모임 수정*/
-    @PutMapping("/{meetingId}")
+    @PutMapping("/json/{meetingId}")
     public ResponseEntity<ResponseDto<Long>> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long updatedMeetingId = meetingService.updateMeeting(requestDto, userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("모임 수정 완료", updatedMeetingId));
     }
     /*모임 array 수정*/
-    @PutMapping("/array/{meetingId}")
+    @PutMapping("/{meetingId}")
     public ResponseEntity<ResponseDto<Long>> updateMeetingArray(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long updatedMeetingId = meetingService.updateMeetingArray(requestDto, userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("모임 수정 완료", updatedMeetingId));
@@ -58,8 +58,8 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("모임 삭제 완료", "삭제"));
     }
 
-    @GetMapping
-    public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListPostgre(
+    @GetMapping("/json")
+    public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListPostgreJson(
             @RequestParam Double locationLat,
             @RequestParam Double locationLng,
             @RequestParam(required = false) List<String> skillId,
@@ -70,7 +70,7 @@ public class MeetingController implements MeetingControllerDocs {
         String skillIdsStr = (skillId == null || skillId.isEmpty()) ? null : String.join(",", skillId);
         String careerIdsStr = (careerId == null || careerId.isEmpty()) ? null : String.join(",", careerId);
 
-        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListPostgre(page
+        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListPostgreJson(page
                 , locationLat
                 , locationLng
                 , skillIdsStr
@@ -80,7 +80,7 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
     }
 
-    @GetMapping("/array")
+    @GetMapping
     public ResponseEntity<ResponseDto<Slice<GetMeetingArrayResponseDto>>> getMeetingListPostgreArray(
             @RequestParam Double locationLat,
             @RequestParam Double locationLng,

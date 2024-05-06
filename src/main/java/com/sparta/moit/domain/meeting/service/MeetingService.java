@@ -18,7 +18,7 @@ public interface MeetingService {
 
     void deleteMeeting(Member member, Long meetingId);
 
-    Slice<GetMeetingResponseDto> getMeetingListPostgre(int page ,Double locationLat ,Double locationLng ,String skillIdsStr ,String careerIdsStr);
+    Slice<GetMeetingResponseDto> getMeetingListPostgreJson(int page ,Double locationLat ,Double locationLng ,String skillIdsStr ,String careerIdsStr);
 
     Slice<GetMeetingArrayResponseDto> getMeetingListPostgreArray(int page, Double locationLat, Double locationLng, String skillIdsStr, String careerIdsStr);
 
