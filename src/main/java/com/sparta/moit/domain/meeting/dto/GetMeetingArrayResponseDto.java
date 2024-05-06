@@ -3,8 +3,6 @@ package com.sparta.moit.domain.meeting.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
-import com.sparta.moit.global.util.CareerMapper;
-import com.sparta.moit.global.util.SkillMapper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +10,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.sparta.moit.global.util.CareerMapper.createCareerResponseList;
+import static com.sparta.moit.global.util.SkillMapper.createSkillResponseList;
 
 @Getter
 @NoArgsConstructor
@@ -54,11 +55,9 @@ public class GetMeetingArrayResponseDto {
     }
     public static GetMeetingArrayResponseDto fromEntity(Meeting meeting) {
 
-        SkillMapper skillMapper = new SkillMapper();
-        List<SkillDto> skillList = skillMapper.createSkillResponseList(meeting.getSkillIdList());
+        List<SkillDto> skillList = createSkillResponseList(meeting.getSkillIdList());
 
-        CareerMapper careerMapper = new CareerMapper();
-        List<CareerDto> careerList = careerMapper.createCareerResponseList(meeting.getCareerIdList());
+        List<CareerDto> careerList = createCareerResponseList(meeting.getCareerIdList());
 
 
         return GetMeetingArrayResponseDto.builder()

@@ -6,14 +6,13 @@ import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.sparta.moit.global.util.CareerMapper.mapCareerIdsToNames;
+import static com.sparta.moit.global.util.SkillMapper.mapSkillIdsToNames;
 
 @Slf4j(topic = "GetMeetingDetailResponseDto")
 @Getter
@@ -68,13 +67,9 @@ public class GetMeetingDetailResponseDto {
     }
 
     public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, boolean isJoin, boolean isBookmarked) {
-        List<String> careerNameList = meeting.getCareerList().stream()
-                .map(CareerResponseDto::getCareerName)
-                .collect(Collectors.toList());
+        List<String> careerNameList = mapCareerIdsToNames(meeting.getCareerIdList());
 
-        List<String> skillNameList = meeting.getSkillList().stream()
-                .map(SkillResponseDto::getSkillName)
-                .collect(Collectors.toList());
+        List<String> skillNameList = mapSkillIdsToNames(meeting.getSkillIdList());
 
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
