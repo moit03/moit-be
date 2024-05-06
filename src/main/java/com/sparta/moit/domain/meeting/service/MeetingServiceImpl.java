@@ -114,7 +114,7 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public Slice<GetMeetingResponseDto> getMeetingListPostgre(
+    public Slice<GetMeetingResponseDto> getMeetingListPostgreJson(
             int page
             , Double locationLat
             , Double locationLng
