@@ -30,8 +30,8 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
 
 //    private final long TOKEN_TIME = 60 * 60 * 1000L; // 60 minutes
-    private final long TOKEN_TIME = 3 * 60 * 1000L; // 1 day
-//    private final long TOKEN_TIME = 24 * 60 * 60 * 1000L; // 1 day
+//    private final long TOKEN_TIME = 3 * 60 * 1000L; // 3 minutes
+    private final long TOKEN_TIME = 24 * 60 * 60 * 1000L; // 1 day
 
     /* refresh token 유효 시간*/
     public static final long REFRESH_TOKEN_VALIDITY_MS = 14 * 24 * 60 * 60 * 1000L; // 14 days
