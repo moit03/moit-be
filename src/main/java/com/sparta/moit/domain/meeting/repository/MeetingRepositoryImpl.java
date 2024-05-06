@@ -10,6 +10,7 @@ import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import com.sparta.moit.domain.meeting.entity.QMeeting;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -26,7 +27,7 @@ import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
 import static com.sparta.moit.domain.meeting.entity.QMeetingMember.meetingMember;
 import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
 
-
+@Slf4j(topic = "스케줄러")
 @RequiredArgsConstructor
 public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -112,10 +113,15 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
     @Override
     public List<Meeting> findAllIncompleteMeetingsForHour() {
+
         LocalDateTime oneHourAgo = LocalDateTime.now().plusHours(8);
+        log.info("oneHourAgo.toString(): " + oneHourAgo);
         LocalDateTime now = LocalDateTime.now().plusHours(9);
+        log.info("now.toString(): " + now);
         LocalTime oneHourAgoTime = oneHourAgo.toLocalTime();
+        log.info("oneHourAgoTime: " + oneHourAgoTime);
         LocalTime nowTime = now.toLocalTime();
+        log.info("nowTime: " + nowTime);
 
         return queryFactory.selectFrom(meeting)
                 .where(isOpenOrFull())
