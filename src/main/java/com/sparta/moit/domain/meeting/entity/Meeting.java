@@ -7,9 +7,7 @@ import com.sparta.moit.domain.meeting.dto.SkillResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
-import com.sparta.moit.global.util.CareerMapper;
 import com.sparta.moit.global.util.PointUtil;
-import com.sparta.moit.global.util.SkillMapper;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +18,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sparta.moit.global.util.CareerMapper.createCareerResponseList;
+import static com.sparta.moit.global.util.SkillMapper.createSkillResponseList;
 
 @Entity(name = "meeting")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -130,11 +131,9 @@ public class Meeting extends Timestamped {
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
-        SkillMapper skillMapper = new SkillMapper();
-        List<SkillResponseDto> skillList = skillMapper.createSkillResponseList(requestDto.getSkillIds());
+        List<SkillResponseDto> skillList = createSkillResponseList(requestDto.getSkillIds());
 
-        CareerMapper careerMapper = new CareerMapper();
-        List<CareerResponseDto> careerList = careerMapper.createCareerResponseList(requestDto.getCareerIds());
+        List<CareerResponseDto> careerList = createCareerResponseList(requestDto.getCareerIds());
 
         this.meetingName = requestDto.getMeetingName();
         this.budget = requestDto.getBudget();
