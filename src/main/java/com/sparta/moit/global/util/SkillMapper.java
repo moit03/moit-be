@@ -65,8 +65,8 @@ public class SkillMapper {
             Map.entry(52L,"C++")
     );
 
-    public List<String> mapSkillIdsToNames(List<Long> skillIds) {
-        return skillIds.stream()
+    public List<String> mapSkillIdsToNames(Long[]  skillIds) {
+        return Arrays.stream(skillIds)
                 .map(SKILL_MAP::get)
                 .collect(Collectors.toList());
     }

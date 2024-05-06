@@ -18,8 +18,8 @@ public class CareerMapper {
             Map.entry(5L,"엑스퍼트(13이상)")
     );
 
-    public List<String> mapCareerIdsToNames(List<Long> careerIds) {
-        return careerIds.stream()
+    public List<String> mapCareerIdsToNames(Long[] careerIds) {
+        return Arrays.stream(careerIds)
                 .map(CAREER_MAP::get)
                 .collect(Collectors.toList());
     }
