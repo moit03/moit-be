@@ -142,8 +142,8 @@ public class MeetingController implements MeetingControllerDocs {
 
     /* 모임 검색 */
     @GetMapping("/search")
-    public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page) {
-        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListBySearch(keyword, page);
+    public ResponseEntity<ResponseDto<Slice<GetMeetingArrayResponseDto>>> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page) {
+        Slice<GetMeetingArrayResponseDto> responseDtoList = meetingService.getMeetingListBySearch(keyword, page);
         return ResponseEntity.ok().body(ResponseDto.success("검색 완료", responseDtoList));
     }
 

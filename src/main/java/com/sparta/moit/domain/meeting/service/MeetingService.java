@@ -30,7 +30,7 @@ public interface MeetingService {
 
     List<GetMeetingResponseDto> getMeetingListByAddress(String firstRegion, String secondRegion, int page) throws JsonProcessingException;
 
-    Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page);
+    Slice<GetMeetingArrayResponseDto> getMeetingListBySearch(String keyword, int page);
 
     Long enterMeeting(Member member, Long meetingId);
 

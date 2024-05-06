@@ -232,10 +232,10 @@ public class MeetingServiceImpl implements MeetingService {
 
     /* 모임 검색 */
     @Override
-    public Slice<GetMeetingResponseDto> getMeetingListBySearch(String keyword, int page) {
+    public Slice<GetMeetingArrayResponseDto> getMeetingListBySearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 10);
         Slice<Meeting> meetingList = meetingRepository.findByKeyword(keyword, pageable);
-        return meetingList.map(GetMeetingResponseDto::fromEntity);
+        return meetingList.map(GetMeetingArrayResponseDto::fromEntity);
     }
 
     /* 인기 모임 top 5 */
