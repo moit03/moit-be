@@ -18,7 +18,8 @@ public class Scheduler {
     private final MeetingService meetingService;
     private final MeetingRepository meetingRepository;
 
-    @Scheduled(cron = "0 0 * * * *")/* 매시각 0분 */
+//    @Scheduled(cron = "0 0 * * * *")/* 매시각 0분 */
+    @Scheduled(cron = "0 */10 * * * *")
     @Transactional
     public void updateMeetingStatus() {
         /* STATUS = COMPLETE or DELETE 가 아닌 meetings 만 조회 */

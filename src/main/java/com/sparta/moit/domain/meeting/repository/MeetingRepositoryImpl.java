@@ -112,8 +112,8 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
     @Override
     public List<Meeting> findAllIncompleteMeetingsForHour() {
-        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime oneHourAgo = LocalDateTime.now().plusHours(8);
+        LocalDateTime now = LocalDateTime.now().plusHours(9);
         LocalTime oneHourAgoTime = oneHourAgo.toLocalTime();
         LocalTime nowTime = now.toLocalTime();
 
