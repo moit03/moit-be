@@ -18,12 +18,12 @@ public class CareerMapper {
             Map.entry(5L,"엑스퍼트(13이상)")
     );
 
-    public List<String> mapCareerIdsToNames(Long[] careerIds) {
+    public static List<String> mapCareerIdsToNames(Long[] careerIds) {
         return Arrays.stream(careerIds)
                 .map(CAREER_MAP::get)
                 .collect(Collectors.toList());
     }
-    public List<CareerResponseDto> createCareerResponseList(List<Long> careerIds) {
+    public static List<CareerResponseDto> createCareerResponseList(List<Long> careerIds) {
         return careerIds.stream()
                 .map(id -> CareerResponseDto.builder()
                         .careerId(id)
@@ -31,7 +31,7 @@ public class CareerMapper {
                         .build())
                 .collect(Collectors.toList());
     }
-    public List<CareerDto> createCareerResponseList(Long[] careerIds) {
+    public static List<CareerDto> createCareerResponseList(Long[] careerIds) {
         return Arrays.stream(careerIds)
                 .map(id -> CareerDto.builder()
                         .careerId(id)

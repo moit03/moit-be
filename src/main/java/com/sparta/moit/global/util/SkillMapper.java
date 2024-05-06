@@ -65,12 +65,12 @@ public class SkillMapper {
             Map.entry(52L,"C++")
     );
 
-    public List<String> mapSkillIdsToNames(Long[]  skillIds) {
+    public static List<String> mapSkillIdsToNames(Long[]  skillIds) {
         return Arrays.stream(skillIds)
                 .map(SKILL_MAP::get)
                 .collect(Collectors.toList());
     }
-    public List<SkillResponseDto> createSkillResponseList(List<Long> skillIds) {
+    public static List<SkillResponseDto> createSkillResponseList(List<Long> skillIds) {
         return skillIds.stream()
                 .map(id -> SkillResponseDto.builder()
                         .skillId(id)
@@ -78,7 +78,7 @@ public class SkillMapper {
                         .build())
                 .collect(Collectors.toList());
     }
-    public List<SkillDto> createSkillResponseList(Long[] skillIds) {
+    public static List<SkillDto> createSkillResponseList(Long[] skillIds) {
         return Arrays.stream(skillIds)
                 .map(id -> SkillDto.builder()
                         .skillId(id)

@@ -3,8 +3,6 @@ package com.sparta.moit.domain.meeting.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
-import com.sparta.moit.global.util.CareerMapper;
-import com.sparta.moit.global.util.SkillMapper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.sparta.moit.global.util.CareerMapper.mapCareerIdsToNames;
+import static com.sparta.moit.global.util.SkillMapper.mapSkillIdsToNames;
 
 @Slf4j(topic = "GetMeetingDetailResponseDto")
 @Getter
@@ -66,11 +67,9 @@ public class GetMeetingDetailResponseDto {
     }
 
     public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, boolean isJoin, boolean isBookmarked) {
-        CareerMapper careerMapper = new CareerMapper();
-        List<String> careerNameList = careerMapper.mapCareerIdsToNames(meeting.getCareerIdList());
+        List<String> careerNameList = mapCareerIdsToNames(meeting.getCareerIdList());
 
-        SkillMapper skillMapper = new SkillMapper();
-        List<String> skillNameList = skillMapper.mapSkillIdsToNames(meeting.getSkillIdList());
+        List<String> skillNameList = mapSkillIdsToNames(meeting.getSkillIdList());
 
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
