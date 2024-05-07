@@ -103,7 +103,8 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 ))
                 .orderBy(
                         meeting.meetingDate.asc(),
-                        meeting.registeredCount.desc()
+                        meeting.registeredCount.desc(),
+                        meeting.id.desc()
                 )
                 .limit(pageable.getPageSize() + 1)
                 .offset(pageable.getOffset())
