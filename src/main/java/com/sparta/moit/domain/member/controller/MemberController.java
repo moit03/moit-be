@@ -49,4 +49,10 @@ public class MemberController implements MemberControllerDocs {
         String token = kakaoService.login();
         return ResponseEntity.ok().body(token);
     }
+
+    @GetMapping("/refresh-test")
+    public ResponseEntity<String> refreshTest() {
+        String token = kakaoService.refreshTest();
+        return ResponseEntity.ok().body(token);
+    }
 }

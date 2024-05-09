@@ -100,6 +100,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/member/signin/kakao").permitAll()
                         .requestMatchers("/api/member/signin/naver").permitAll()
                         .requestMatchers("/api/member/login").permitAll()
+                        .requestMatchers("/api/member/refresh-test").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/app/api/meetings/**").permitAll()

@@ -1,5 +1,7 @@
 package com.sparta.moit.global.security;
 
+import com.sparta.moit.global.error.CustomException;
+import com.sparta.moit.global.error.ErrorCode;
 import com.sparta.moit.global.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -7,11 +9,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,6 +36,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
         String tokenValue = jwtUtil.getJwtFromHeader(req);
+        if (tokenValue == null) {
+            filterChain.doFilter(req, res);
+            return;
+        }
+
+        String tokenType = jwtUtil.getTokenType(tokenValue);
+        if (!tokenType.equals("access")) {
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_ERROR);
+        }
 
         if (StringUtils.hasText(tokenValue)) {
 
