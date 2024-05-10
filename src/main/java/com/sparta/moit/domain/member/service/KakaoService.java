@@ -11,5 +11,6 @@ public interface KakaoService {
     String login();
 
     String signOut(Member member) throws JsonProcessingException;
-    
+
+    String refreshTest();
 }

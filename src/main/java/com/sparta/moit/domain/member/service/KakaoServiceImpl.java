@@ -54,6 +54,10 @@ public class KakaoServiceImpl implements KakaoService {
         return jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
     }
 
+    public String refreshTest() {
+        return jwtUtil.createRefreshToken("brandy0108@daum.net", UserRoleEnum.USER);
+    }
+
     @Override
     public String signOut(Member member) throws JsonProcessingException {
         /* 요청 URL 만들기 */

@@ -1,14 +1,11 @@
 package com.sparta.moit.global.common.controller;
 
 import com.sparta.moit.domain.member.service.KakaoService;
-import com.sparta.moit.domain.member.service.KakaoServiceImpl;
 import com.sparta.moit.global.common.controller.docs.AuthControllerDocs;
 import com.sparta.moit.global.common.dto.RefreshTokenRequest;
 import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.common.service.RefreshTokenService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

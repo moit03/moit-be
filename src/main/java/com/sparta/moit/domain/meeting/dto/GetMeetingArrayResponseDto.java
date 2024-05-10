@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static com.sparta.moit.global.util.CareerMapper.createCareerResponseList;
@@ -36,9 +37,8 @@ public class GetMeetingArrayResponseDto {
     @Builder
     GetMeetingArrayResponseDto(
             Long meetingId, String meetingName, Short registeredCount, Short totalCount, Double locationLat,
-            Double locationLng,  List<SkillDto> skillList, List<CareerDto> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime,
-            LocalDateTime meetingEndTime, String locationAddress, MeetingStatusEnum status)
-    {
+            Double locationLng, List<SkillDto> skillList, List<CareerDto> careerList, LocalDate meetingDate, LocalDateTime meetingStartTime,
+            LocalDateTime meetingEndTime, String locationAddress, MeetingStatusEnum status) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.registeredCount = registeredCount;
@@ -53,12 +53,16 @@ public class GetMeetingArrayResponseDto {
         this.careerList = careerList;
         this.status = status;
     }
+
     public static GetMeetingArrayResponseDto fromEntity(Meeting meeting) {
-
-        List<SkillDto> skillList = createSkillResponseList(meeting.getSkillIdList());
-
-        List<CareerDto> careerList = createCareerResponseList(meeting.getCareerIdList());
-
+        List<SkillDto> skillList = Collections.emptyList();
+        List<CareerDto> careerList = Collections.emptyList();
+        if (meeting.getSkillIdList() != null) {
+            skillList = createSkillResponseList(meeting.getSkillIdList());
+        }
+        if (meeting.getCareerIdList() != null) {
+            careerList = createCareerResponseList(meeting.getCareerIdList());
+        }
 
         return GetMeetingArrayResponseDto.builder()
                 .meetingId(meeting.getId())

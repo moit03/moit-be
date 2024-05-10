@@ -125,7 +125,6 @@ public class MeetingServiceImpl implements MeetingService {
         int pageSize = 10;
         int offset = Math.max(page - 1, 0) * pageSize;
 
-//        Point currentPoint = PointUtil.createPointFromLngLat(locationLng, locationLat);
         List<Meeting> meetingList = meetingRepository.findMeetingST_Dwithin(
                   locationLng
                 , locationLat
