@@ -3,7 +3,6 @@ package com.sparta.moit.global.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
-import com.sparta.moit.global.common.entity.RedisRefreshToken;
 import com.sparta.moit.global.common.repository.RedisRefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -152,6 +151,21 @@ public class JwtUtil {
         cookie.setMaxAge((int) (REFRESH_TOKEN_TIME / 1000));
 
         response.addCookie(cookie);
+    }
+
+    public void addAccessTokenToCookie(String accessToken, HttpServletResponse response) {
+        accessToken = URLEncoder.encode(accessToken, StandardCharsets.UTF_8)
+                .replaceAll("\\+", "%20");
+
+        Cookie cookie = new Cookie("AccessToken", accessToken);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setMaxAge((int) (TOKEN_TIME / 1000));
+
+        response.addCookie(cookie);
+        System.out.println(cookie);
     }
 
     public String getRefreshTokenFromCookie(HttpServletRequest request) {
