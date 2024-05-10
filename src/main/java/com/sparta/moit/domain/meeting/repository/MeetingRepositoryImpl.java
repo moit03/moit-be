@@ -10,6 +10,7 @@ import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import com.sparta.moit.domain.meeting.entity.QMeeting;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -26,7 +27,7 @@ import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
 import static com.sparta.moit.domain.meeting.entity.QMeetingMember.meetingMember;
 import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
 
-
+@Slf4j(topic = "스케줄러")
 @RequiredArgsConstructor
 public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -102,7 +103,8 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 ))
                 .orderBy(
                         meeting.meetingDate.asc(),
-                        meeting.registeredCount.desc()
+                        meeting.registeredCount.desc(),
+                        meeting.id.desc()
                 )
                 .limit(pageable.getPageSize() + 1)
                 .offset(pageable.getOffset())
@@ -119,10 +121,10 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
 
         return queryFactory.selectFrom(meeting)
                 .where(isOpenOrFull())
-                .where(meeting.meetingDate.eq(LocalDate.now()))
+                .where(meeting.meetingDate.eq(now.toLocalDate()))
                 /* meetingDate가 오늘이고, meetingEndTime이 1시간 전부터 현재까지인 회의 */
                 .where(meeting.meetingEndTime.hour().between(
-                                oneHourAgoTime.getHour(),nowTime.getHour()
+                                oneHourAgoTime.getHour(), nowTime.getHour()
                         )
                 )
                 .fetch();
