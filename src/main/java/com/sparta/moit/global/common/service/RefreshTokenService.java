@@ -40,7 +40,7 @@ public class RefreshTokenService {
 
     /*리프레시 토큰 검증*/
     public boolean validateRefreshToken(String token) {
-        log.info("validateRefreshToken 검증하는 리프레시 토큰: ", token);
+        log.info("validateRefreshToken 검증하는 리프레시 토큰: "+ token);
         return redisRefreshTokenRepository.existsByToken(token);
     }
 

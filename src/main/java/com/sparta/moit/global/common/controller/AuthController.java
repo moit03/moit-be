@@ -40,6 +40,7 @@ public class AuthController implements AuthControllerDocs {
         /*리프레시 토큰 검증*/
         log.info("isValidRefreshToken 이전 refeshToken: "+ refreshToken);
         boolean isValidRefreshToken = refreshTokenService.validateRefreshToken(refreshToken);
+        log.info("isValidRefreshToken 이후 refeshToken: "+ refreshToken);
         log.info("isValidRefreshToken: "+ isValidRefreshToken);
         if (!isValidRefreshToken) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 필요합니다.");
