@@ -173,7 +173,7 @@ public class JwtUtil {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("RefreshToken")) {
-                    log.info("RefreshToken cookie value"+URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));
+                    log.info("RefreshToken cookie value: "+ URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));
                     return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
                 }
             }
