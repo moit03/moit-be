@@ -31,16 +31,16 @@ public class AuthController implements AuthControllerDocs {
     public ResponseEntity<?> refreshAccessTokenTest(HttpServletRequest request, HttpServletResponse response) {
         /*리프레시 토큰이 없으면 badRequest 반환*/
         String refreshToken = jwtUtil.getRefreshTokenFromCookie(request);
-        log.info("jwtUtil.getRefreshTokenFromCookie : ", refreshToken);
+        log.info("jwtUtil.getRefreshTokenFromCookie : "+ refreshToken);
 
         if (refreshToken == null || refreshToken.isEmpty()) {
             return ResponseEntity.badRequest().body("토큰이 입력되지 않았습니다.");
         }
 
         /*리프레시 토큰 검증*/
-        log.info("isValidRefreshToken 이전 refeshToken: ", refreshToken);
+        log.info("isValidRefreshToken 이전 refeshToken: "+ refreshToken);
         boolean isValidRefreshToken = refreshTokenService.validateRefreshToken(refreshToken);
-        log.info("isValidRefreshToken: ", isValidRefreshToken);
+        log.info("isValidRefreshToken: "+ isValidRefreshToken);
         if (!isValidRefreshToken) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 필요합니다.");
         }
