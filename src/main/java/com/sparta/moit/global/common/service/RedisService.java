@@ -23,6 +23,7 @@ public class RedisService {
     private final RedisRefreshTokenRepository redisRefreshTokenRepository;
 
     public void saveRefreshToken(RedisRefreshToken refreshToken) {
+        log.info("저장된 refresh Token" + refreshToken.getToken());
         redisRefreshTokenRepository.save(refreshToken);
     }
 

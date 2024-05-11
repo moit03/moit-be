@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j(topic = "authcontroller")
 public class AuthController implements AuthControllerDocs {
     private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
@@ -36,6 +38,7 @@ public class AuthController implements AuthControllerDocs {
 
         /*리프레시 토큰 검증*/
         boolean isValidRefreshToken = refreshTokenService.validateRefreshToken(refreshToken);
+        log.info("isValidRefreshToken: ", isValidRefreshToken);
         if (!isValidRefreshToken) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 필요합니다.");
         }
@@ -65,6 +68,7 @@ public class AuthController implements AuthControllerDocs {
 
         /*리프레시 토큰 검증*/
         boolean isValidRefreshToken = refreshTokenService.validateRefreshToken(refreshToken);
+
         if (!isValidRefreshToken) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 필요합니다.");
         }
