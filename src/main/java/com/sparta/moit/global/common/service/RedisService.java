@@ -30,6 +30,11 @@ public class RedisService {
     public Optional<RedisRefreshToken> findRefreshToken(String token) {
         return redisRefreshTokenRepository.findById(token);
     }
+
+    public boolean validateRefreshToken(String token) {
+        Optional<RedisRefreshToken> redisRefreshToken = redisRefreshTokenRepository.findById(token);
+        return redisRefreshTokenRepository.findById(token).isPresent();
+    }
     public void setValues(String key, String data) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         values.set(key, data);
