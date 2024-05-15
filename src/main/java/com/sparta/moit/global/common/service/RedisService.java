@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
+@Slf4j(topic = "redisService ")
 @Component
 @RequiredArgsConstructor
 public class RedisService {
@@ -23,12 +23,16 @@ public class RedisService {
     private final RedisRefreshTokenRepository redisRefreshTokenRepository;
 
     public void saveRefreshToken(RedisRefreshToken refreshToken) {
-        log.info("저장된 refresh Token" + refreshToken.getToken());
         redisRefreshTokenRepository.save(refreshToken);
     }
 
     public Optional<RedisRefreshToken> findRefreshToken(String token) {
         return redisRefreshTokenRepository.findById(token);
+    }
+
+    public boolean validateRefreshToken(String token) {
+        Optional<RedisRefreshToken> redisRefreshToken = redisRefreshTokenRepository.findById(token);
+        return redisRefreshTokenRepository.findById(token).isPresent();
     }
     public void setValues(String key, String data) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();

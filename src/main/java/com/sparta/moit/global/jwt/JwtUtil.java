@@ -140,7 +140,6 @@ public class JwtUtil {
     }
 
     public void addRefreshTokenToCookie(String refreshToken, HttpServletResponse response) {
-        log.info("refresh Token decoded 이전: " + refreshToken);
         refreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
                 .replaceAll("\\+", "%20");
 
@@ -174,8 +173,6 @@ public class JwtUtil {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("RefreshToken")) {
-                    log.info("RefreshToken cookie value decoded 이후 : "+ URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));
-                    log.info("check----");
                     return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
                 }
             }
