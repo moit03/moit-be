@@ -32,14 +32,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: make env.properties
-        if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'dev')
-        run: |
-          touch env.properties
-          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
-        shell: bash
+#      - name: make env.properties
+#        if: |
+#          contains(github.ref, 'main') ||
+#          contains(github.ref, 'dev')
+#        run: |
+#          touch env.properties
+#          echo "${{ secrets.ENV_PROPERTIES }}" > env.properties
+#        shell: bash
 
       - name: make application-dev
         if: |
@@ -54,14 +54,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build -x test
-
-      # 현재시간가져오기
-      - name: Get current time
-        uses: josStorer/get-current-time@v2.0.2
-        id: current-time
-        with:
-          format: YYYY-MM-DDTHH-mm-ss
-          utcOffset: "+09:00"
 
       # docker build & push
       # Dockerfile을 통해 이미지화

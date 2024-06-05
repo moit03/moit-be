@@ -2,15 +2,19 @@ package com.sparta.moit.domain.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.moit.domain.meeting.entity.Meeting;
+import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
+import static com.sparta.moit.global.util.CareerMapper.mapCareerIdsToNames;
+import static com.sparta.moit.global.util.SkillMapper.mapSkillIdsToNames;
+
+@Slf4j(topic = "GetMeetingDetailResponseDto")
 @Getter
 public class GetMeetingDetailResponseDto {
 
@@ -23,9 +27,9 @@ public class GetMeetingDetailResponseDto {
     private final LocalDate meetingDate;
 
     @JsonFormat(pattern = "HH:mm")
-    private final ZonedDateTime meetingStartTime;
+    private final LocalDateTime meetingStartTime;
     @JsonFormat(pattern = "HH:mm")
-    private final ZonedDateTime meetingEndTime;
+    private final LocalDateTime meetingEndTime;
 
     private final String locationAddress;
 
@@ -36,9 +40,11 @@ public class GetMeetingDetailResponseDto {
     private final Double locationLat;
     private final Double locationLng;
     private final boolean isJoin;
+    private final MeetingStatusEnum status;
+    private final boolean isBookmarked;
 
     @Builder
-    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin) {
+    public GetMeetingDetailResponseDto(Long meetingId, String meetingName, String creatorName, String creatorEmail, List<String> careerNameList, List<String> skillNameList, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, String locationAddress, Short registeredCount, Short totalCount, Integer budget, String contents, Double locationLat, Double locationLng, boolean isJoin, MeetingStatusEnum status, boolean isBookmarked) {
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.creatorName = creatorName;
@@ -46,8 +52,8 @@ public class GetMeetingDetailResponseDto {
         this.careerNameList = careerNameList;
         this.skillNameList = skillNameList;
         this.meetingDate = meetingDate;
-        this.meetingStartTime = meetingStartTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        this.meetingEndTime = meetingEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        this.meetingStartTime = meetingStartTime;
+        this.meetingEndTime = meetingEndTime;
         this.locationAddress = locationAddress;
         this.registeredCount = registeredCount;
         this.totalCount = totalCount;
@@ -56,9 +62,15 @@ public class GetMeetingDetailResponseDto {
         this.locationLat = locationLat;
         this.locationLng = locationLng;
         this.isJoin = isJoin;
+        this.status = status;
+        this.isBookmarked = isBookmarked;
     }
 
-    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, List<String> careerNameList, List<String> skillNameList, boolean isJoin) {
+    public static GetMeetingDetailResponseDto fromEntity(Meeting meeting, boolean isJoin, boolean isBookmarked) {
+        List<String> careerNameList = mapCareerIdsToNames(meeting.getCareerIdList());
+
+        List<String> skillNameList = mapSkillIdsToNames(meeting.getSkillIdList());
+
         return GetMeetingDetailResponseDto.builder()
                 .meetingId(meeting.getId())
                 .meetingName(meeting.getMeetingName())
@@ -77,6 +89,8 @@ public class GetMeetingDetailResponseDto {
                 .locationLat(meeting.getLocationLat())
                 .locationLng(meeting.getLocationLng())
                 .isJoin(isJoin)
+                .status(meeting.getStatus())
+                .isBookmarked(isBookmarked)
                 .build();
     }
 }

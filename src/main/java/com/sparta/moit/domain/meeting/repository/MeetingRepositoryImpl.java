@@ -1,32 +1,33 @@
 package com.sparta.moit.domain.meeting.repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.moit.domain.meeting.dto.GetMyPageDto;
 import com.sparta.moit.domain.meeting.entity.Meeting;
 import com.sparta.moit.domain.meeting.entity.MeetingStatusEnum;
 import com.sparta.moit.domain.meeting.entity.QMeeting;
-import com.sparta.moit.domain.meeting.entity.QMeetingMember;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.sparta.moit.domain.bookmark.entity.QBookMark.bookMark;
 import static com.sparta.moit.domain.meeting.entity.QCareer.career;
 import static com.sparta.moit.domain.meeting.entity.QMeeting.meeting;
-import static com.sparta.moit.domain.meeting.entity.QMeetingCareer.meetingCareer;
 import static com.sparta.moit.domain.meeting.entity.QMeetingMember.meetingMember;
 import static com.sparta.moit.domain.meeting.entity.QMeetingSkill.meetingSkill;
-import static com.sparta.moit.domain.meeting.entity.QSkill.skill;
-import static org.hibernate.query.results.Builders.fetch;
 
-
+@Slf4j(topic = "스케줄러")
 @RequiredArgsConstructor
 public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -42,7 +43,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                 .from(meetingMember)
                 .leftJoin(meetingMember.meeting, meeting)
                 .where(meetingMember.member.id.eq(memberId)
-                        .and(meeting.status.ne(MeetingStatusEnum.DELETE))) // status != DELETE 조건 추가
+                        .and(meeting.status.eq(MeetingStatusEnum.COMPLETE))) /*완료인 경우만 조회*/
                 .fetch();
     }
 
@@ -56,6 +57,7 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
                         meetingMember.member.id.eq(memberId),
                         isOpenOrFull()
                 )
+                .orderBy(meeting.meetingDate.asc())
                 .fetch();
         return response;
     }
@@ -66,8 +68,8 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
         List<Meeting> meetingList = queryFactory
                 .selectFrom(meeting)
                 .distinct()
-                .leftJoin(meeting.skills, meetingSkill)
-                .leftJoin(meeting.careers, meetingCareer)
+//                .leftJoin(meeting.skills, meetingSkill)
+//                .leftJoin(meeting.careers, meetingCareer)
                 .where(
                         skillEq(skillId),
                         careerEq(careerId),
@@ -86,52 +88,81 @@ public class MeetingRepositoryImpl implements MeetingRepositoryCustom {
     /* 검색 */
     @Override
     public Slice<Meeting> findByKeyword(String keyword, Pageable pageable) {
-        List<Meeting> meetingList = queryFactory
-                .selectFrom(meeting)
-                .where(
-                        titleLike(keyword)
-                                .or(addressLike(keyword))
-                                .or(contentLike(keyword)),
-                        isOpenOrFull()
-                )
+        QMeeting subMeeting = new QMeeting("subMeeting");
+
+        List<Meeting> meetings = queryFactory.selectFrom(meeting)
+                .where(meeting.id.in(
+                        JPAExpressions.selectDistinct(subMeeting.id)
+                                .from(subMeeting)
+                                .where(
+                                        titleLike(keyword)
+                                                .or(addressLike(keyword))
+                                                .or(contentLike(keyword)),
+                                        isOpenOrFull()
+                                )
+                ))
                 .orderBy(
                         meeting.meetingDate.asc(),
-                        meeting.registeredCount.desc()
+                        meeting.registeredCount.desc(),
+                        meeting.id.desc()
                 )
-                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
+                .offset(pageable.getOffset())
                 .fetch();
-        return new SliceImpl<>(meetingList, pageable, hasNextPage(meetingList, pageable.getPageSize()));
-    }
-
-    @Override
-    public List<String> findCareerNameList(Long meetingId) {
-        return queryFactory
-                .select(career.careerName)
-                .from(meetingCareer)
-                .join(meetingCareer.career, career)
-                .where(meetingCareer.meeting.id.eq(meetingId))
-                .fetch();
-    }
-
-    @Override
-    public List<String> findSkillNameList(Long meetingId) {
-        return queryFactory
-                .select(skill.skillName)
-                .from(meetingSkill)
-                .join(meetingSkill.skill, skill)
-                .where(meetingSkill.meeting.id.eq(meetingId))
-                .fetch();
+        return new SliceImpl<>(meetings, pageable, hasNextPage(meetings, pageable.getPageSize()));
     }
 
     @Override
     public List<Meeting> findAllIncompleteMeetingsForHour() {
-        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        LocalDateTime oneHourAgo = LocalDateTime.now().plusHours(8);
+        LocalDateTime now = LocalDateTime.now().plusHours(9);
+        LocalTime oneHourAgoTime = oneHourAgo.toLocalTime();
+        LocalTime nowTime = now.toLocalTime();
 
         return queryFactory.selectFrom(meeting)
                 .where(isOpenOrFull())
-                /* now() - 1hr <= meetingEndTime < now() */
-                .where(meeting.meetingStartTime.between(oneHourAgo, LocalDateTime.now()))
+                .where(meeting.meetingDate.eq(now.toLocalDate()))
+                /* meetingDate가 오늘이고, meetingEndTime이 1시간 전부터 현재까지인 회의 */
+                .where(meeting.meetingEndTime.hour().between(
+                                oneHourAgoTime.getHour(), nowTime.getHour()
+                        )
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Meeting> getPopularMeetings() {
+        List<Long> ids= queryFactory.select(bookMark.meeting.id)
+                .from(bookMark)
+                .join(bookMark.meeting, meeting)
+                .where(meeting.status.eq(MeetingStatusEnum.OPEN).or(meeting.status.eq(MeetingStatusEnum.FULL)))
+                .groupBy(bookMark.meeting.id)
+                .orderBy(bookMark.meeting.count().desc())
+                .limit(5)
+                .fetch();
+
+        return queryFactory.selectFrom(meeting)
+                .where(meeting.id.in(ids))
+                .fetch();
+    }
+
+    public List<Meeting> findHeldMeetingsByCreatorId(Long memberId) {
+        QMeeting m = QMeeting.meeting;
+
+        BooleanExpression whereClause = m.creator.id.eq(memberId)
+                .and(m.status.ne(MeetingStatusEnum.DELETE));
+
+        List<OrderSpecifier<?>> orderBy = new ArrayList<>();
+        orderBy.add(new CaseBuilder()
+                .when(m.status.eq(MeetingStatusEnum.OPEN).or(m.status.eq(MeetingStatusEnum.FULL)))
+                .then(1)
+                .otherwise(2).asc());
+        orderBy.add(m.meetingDate.asc());
+
+        return queryFactory
+                .selectFrom(m)
+                .where(whereClause)
+                .orderBy(orderBy.toArray(new OrderSpecifier[0]))
                 .fetch();
     }
 

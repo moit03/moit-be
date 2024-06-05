@@ -10,10 +10,6 @@ import java.util.List;
 
 
 public interface MeetingRepositoryCustom {
-    List<String> findCareerNameList(Long meetingId);
-
-    List<String> findSkillNameList(Long meetingId);
-
     Slice<Meeting> getMeetingSlice(Double locationLat, Double locationLng, List<Long> skillId, List<Long> careerId, Pageable pageable);
 
     Slice<Meeting> findByKeyword(String keyword, Pageable pageable);
@@ -23,4 +19,8 @@ public interface MeetingRepositoryCustom {
     List<Meeting> findMeetingsByMember(Long memberId);
 
     List<Meeting> findAllIncompleteMeetingsForHour();
+
+    List<Meeting> getPopularMeetings();
+
+    List<Meeting> findHeldMeetingsByCreatorId(Long memberId);
 }

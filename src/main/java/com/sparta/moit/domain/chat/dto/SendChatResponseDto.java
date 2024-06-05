@@ -26,7 +26,7 @@ public class SendChatResponseDto {
                 .chatId(chat.getId())
                 .sender(sender)
                 .content(chat.getContent())
-                .createdAt(chat.getCreatedAt())
+                .createdAt(chat.getCreatedAt().plusHours(9))
                 .build();
     }
 }

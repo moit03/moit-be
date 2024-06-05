@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.moit.domain.member.dto.KakaoUserInfoDto;
 import com.sparta.moit.domain.member.dto.MemberResponseDto;
 import com.sparta.moit.domain.member.entity.Member;
+import com.sparta.moit.domain.member.entity.MemberStatusEnum;
 import com.sparta.moit.domain.member.entity.UserRoleEnum;
 import com.sparta.moit.domain.member.repository.MemberRepository;
-import com.sparta.moit.global.jwt.JwtUtil;
 import com.sparta.moit.global.common.service.RefreshTokenService;
+import com.sparta.moit.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +25,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j(topic = "Kakao Login")
 @Service
 @RequiredArgsConstructor
-public class KakaoServiceImpl implements KakaoService{
+public class KakaoServiceImpl implements KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
@@ -45,9 +47,55 @@ public class KakaoServiceImpl implements KakaoService{
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
+    @Value("${kakao.admin-key}")
+    private String serviceAdminKey;
+
     public String login() {
         return jwtUtil.createToken("brandy0108@daum.net", UserRoleEnum.USER);
     }
+
+    public String refreshTest() {
+        return jwtUtil.createRefreshToken("brandy0108@daum.net", UserRoleEnum.USER);
+    }
+
+    @Override
+    public String signOut(Member member) throws JsonProcessingException {
+        /* 요청 URL 만들기 */
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://kauth.kakao.com")
+                .path("/user/unlink")
+                .encode()
+                .build()
+                .toUri();
+
+        /* HTTP Header 생성 */
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", "KakaoAK " + serviceAdminKey);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("target_id_type", "user_id");
+        body.add("target_id", String.valueOf(member.getKakaoId()));
+
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
+                .post(uri)
+                .headers(headers)
+                .body(body);
+
+        /* HTTP 요청 보내기 */
+        ResponseEntity<String> response = restTemplate.exchange(
+                requestEntity,
+                String.class
+        );
+
+        /* HTTP 응답 (JSON) -> 카카오ID 파싱 */
+        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        String kakaoId = jsonNode.get("id").asText();
+
+        /*  access token 반환 */
+        return kakaoId;
+    }
+
     public MemberResponseDto kakaoLogin(String code) throws JsonProcessingException {
         /* 1. "인가 코드"로 "액세스 토큰" 요청 */
         String accessToken = getToken(code);
@@ -57,6 +105,11 @@ public class KakaoServiceImpl implements KakaoService{
 
         /* 3. 필요시에 회원가입 */
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoUserInfo);
+        if (kakaoMember == null) {
+            log.error("Kakao 사용자 등록 실패");
+            throw new RuntimeException("Kakao 사용자 등록 실패");
+        }
+        log.info("Kakao 사용자 등록 완료: " + kakaoMember);
 
         /* 4. JWT 토큰 반환 */
         /* 이게 우리서버 Access Token */
@@ -73,7 +126,6 @@ public class KakaoServiceImpl implements KakaoService{
     }
 
     private String getToken(String code) throws JsonProcessingException {
-        log.info("인가코드 : " + code);
         /* 요청 URL 만들기 */
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kauth.kakao.com")
@@ -114,7 +166,6 @@ public class KakaoServiceImpl implements KakaoService{
     }
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
-        log.info("accessToken : " + accessToken);
 
         /* 요청 URL 만들기 */
         URI uri = UriComponentsBuilder
@@ -148,6 +199,7 @@ public class KakaoServiceImpl implements KakaoService{
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
 
+        log.info("서버 로그인 시간: " + LocalDateTime.now());
         log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(id, nickname, email);
     }
@@ -179,6 +231,7 @@ public class KakaoServiceImpl implements KakaoService{
                         .password(encodedPassword)
                         .email(kakaoUserInfo.getEmail())
                         .role(UserRoleEnum.USER)
+                        .status(MemberStatusEnum.MEMBER)
                         .kakaoId(kakaoId)
                         .build();
             }
@@ -187,9 +240,4 @@ public class KakaoServiceImpl implements KakaoService{
         }
         return kakaoUser;
     }
-
-//    /* 로그아웃 */
-//    public void deleteRefreshToken(String refreshTokenString){
-//        refreshTokenService.deleteRefreshToken(refreshTokenString);
-//    }
 }

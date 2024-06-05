@@ -2,16 +2,25 @@ package com.sparta.moit.domain.meeting.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.moit.domain.meeting.dto.CareerResponseDto;
+import com.sparta.moit.domain.meeting.dto.SkillResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.entity.Timestamped;
+import com.sparta.moit.global.util.PointUtil;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sparta.moit.global.util.CareerMapper.createCareerResponseList;
+import static com.sparta.moit.global.util.SkillMapper.createSkillResponseList;
 
 @Entity(name = "meeting")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -56,6 +65,9 @@ public class Meeting extends Timestamped {
     @Column(name = "location_lng")
     private Double locationLng;
 
+    @Column(columnDefinition = "geography(Point,4326)")
+    private Point locationPosition;
+
     @Column(name = "region_first_name")
     private String regionFirstName;
 
@@ -74,18 +86,27 @@ public class Meeting extends Timestamped {
     @JsonIgnore
     private List<MeetingMember> meetingMembers = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MeetingSkill> skills = new ArrayList<>();
+    @Type(JsonType.class)
+    @Column(name = "skill_list",columnDefinition = "jsonb")
+    private List<SkillResponseDto> skillList = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MeetingCareer> careers = new ArrayList<>();
+    @Type(JsonType.class)
+    @Column(name = "career_list",columnDefinition = "jsonb")
+    private List<CareerResponseDto> careerList = new ArrayList<>();
+
+    @Column(name = "career_id_list", columnDefinition = "bigint[]")
+    private Long[] careerIdList;
+
+    @Column(name = "skill_id_list", columnDefinition = "bigint[]")
+    private Long[] skillIdList;
+
 
     @Builder
-    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime, Integer budget,
-                   String locationAddress, String contents, Short registeredCount, Short totalCount,
-                   Double locationLat, Double locationLng, String regionFirstName, String regionSecondName, MeetingStatusEnum status, Member creator, List<MeetingMember> meetingMembers) {
+    public Meeting(Long id, String meetingName, LocalDate meetingDate, LocalDateTime meetingStartTime, LocalDateTime meetingEndTime,
+                   Integer budget, String locationAddress, String contents, Short registeredCount, Short totalCount,
+                   Double locationLat, Double locationLng, Point locationPosition, String regionFirstName, String regionSecondName, MeetingStatusEnum status,
+                   Member creator, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList, Long[] careerIdList,
+                   Long[] skillIdList) {
         this.id = id;
         this.meetingName = meetingName;
         this.meetingDate = meetingDate;
@@ -98,14 +119,22 @@ public class Meeting extends Timestamped {
         this.totalCount = totalCount;
         this.locationLat = locationLat;
         this.locationLng = locationLng;
+        this.locationPosition = locationPosition;
         this.regionFirstName = regionFirstName;
         this.regionSecondName = regionSecondName;
         this.status = MeetingStatusEnum.OPEN;
         this.creator = creator;
-        this.meetingMembers = new ArrayList<>();
+        this.skillList = skillList;
+        this.careerList = careerList;
+        this.skillIdList = skillIdList;
+        this.careerIdList = careerIdList;
     }
 
     public void updateMeeting(UpdateMeetingRequestDto requestDto) {
+        List<SkillResponseDto> skillList = createSkillResponseList(requestDto.getSkillIds());
+
+        List<CareerResponseDto> careerList = createCareerResponseList(requestDto.getCareerIds());
+
         this.meetingName = requestDto.getMeetingName();
         this.budget = requestDto.getBudget();
         this.locationAddress = requestDto.getLocationAddress();
@@ -113,8 +142,28 @@ public class Meeting extends Timestamped {
         this.totalCount = requestDto.getTotalCount();
         this.locationLat = requestDto.getLocationLat();
         this.locationLng = requestDto.getLocationLng();
+        this.locationPosition = PointUtil.createPointFromLngLat(requestDto.getLocationLng(), requestDto.getLocationLat());
         this.regionFirstName = requestDto.getRegionFirstName();
         this.regionSecondName = requestDto.getRegionSecondName();
+        this.skillList = skillList;
+        this.careerList = careerList;
+    }
+    public void updateMeetingArray(UpdateMeetingRequestDto requestDto) {
+        Long[] skillArray = requestDto.getSkillIds().toArray(new Long[0]);
+        Long[] careerArray = requestDto.getCareerIds().toArray(new Long[0]);
+
+        this.meetingName = requestDto.getMeetingName();
+        this.budget = requestDto.getBudget();
+        this.locationAddress = requestDto.getLocationAddress();
+        this.contents = requestDto.getContents();
+        this.totalCount = requestDto.getTotalCount();
+        this.locationLat = requestDto.getLocationLat();
+        this.locationLng = requestDto.getLocationLng();
+        this.locationPosition = PointUtil.createPointFromLngLat(requestDto.getLocationLng(), requestDto.getLocationLat());
+        this.regionFirstName = requestDto.getRegionFirstName();
+        this.regionSecondName = requestDto.getRegionSecondName();
+        this.skillIdList = skillArray;
+        this.careerIdList = careerArray;
     }
 
     public Short incrementRegisteredCount() {

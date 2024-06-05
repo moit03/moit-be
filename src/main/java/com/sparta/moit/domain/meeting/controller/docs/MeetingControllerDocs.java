@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
 import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
 import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
+import com.sparta.moit.global.common.dto.ResponseDto;
 import com.sparta.moit.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -24,9 +26,16 @@ public interface MeetingControllerDocs {
     @Operation(summary = "모임 등록 기능", description = "모임 등록 API")
     ResponseEntity<?> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
+    @Operation(summary = "모임 등록 기능", description = "모임 등록 API")
+    ResponseEntity<?> createMeetingArray(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
+
+
     @Operation(summary = "모임 수정 기능", description = "모임 수정 API")
     ResponseEntity<?> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
+    @Operation(summary = "모임 수정 array 기능", description = "모임 수정 array API")
+    @PutMapping("/array/{meetingId}")
+    public ResponseEntity<ResponseDto<Long>> updateMeetingArray(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails);
     @Operation(summary = "모임 삭제 기능", description = "모임 삭제 API")
     ResponseEntity<?> deleteMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);
 
@@ -52,6 +61,9 @@ public interface MeetingControllerDocs {
 
     @Operation(summary = "모임 검색 기능", description = "모임 검색 API")
     ResponseEntity<?> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page);
+
+    @Operation(summary = "인기 모임", description = "인기 모임 API")
+    ResponseEntity<?> getPopularMeeting();
 
     @Operation(summary = "회원 모임 참가 기능", description = "모임 참가 API")
     ResponseEntity<?> enterMeeting(@PathVariable Long meetingId, @AuthenticationPrincipal UserDetailsImpl userDetails);

@@ -1,10 +1,7 @@
 package com.sparta.moit.domain.meeting.controller;
 
 import com.sparta.moit.domain.meeting.controller.docs.MeetingControllerDocs;
-import com.sparta.moit.domain.meeting.dto.CreateMeetingRequestDto;
-import com.sparta.moit.domain.meeting.dto.GetMeetingDetailResponseDto;
-import com.sparta.moit.domain.meeting.dto.GetMeetingResponseDto;
-import com.sparta.moit.domain.meeting.dto.UpdateMeetingRequestDto;
+import com.sparta.moit.domain.meeting.dto.*;
 import com.sparta.moit.domain.meeting.service.MeetingService;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.global.common.dto.ResponseDto;
@@ -28,16 +25,29 @@ public class MeetingController implements MeetingControllerDocs {
     private final MeetingService meetingService;
 
     /*모임 등록*/
-    @PostMapping
+    @PostMapping("/json")
     public ResponseEntity<ResponseDto<Long>> createMeeting(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long meetingId = meetingService.createMeeting(requestDto, userDetails.getUser());
         return ResponseEntity.ok().body(ResponseDto.success("모임 등록 완료", meetingId));
     }
 
+    /*모임 등록*/
+    @PostMapping
+    public ResponseEntity<ResponseDto<Long>> createMeetingArray(@RequestBody CreateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long meetingId = meetingService.createMeetingArray(requestDto, userDetails.getUser());
+        return ResponseEntity.ok().body(ResponseDto.success("모임 등록 완료", meetingId));
+    }
+
     /*모임 수정*/
-    @PutMapping("/{meetingId}")
+    @PutMapping("/json/{meetingId}")
     public ResponseEntity<ResponseDto<Long>> updateMeeting(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long updatedMeetingId = meetingService.updateMeeting(requestDto, userDetails.getUser(), meetingId);
+        return ResponseEntity.ok().body(ResponseDto.success("모임 수정 완료", updatedMeetingId));
+    }
+    /*모임 array 수정*/
+    @PutMapping("/{meetingId}")
+    public ResponseEntity<ResponseDto<Long>> updateMeetingArray(@PathVariable Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long updatedMeetingId = meetingService.updateMeetingArray(requestDto, userDetails.getUser(), meetingId);
         return ResponseEntity.ok().body(ResponseDto.success("모임 수정 완료", updatedMeetingId));
     }
 
@@ -48,8 +58,55 @@ public class MeetingController implements MeetingControllerDocs {
         return ResponseEntity.ok().body(ResponseDto.success("모임 삭제 완료", "삭제"));
     }
 
-    /*모임 조회*/
+    @GetMapping("/json")
+    public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListPostgreJson(
+            @RequestParam Double locationLat,
+            @RequestParam Double locationLng,
+            @RequestParam(required = false) List<String> skillId,
+            @RequestParam(required = false) List<String> careerId,
+            @RequestParam(defaultValue = "1") int page)
+    {
+
+        String skillIdsStr = (skillId == null || skillId.isEmpty()) ? null : String.join(",", skillId);
+        String careerIdsStr = (careerId == null || careerId.isEmpty()) ? null : String.join(",", careerId);
+
+        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListPostgreJson(page
+                , locationLat
+                , locationLng
+                , skillIdsStr
+                , careerIdsStr
+        );
+
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
+
     @GetMapping
+    public ResponseEntity<ResponseDto<Slice<GetMeetingArrayResponseDto>>> getMeetingListPostgreArray(
+            @RequestParam Double locationLat,
+            @RequestParam Double locationLng,
+            @RequestParam(required = false) List<String> skillId,
+            @RequestParam(required = false) List<String> careerId,
+            @RequestParam(defaultValue = "1") int page)
+    {
+
+        String skillIdsStr = (skillId == null || skillId.isEmpty()) ? null : String.join(",", skillId);
+        String careerIdsStr = (careerId == null || careerId.isEmpty()) ? null : String.join(",", careerId);
+
+        Slice<GetMeetingArrayResponseDto> responseDtoList = meetingService.getMeetingListPostgreArray(
+                page
+                , locationLat
+                , locationLng
+                , skillIdsStr
+                , careerIdsStr
+        );
+
+        return ResponseEntity.ok().body(ResponseDto.success("조회 완료", responseDtoList));
+    }
+
+
+
+    /*모임 조회*/
+    @GetMapping("/mysql")
     public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingList
     (@RequestParam Double locationLat,
      @RequestParam Double locationLng,
@@ -85,9 +142,16 @@ public class MeetingController implements MeetingControllerDocs {
 
     /* 모임 검색 */
     @GetMapping("/search")
-    public ResponseEntity<ResponseDto<Slice<GetMeetingResponseDto>>> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page) {
-        Slice<GetMeetingResponseDto> responseDtoList = meetingService.getMeetingListBySearch(keyword, page);
+    public ResponseEntity<ResponseDto<Slice<GetMeetingArrayResponseDto>>> getMeetingListBySearch(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page) {
+        Slice<GetMeetingArrayResponseDto> responseDtoList = meetingService.getMeetingListBySearch(keyword, page);
         return ResponseEntity.ok().body(ResponseDto.success("검색 완료", responseDtoList));
+    }
+
+    /* 인기 모임 top 5 */
+    @GetMapping("/popular")
+    public ResponseEntity<?> getPopularMeeting() {
+        List<GetPopularResponseDto> responseDtoList = meetingService.getPopularMeeting();
+        return ResponseEntity.ok().body(ResponseDto.success("인기 모임 top 5", responseDtoList));
     }
 
     /*모임 참가*/
