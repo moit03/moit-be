@@ -73,5 +73,5 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker-compose up -d
             docker-compose down
+            docker-compose up -d
