@@ -73,5 +73,18 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            export PROD_DB_URL=${{ secrets.PROD_DB_URL }}
+            export PROD_DB_USERNAME=${{ secrets.PROD_DB_USERNAME }}
+            export PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}
+            export PROD_REDIS_URL=${{ secrets.PROD_REDIS_URL }}
+            export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            export NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+            export NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+            export NAVER_SECURITY_REDIRECT_URI=${{ secrets.NAVER_SECURITY_REDIRECT_URI }}
+            export NAVER_REDIRECT_URI=${{ secrets.NAVER_REDIRECT_URI }}
+            export KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+            export KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+            export KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}
+            export KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }}
             docker-compose down
             docker-compose up -d
