@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Debugging with tmate
         uses: mxschmitt/action-tmate@v3.18
+        env: 
+          ENV: ${{ secrets.ENV }}
             
       - name: action-slack
         uses: 8398a7/action-slack@v3
