@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Debugging with tmate
+        uses: mxschmitt/action-tmate@v3.18
+            
       - name: action-slack
         uses: 8398a7/action-slack@v3
         with:
