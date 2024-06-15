@@ -12,6 +12,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3.18
         env: 
           ENV: ${{ secrets.ENV }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
             
       - name: action-slack
         uses: 8398a7/action-slack@v3
