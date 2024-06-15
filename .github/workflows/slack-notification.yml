@@ -18,5 +18,8 @@ jobs:
         # env:
         #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
         if: always() # Pick up events even if the job fails or is canceled.
+  echo:
+    runs-on: ubuntu-latest
+    steps:
       - name: echo
         run: echo "${{ secrets.ENV }}"
