@@ -38,13 +38,13 @@ public class KakaoServiceImpl implements KakaoService {
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
 
-    @Value("${kakao.client-id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
 
-    @Value("${kakao.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String clientSecret;
 
-    @Value("${kakao.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String redirectUri;
 
     @Value("${kakao.admin-key}")
