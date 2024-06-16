@@ -8,12 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Debugging with tmate
-        uses: mxschmitt/action-tmate@v3.18
-        env: 
-          ENV: ${{ secrets.ENV }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-            
       - name: action-slack
         uses: 8398a7/action-slack@v3
         with:
@@ -21,8 +15,8 @@ jobs:
           author_name: www-be
           fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
           if_mention: failure,cancelled
-        # env:
-        #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
         if: always() # Pick up events even if the job fails or is canceled.
   echo:
     runs-on: ubuntu-latest
