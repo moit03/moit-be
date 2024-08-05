@@ -204,8 +204,6 @@ gradle-app.setting
 .idea/
 env.properties
 prometheus.yml
-application-dev.properties
-application-local.properties
 application-sql.properties
 
 ### Logging files ###

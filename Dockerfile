@@ -1,10 +1,7 @@
-FROM openjdk:17-alpine
-
-#COPY env.properties /env.properties
-COPY src/main/resources/application-dev.properties /src/main/resources/application-dev.properties
+#FROM openjdk:17-alpine
+FROM bellsoft/liberica-openjdk-alpine:17
 
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]
-# , "-Dspring.profiles.active=prod"

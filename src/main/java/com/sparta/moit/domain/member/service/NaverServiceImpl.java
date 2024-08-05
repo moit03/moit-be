@@ -39,10 +39,10 @@ public class NaverServiceImpl implements NaverService {
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
 
-    @Value("${naver.client-id}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String clientId;
 
-    @Value("${naver.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String clientSecret;
 
     @Value("${naver.redirect-uri}")
