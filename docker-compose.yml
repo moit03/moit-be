@@ -4,7 +4,6 @@ services:
     image: "moit03/moit:latest"
     ports:
       - "443:8080"
-      - "80:8080"
     environment:
       - PROD_DB_URL
       - PROD_DB_USERNAME
@@ -23,8 +22,9 @@ services:
       - SSL_KEY_STORE_PASSWORD
       - SSL_KEY_STORE_TYPE
     restart: "always"
-#    volumes:
-#      - '/var/log/:/log'
+    volumes:
+      - '/etc/letsencrypt/live/api.moit.app/keystore.p12:/etc/letsencrypt/live/api.moit.app/keystore.p12'
+
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
