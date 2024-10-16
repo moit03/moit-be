@@ -18,6 +18,9 @@ services:
       - KAKAO_CLIENT_SECRET
       - KAKAO_REDIRECT_URI
       - KAKAO_ADMIN_KEY
+      - SSL_KEY_STORE
+      - SSL_KEY_STORE_PASSWORD
+      - SSL_KEY_STORE_TYPE
     restart: "always"
 #    volumes:
 #      - '/var/log/:/log'
