@@ -23,8 +23,8 @@ services:
       - SSL_KEY_STORE_PASSWORD
       - SSL_KEY_STORE_TYPE
     restart: "always"
-#    volumes:
-#      - '/var/log/:/log'
+    volumes:
+      - '/etc/letsencrypt/live/api.moit.app/keystore.p12:/etc/letsencrypt/live/api.moit.app/keystore.p12'
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
