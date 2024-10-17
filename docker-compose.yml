@@ -3,7 +3,7 @@ services:
   backend:
     image: "moit03/moit:latest"
     ports:
-      - "443:8080"
+      - "443:8443"
     environment:
       - PROD_DB_URL
       - PROD_DB_USERNAME
