@@ -37,7 +37,7 @@ public enum ErrorCode {
 
     DUPLICATED_EMAIL("DUPLICATED_EMAIL", "중복된 이메일입니다.", HttpStatus.BAD_REQUEST),
     DUPLICATED_MEMBER("DUPLICATED_MEMBER", "중복된 회원입니다.", HttpStatus.BAD_REQUEST),
-    ALREADY_MEMBER("ALREADY_MEMBER", "이미 참가한 회원입니다.", HttpStatus.BAD_REQUEST),
+    ALREADY_MEMBER("ALREADY_MEMBER", "해당 모임에 이미 참가한 회원입니다.", HttpStatus.BAD_REQUEST),
     MEETING_FULL("MEETING_FULL", "가득찬 모임입니다.", HttpStatus.BAD_REQUEST),
     MEETING_COMPLETE("MEETING_COMPLETE", "완료된 모임입니다.", HttpStatus.BAD_REQUEST),
     MEETING_DELETE("MEETING_DELETE", "삭제된 모임입니다.", HttpStatus.BAD_REQUEST),
@@ -47,28 +47,13 @@ public enum ErrorCode {
     VALIDATION_ERROR("VALIDATION_ERROR", "잘못된 입력입니다.", HttpStatus.BAD_REQUEST),
     FORBIDDEN("FORBIDDEN", "접근 권한이 없습니다. ADMIN에게 문의하세요.", HttpStatus.FORBIDDEN),
     UNAUTHORIZED("UNAUTHORIZED", "로그인 후 이용할 수 있습니다. 계정이 없다면 회원 가입을 진행해주세요.", HttpStatus.UNAUTHORIZED),
-    NOT_EXIST_COMMENT("NOT_EXIST_COMMENT", "해당 댓글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
-    NOT_EXIST_POST("NOT_EXIST_POST", "해당 글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
-    NOT_YOUR_POST("NOT_YOUR_POST","해당 게시글을 작성한 유저가 아닙니다." ,HttpStatus.BAD_REQUEST),
-    NOT_YOUR_IMG("NOT_YOUR_IMG", "imgId를 확인해주세요", HttpStatus.BAD_REQUEST),
-    NOT_EXIST_IMG("NOT_EXIST_IMG", "해당 사진이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
-    FAIL_TO_SEND_MAIL("FAIL_TO_SEND_MAIL", "메일을 보내는데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    DUPLICATED_PHONE_NUMBER("DUPLICATED_PHONE_NUMBER", "중복된 전화번호입니다.", HttpStatus.BAD_REQUEST),
-    INVALID_CATEGORY_INPUT("INVALID_CATEGORY_INPUT", "잘못된 카테고리 입력입니다.", HttpStatus.BAD_REQUEST),
-    NOT_YOUR_COMMENT("NOT_YOUR_COMMENT", "해당 댓글을 작성한 유저가 아닙니다.", HttpStatus.BAD_REQUEST),
-    NOT_MATCH_CODE("NOT_MATCH_CODE", "인증번호가 일치하지 않습니다", HttpStatus.UNAUTHORIZED),
-    MSG_TIME_OUT("MSG_TIME_OUT", "인증시간이 초과되었습니다.", HttpStatus.REQUEST_TIMEOUT),
-    NOT_EXIST_PROFILE("NOT_EXIST_PROFILE", "프로필사진이 없습니다", HttpStatus.BAD_REQUEST),
-    INVALID_PARENT_COMMENT("INVALID_PARENT_COMMENT", "유효하지 않은 부모 댓글입니다.", HttpStatus.BAD_REQUEST),
     CHATROOM_NOT_FOUND("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MEETING_NOT_FOUND("MEETING_NOT_FOUND", "모임을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOT_MEETING_MEMBER("NOT_MEETING_MEMBER", "모임에 가입한 유저가 아닙니다.", HttpStatus.FORBIDDEN),
     CREATOR_CAN_NOT_LEAVE("CREATOR_CAN_NOT_LEAVE", "작성자는 탈퇴할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    //STARTTIME_CAN_NOT_LATER_THAN_ENDTIME("STARTTIME_CAN_NOT_LATER_THAN_ENDTIME", "d", HttpStatus.BAD_REQUEST),
     NOT_BOOKMARKED("NOT_BOOKMARKED", "북마크 하지 않은 모임입니다.",HttpStatus.BAD_REQUEST),
     ALREADY_BOOKMARKED("ALREADY_BOOKMARKED", "이미 북마크 된 모임입니다.", HttpStatus.BAD_REQUEST),
     BOOKMARK_NOT_FOUND("BOOKMARK_NOT_FOUND", "북마크를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    NOT_EXIST_MY_PAGE("NOT_EXIST_MY_PAGE", "마이페이지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     KAKAOID_UNLINK_FAILURE("KAKAOID_UNLINK_FAILURE", "카카오 ID 연동에 실패했습니다.", HttpStatus.FAILED_DEPENDENCY),
     REFRESH_TOKEN_ERROR("REFRESH_TOKEN_ERROR", "RefreshToken 요청입니다.", HttpStatus.BAD_REQUEST)
     ;
@@ -79,6 +64,7 @@ public enum ErrorCode {
     private final String key;
     private final String message;
     private final HttpStatus httpStatus;
+
 
     ErrorCode(String key, String message, HttpStatus httpStatus) {
         this.key = key;
