@@ -43,7 +43,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String tokenType = jwtUtil.getTokenType(tokenValue);
         if (!tokenType.equals("access")) {
-            throw new CustomException(ErrorCode.REFRESH_TOKEN_ERROR);
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_ERROR, "proper token type : access, received token type: "+ tokenType);
         }
 
         if (StringUtils.hasText(tokenValue)) {

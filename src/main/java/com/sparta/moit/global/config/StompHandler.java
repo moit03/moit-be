@@ -45,7 +45,7 @@ public class StompHandler implements ChannelInterceptor {
                     String email = decodedJWT.getSubject();
                     // 사용자 정보 조회
                     Member member = memberRepository.findByEmail(email).orElseThrow(() ->
-                            new CustomException(ErrorCode.NOT_EXIST_USER)
+                            new CustomException(ErrorCode.NOT_EXIST_USER, "userEmail: "+ email )
                     );
 
                     // 사용자 인증 정보 설정

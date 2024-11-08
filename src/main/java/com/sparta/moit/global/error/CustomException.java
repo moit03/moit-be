@@ -1,13 +1,19 @@
 package com.sparta.moit.global.error;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@AllArgsConstructor
 public class CustomException extends RuntimeException{
     private final ErrorCode errorCode;
+    @Getter
+    private final String logMessage;
+
+    public CustomException(ErrorCode errorCode, String logMessage) {
+        this.errorCode = errorCode;
+        this.logMessage = logMessage;
+    }
+
     public String getKey(){
         return errorCode.getKey();
     }
@@ -18,4 +24,6 @@ public class CustomException extends RuntimeException{
     public HttpStatus getHttpStatus(){
         return errorCode.getHttpStatus();
     }
+
+
 }

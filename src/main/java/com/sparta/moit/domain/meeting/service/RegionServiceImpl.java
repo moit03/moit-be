@@ -42,7 +42,7 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public List<RegionSecondResponseDto> getRegionSecond(Short regionFirstId) {
         RegionFirst regionFirst = regionFirstRepository.findById(regionFirstId).orElseThrow(() ->
-                new CustomException(ErrorCode.VALIDATION_ERROR)
+                new CustomException(ErrorCode.VALIDATION_ERROR, "Not valid regionFirstId: "+ regionFirstId)
         );
         List<RegionSecond> regionSecondList = regionSecondRepository.findAllByRegionFirstOrderByRegionSecondId(regionFirst);
         return regionSecondList.stream().map(RegionSecondResponseDto::fromEntity).toList();

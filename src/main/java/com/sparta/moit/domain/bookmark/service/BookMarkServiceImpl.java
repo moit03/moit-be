@@ -20,14 +20,15 @@ public class BookMarkServiceImpl implements BookMarkService {
 
     @Transactional
     public void addMeetingBookmark(BookMarkResponseDto bookmarkResponseDto, Member member) {
+        // TODO: member 인증관련 코드는 UserDetails 에서 처리 해야할 것 같다고 생각
         if (member == null) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.UNAUTHORIZED, "userDetails Member not found");
         }
         if (isBookmarked(bookmarkResponseDto, member)) {
-            throw new CustomException(ErrorCode.ALREADY_BOOKMARKED);
+            throw new CustomException(ErrorCode.ALREADY_BOOKMARKED, "meetingId: ," + bookmarkResponseDto.getMeetingId() + " memberId:"+ member.getId());
         }
         Meeting meeting = meetingRepository.findById(bookmarkResponseDto.getMeetingId())
-                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND, "meetingId : " + bookmarkResponseDto.getMeetingId()));
 
         BookMark bookmark = BookMark.builder()
                 .meeting(meeting)
@@ -41,13 +42,13 @@ public class BookMarkServiceImpl implements BookMarkService {
     @Transactional
     public void removeMeetingBookmark(BookMarkResponseDto bookmarkResponseDto, Member member) {
         if (member == null) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.UNAUTHORIZED, "userDetails Member not found");
         }
         if (!isBookmarked(bookmarkResponseDto, member)) {
-            throw new CustomException(ErrorCode.NOT_BOOKMARKED);
+            throw new CustomException(ErrorCode.NOT_BOOKMARKED, "meetingId: "+ bookmarkResponseDto.getMeetingId()+ "memberId: "+member.getId());
         }
         BookMark bookmark = bookMarkRepository.findByMeetingIdAndMemberId(bookmarkResponseDto.getMeetingId(), member.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND,  "meetingId: "+ bookmarkResponseDto.getMeetingId()+ "memberId: "+member.getId()));
 
         bookMarkRepository.delete(bookmark);
     }
