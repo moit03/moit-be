@@ -2,10 +2,12 @@ package com.sparta.moit.domain.meeting.dto;
 
 import com.sparta.moit.domain.meeting.entity.Career;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 
 @Getter
+@EqualsAndHashCode
 public class CareerResponseDto {
     private final Long careerId;
     private final String careerName;

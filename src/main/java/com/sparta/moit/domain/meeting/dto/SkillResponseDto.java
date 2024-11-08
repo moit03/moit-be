@@ -2,12 +2,14 @@ package com.sparta.moit.domain.meeting.dto;
 
 import com.sparta.moit.domain.meeting.entity.Skill;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class SkillResponseDto {
-    private Long skillId;
-    private String skillName;
+    private final Long skillId;
+    private final String skillName;
 
     @Builder
     public SkillResponseDto(Long skillId, String skillName) {
