@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.TimeZone;
-
-@OpenAPIDefinition(servers = {@Server(url = "https://hhboard.xyz", description = "Default Server URL")})
+@OpenAPIDefinition(servers = {@Server(url = "https://api.moit.app", description = "Default Server URL")})
 @EnableJpaAuditing
 @SpringBootApplication
 @EnableScheduling

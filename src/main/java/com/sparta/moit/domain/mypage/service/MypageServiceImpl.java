@@ -12,16 +12,13 @@ import com.sparta.moit.domain.mypage.dto.MypageMeetingResponseDto;
 import com.sparta.moit.domain.mypage.dto.MypageResponseDto;
 import com.sparta.moit.global.error.CustomException;
 import com.sparta.moit.global.error.ErrorCode;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
 
 @Slf4j(topic = "Mypage")
 @Service
@@ -45,7 +42,7 @@ public class MypageServiceImpl implements MypageService {
     public MypageResponseDto getMypageInfo(Member member) {
 
         Member member1 = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER, "memberId:" +member.getId()));
 
         /* 참여한 모임 개수 조회 */
         int enterMeetingCount = meetingMemberRepository.countByMemberIdAndMeeting_StatusNot(member.getId(), MeetingStatusEnum.DELETE);

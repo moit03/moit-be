@@ -1,5 +1,6 @@
 package com.sparta.moit.domain.member.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.moit.domain.member.entity.Member;
 import com.sparta.moit.domain.member.repository.MemberRepository;
 import com.sparta.moit.global.error.CustomException;
@@ -21,15 +22,14 @@ public class MemberServiceImpl implements MemberService {
     public void signOut(Member member) {
 
         Member member1 = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다. memberId= " + member));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER, "memberId: " +member.getId()));
 
-        System.out.println(member1.getKakaoId());
         /*카카오 unlink*/
         if (member1.getKakaoId() != null) {
             try {
                 kakaoService.signOut(member1);
-            } catch (Exception e) {
-                throw new CustomException(ErrorCode.KAKAOID_UNLINK_FAILURE);
+            } catch (JsonProcessingException e) {
+                throw new CustomException(ErrorCode.KAKAOID_UNLINK_FAILURE, "memberId: ," + member1.getId()+ " kakaoId: "+ member1.getKakaoId());
             }
         }
         member1.signOutStatus();

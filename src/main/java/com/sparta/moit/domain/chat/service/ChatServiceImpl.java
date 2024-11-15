@@ -43,14 +43,14 @@ public class ChatServiceImpl implements ChatService {
          * 현재 참여한 채팅방의 채팅내역를 가져온다.
          * */
         Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND,  "meetingId : " + meetingId));
 
         if (meeting.getStatus().equals(MeetingStatusEnum.DELETE)) {
-            throw new CustomException(ErrorCode.MEETING_NOT_FOUND);
+            throw new CustomException(ErrorCode.MEETING_NOT_FOUND, "meetingId : " + meetingId);
         }
 
         if (!isMeetingMember(member, meeting)) {
-            throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
+            throw new CustomException(ErrorCode.NOT_MEETING_MEMBER,"meetingId: "+ meetingId+ ", member: "+ member.getId());
         }
 
         int CHAT_PAGE_SIZE = 20;
@@ -70,17 +70,17 @@ public class ChatServiceImpl implements ChatService {
          * */
 
         Member testMember = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_MEETING_MEMBER));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER, "userEmail: " + email));
 
         Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEETING_NOT_FOUND,  "meetingId : " + meetingId));
 
         if (meeting.getStatus().equals(MeetingStatusEnum.COMPLETE)){
-            throw new CustomException(ErrorCode.MEETING_NOT_FOUND);
+            throw new CustomException(ErrorCode.MEETING_COMPLETE, "meeting status : COMPLETE, meetingId :" + meetingId);
         }
 
         if (!isMeetingMember(testMember, meeting)) {
-            throw new CustomException(ErrorCode.NOT_MEETING_MEMBER);
+            throw new CustomException(ErrorCode.NOT_MEETING_MEMBER,"meetingId: "+ meetingId+ ", member: "+ testMember.getId());
         }
 
         Chat chat = Chat.builder()

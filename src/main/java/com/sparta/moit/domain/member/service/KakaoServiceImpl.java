@@ -58,6 +58,7 @@ public class KakaoServiceImpl implements KakaoService {
         return jwtUtil.createRefreshToken("brandy0108@daum.net", UserRoleEnum.USER);
     }
 
+    // TODO: kakao 예외 처리 필요 -> API 문서상 예외 코드별로 처리 후 logging 할 것
     @Override
     public String signOut(Member member) throws JsonProcessingException {
         /* 요청 URL 만들기 */
@@ -90,10 +91,9 @@ public class KakaoServiceImpl implements KakaoService {
 
         /* HTTP 응답 (JSON) -> 카카오ID 파싱 */
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-        String kakaoId = jsonNode.get("id").asText();
 
         /*  access token 반환 */
-        return kakaoId;
+        return jsonNode.get("id").asText();
     }
 
     public MemberResponseDto kakaoLogin(String code) throws JsonProcessingException {
@@ -121,8 +121,7 @@ public class KakaoServiceImpl implements KakaoService {
         /* 발급한 토큰을 DB에 저장하기 */
         String refreshTokenValue = refreshTokenService.createAndSaveRefreshToken(kakaoMember.getEmail(), refreshToken);
 
-        MemberResponseDto responseDto = MemberResponseDto.builder().username(kakaoMember.getUsername()).accessToken(createToken).refreshToken(refreshTokenValue).build();
-        return responseDto;
+        return MemberResponseDto.builder().username(kakaoMember.getUsername()).accessToken(createToken).refreshToken(refreshTokenValue).build();
     }
 
     private String getToken(String code) throws JsonProcessingException {
@@ -159,10 +158,9 @@ public class KakaoServiceImpl implements KakaoService {
 
         /* HTTP 응답 (JSON) -> 액세스 토큰 파싱 */
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-        String accessToken = jsonNode.get("access_token").asText();
 
         /*  access token 반환 */
-        return accessToken;
+        return jsonNode.get("access_token").asText();
     }
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
